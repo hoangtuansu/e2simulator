@@ -209,8 +209,8 @@ void kpm_report_indication_header_initialized(E2SM_KPM_IndicationHeader_t* ihead
                                               uint8_t* plmnid_buf, uint8_t* sst_buf,
                                               uint8_t* sd_buf, long fqival, long qcival,
                                               uint8_t* nrcellid_buf, uint8_t* gnbid_buf,
-                                              int gnbid_unused, uint8_t* cuupid_buf,
-                                              uint8_t* duid_buf, uint8_t* cuupname_buf) {
+                                              int gnbid_unused, int16_t* cuupid_buf,
+                                              int16_t* duid_buf, uint8_t* cuupname_buf) {
   LOG_I("Start initializing mocked indication header");
   E2SM_KPM_IndicationHeader_Format1_t* ind_header =
       (E2SM_KPM_IndicationHeader_Format1_t*)calloc(1, sizeof(E2SM_KPM_IndicationHeader_Format1_t));

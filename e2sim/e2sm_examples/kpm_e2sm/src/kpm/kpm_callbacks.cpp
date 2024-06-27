@@ -16,6 +16,7 @@
 #                                                                            *
 ******************************************************************************/
 
+#include <chrono>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -55,6 +56,8 @@ extern "C" {
 using json = nlohmann::json;
 
 using namespace std;
+using namespace std::chrono;
+
 class E2Sim;
 int gFuncId;
 
@@ -70,6 +73,27 @@ int main(int argc, char* argv[]) {
   nrcellid_buf[2] = 0xD6;
   nrcellid_buf[3] = 0x00;
   nrcellid_buf[4] = 0x70;
+
+  
+  std::ifstream ifs("/playpen/src/src/kpm/config.json");
+  json e2sim_config = json::parse(ifs);
+  
+  int numPMs = e2sim_config["pm"].size();
+  LOG_D("There are %d metrics", numPMs);
+  
+  std::string performance_measurements[numPMs];
+
+  std::string pm_str = "";
+
+  for(int i = 0; i < numPMs; i++) {
+	json::json_pointer pm(std::string("/pm/") + std::to_string(i));
+	performance_measurements[i] = e2sim_config[pm].get<std::string>();
+
+	pm_str = pm_str + performance_measurements[i] + " ";
+  }
+
+  LOG_I("List of metrics: %s", pm_str.c_str());
+	
 
   asn_codec_ctx_t *opt_cod;
   
@@ -312,10 +336,10 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
 			gnbid_buf[1] = 0x5B;
 			gnbid_buf[2] = 0xD6;
 
-			uint8_t cuupid_buf[2] = {0, };
+			int16_t cuupid_buf[2] = {0, };
 			cuupid_buf[0] = 20000;
 
-			uint8_t duid_buf[2] = {0, };
+			int16_t duid_buf[2] = {0, };
 			duid_buf[0] = 20000;
 
 			uint8_t *cuupname_buf = (uint8_t*)"GNBCUUP5";	  
@@ -443,10 +467,10 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
 			gnbid_buf[1] = 0x5B;
 			gnbid_buf[2] = 0xD6;
 
-			uint8_t cuupid_buf[2] = {0, };
+			int16_t cuupid_buf[2] = {0, };
 			cuupid_buf[0] = 20000;
 
-			uint8_t duid_buf[2] = {0, };
+			int16_t duid_buf[2] = {0, };
 			duid_buf[0] = 20000;
 
 			uint8_t *cuupname_buf = (uint8_t*)"GNBCUUP5";	  	  
@@ -511,10 +535,10 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
 				LOG_I("Failed to serialize data. Detail: %s.\n", asn_DEF_E2SM_KPM_IndicationHeader.name);
 				exit(1);
 			} else if(er_header_style1.encoded > e2sm_header_buf_size_style1) {
-				LOG_I("Buffer of size %zu is too small for %s, need %zu\n", e2sm_header_buf_size_style1, asn_DEF_E2SM_KPM_IndicationHeader.name, er_header_style1.encoded);
+				LOG_I("Buffer of size %zu is too small for %s, need %zu", e2sm_header_buf_size_style1, asn_DEF_E2SM_KPM_IndicationHeader.name, er_header_style1.encoded);
 				exit(1);
 			} else {
-				LOG_I("Encoded Cell indication header succesfully, size in bytes: %d", er_header_style1.encoded)
+				LOG_I("Encoded Cell indication header succesfully, size in bytes: %ld", er_header_style1.encoded)
 			}
 
 			ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationHeader, ind_header_style1);
