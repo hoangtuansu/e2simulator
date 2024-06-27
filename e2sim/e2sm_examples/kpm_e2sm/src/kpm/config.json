@@ -1,0 +1,13 @@
+{
+  "pm": [
+    "RlcSduTransmittedVolumeDL",
+    "RlcSduTransmittedVolumeUL",
+    "PerDataVolumeDLDist.Bin",
+    "PerDataVolumeULDist.Bin",
+    "RlcPacketDropRateDLDist",
+    "PacketLossRateULDist",
+    "DL-SS-RSRP.SSB",
+    "DL-SS-SINR.SSB",
+    "UL-SRS-RSRP"
+  ]
+}
