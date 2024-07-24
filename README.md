@@ -1,22 +1,16 @@
-#/*****************************************************************************
-#                                                                            *
-# Copyright 2019 AT&T Intellectual Property                                  *
-# Copyright 2019 Nokia                                                       *
-#                                                                            *
-# Licensed under the Apache License, Version 2.0 (the "License");            *
-# you may not use this file except in compliance with the License.           *
-# You may obtain a copy of the License at                                    *
-#                                                                            *
-#      http://www.apache.org/licenses/LICENSE-2.0                            *
-#                                                                            *
-# Unless required by applicable law or agreed to in writing, software        *
-# distributed under the License is distributed on an "AS IS" BASIS,          *
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   *
-# See the License for the specific language governing permissions and        *
-# limitations under the License.                                             *
-#                                                                            *
-#******************************************************************************/
+# Build and deploy
 
+Run the following command to build and push to Docker registry:
+```
+docker build -f Dockerfile_kpm -t e2_sim . && docker image tag e2_sim:latest <your-repo>/
+e2sim:0.0 && docker push <your-repo>/e2sim:0.0
+```
+
+To set the ID of RAN function, use environment variable `RAN_FUNC_ID`. If it is not set, the ID will be assigned to a random value between 0 and 4095.
+
+In K8s environment, multiple instances of E2Sim can run in parallel to simulate an environment with multiple cells/UEs. Each instance will have a random RAN function ID and random `gnb` name.
+
+# Other
 This is an update to E2 Simulator, based on E2AP v1 defined in ORAN
 E2 Simulator is built as a library that supports basic functions and is
 linked by an E2 Simulation application.
