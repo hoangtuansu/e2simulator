@@ -315,7 +315,7 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
 			
 			neighbor_str += "]";
 			
-			LOG_I("This is neighbor str %s\n", neighbor_str.c_str());
+			LOG_I("This is neighbor str %s", neighbor_str.c_str());
 								
 			const uint8_t *neighbor_buf = reinterpret_cast<const uint8_t*>(neighbor_str.c_str());
 
@@ -585,20 +585,20 @@ void callback_kpm_subscription_request(E2AP_PDU_t *sub_req_pdu) {
   std::vector<long> actionIdsAccept;
   std::vector<long> actionIdsReject;
 
+  LOG_I("Go through all the IEs in subscription request to construct neccessay parameters.");
   for (int i=0; i < count; i++) {
     RICsubscriptionRequest_IEs_t *next_ie = ies[i];
     pres = next_ie->value.present;
     
-    LOG_I("The next present value %d", pres);
+    
 
     switch(pres) {
 		case RICsubscriptionRequest_IEs__value_PR_RICrequestID: {
-			LOG_I("in case request id");
 			RICrequestID_t reqId = next_ie->value.choice.RICrequestID;
 			long requestorId = reqId.ricRequestorID;
 			long instanceId = reqId.ricInstanceID;
 
-			LOG_I("requestorId: %ld, InstanceID: %ld", requestorId, instanceId);
+			LOG_I("RequestorId: %ld, InstanceID: %ld", requestorId, instanceId);
 
 			reqRequestorId = requestorId;
 			reqInstanceId = instanceId;
@@ -649,11 +649,8 @@ void callback_kpm_subscription_request(E2AP_PDU_t *sub_req_pdu) {
     
   }
 
-  LOG_I("After Processing Subscription Request");
-
-  for (int i=0; i < actionIdsAccept.size(); i++) {
-    LOG_D("Action ID %d %ld\n", i, actionIdsAccept.at(i));
-  }
+  for (int i=0; i < actionIdsAccept.size(); i++)
+    LOG_D("Accepted action ID:  %ld", actionIdsAccept.at(i));
 
   E2AP_PDU *e2ap_pdu = (E2AP_PDU*)calloc(1,sizeof(E2AP_PDU));
 

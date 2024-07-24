@@ -77,24 +77,23 @@ long encoding::get_function_id_from_subscription(E2AP_PDU_t *e2ap_pdu) {
 
   RICsubscriptionRequest_IEs__value_PR pres;
 
-  long func_id;
+  long func_id = -1;
 
   for (int i=0; i < count; i++) {
     RICsubscriptionRequest_IEs_t *next_ie = ies[i];
     pres = next_ie->value.present;
     
-    LOG_D("Next present value: %d, pres RAN func id: %d", pres, RICsubscriptionRequest_IEs__value_PR_RANfunctionID);
-
-    if (pres == RICsubscriptionRequest_IEs__value_PR_RANfunctionID) {
-      LOG_E("equal pres to ranfuncid");
+    if (pres == RICsubscriptionRequest_IEs__value_PR_RANfunctionID)
       func_id = next_ie->value.choice.RANfunctionID;
-    }
   }
 
-  LOG_I("After loop, func_id is %ld", func_id);
+  if (func_id == -1) {
+    LOG_E("RAN function id is not provided in subscription request");
+    exit(-1);
+  }
 
-  return func_id;  
-
+  LOG_I("Value of RANfunctionID in subscription request is %ld", func_id);
+  return func_id;
 }
 
 void encoding::generate_e2apv1_service_update(E2AP_PDU_t *e2ap_pdu, std::vector<encoding::ran_func_info> all_funcs) {
@@ -687,11 +686,7 @@ void encoding::generate_e2apv1_subscription_response_success(E2AP_PDU *e2ap_pdu,
   int numAccept = accept_size;
   int numReject = reject_size;
 
-
-  
   for (int i=0; i < numAccept ; i++) {
-    fprintf(stderr, "in for loop i = %d\n", i);
-
     long aid = reqActionIdsAccepted[i];
 
     RICaction_Admitted_ItemIEs_t *admitie = (RICaction_Admitted_ItemIEs_t*)calloc(1,sizeof(RICaction_Admitted_ItemIEs_t));
