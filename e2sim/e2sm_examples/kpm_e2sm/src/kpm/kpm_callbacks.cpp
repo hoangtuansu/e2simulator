@@ -81,19 +81,17 @@ int main(int argc, char* argv[]) {
   int numPMs = e2sim_config["pm"].size();
   LOG_D("There are %d metrics", numPMs);
   
-  std::string performance_measurements[numPMs];
+  std::string pms[numPMs];
 
   std::string pm_str = "";
 
   for(int i = 0; i < numPMs; i++) {
 	json::json_pointer pm(std::string("/pm/") + std::to_string(i));
-	performance_measurements[i] = e2sim_config[pm].get<std::string>();
-
-	pm_str = pm_str + performance_measurements[i] + " ";
+	pms[i] = e2sim_config[pm].get<std::string>();
+	pm_str = pm_str + pms[i] + (i == (numPMs-1) ? "" : ", ");
   }
 
   LOG_I("List of metrics: %s", pm_str.c_str());
-	
 
   asn_codec_ctx_t *opt_cod;
   
@@ -122,12 +120,10 @@ int main(int argc, char* argv[]) {
   OCTET_STRING_t *ranfunc_ostr = (OCTET_STRING_t*)calloc(1,sizeof(OCTET_STRING_t));
   ranfunc_ostr->buf = (uint8_t*)calloc(1,er.encoded);
   ranfunc_ostr->size = er.encoded;
-  memcpy(ranfunc_ostr->buf,e2smbuffer,er.encoded);
+  memcpy(ranfunc_ostr->buf, e2smbuffer, er.encoded);
 
   const char* func_id_str = std::getenv("RAN_FUNC_ID");
-  long cur_ts = (long)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();    
-
-  ::gFuncId = func_id_str == nullptr ? cur_ts : std::stoi(func_id_str);
+  ::gFuncId = func_id_str == nullptr ? rand()%4096 : std::stoi(func_id_str);
 
   e2sim.register_e2sm(gFuncId, ranfunc_ostr);
   e2sim.register_subscription_callback(gFuncId, &callback_kpm_subscription_request);

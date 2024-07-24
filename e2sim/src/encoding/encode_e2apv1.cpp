@@ -23,6 +23,8 @@
 #include <string.h>
 #include <iostream>
 #include <unistd.h>
+#include <time.h>
+#include <random>
 
 #include <iterator>
 #include <vector>
@@ -89,7 +91,7 @@ long encoding::get_function_id_from_subscription(E2AP_PDU_t *e2ap_pdu) {
     }
   }
 
-  LOG_I("After loop, func_id is %d", func_id);
+  LOG_I("After loop, func_id is %ld", func_id);
 
   return func_id;  
 
@@ -156,22 +158,24 @@ void encoding::generate_e2apv1_service_update(E2AP_PDU_t *e2ap_pdu, std::vector<
 }
 
 void encoding::generate_e2apv1_setup_request_parameterized(E2AP_PDU_t *e2ap_pdu, std::vector<ran_func_info> all_funcs) {
-
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> distrib(0, 255); // range [0, 255]
+  
   BIT_STRING_t *gnb_bstring = (BIT_STRING_t*)calloc(1, sizeof(BIT_STRING_t));;
-  gnb_bstring->buf = (uint8_t*)calloc(1,4);
   gnb_bstring->size = 4;
-  gnb_bstring->buf[0] = 0xB5;
-  gnb_bstring->buf[1] = 0xC6;
-  gnb_bstring->buf[2] = 0x77;
-  gnb_bstring->buf[3] = 0x88;
+  gnb_bstring->buf = (uint8_t*)calloc(1, gnb_bstring->size);
 
-  gnb_bstring->bits_unused = 3;
+  for(int i = 0; i < gnb_bstring->size; i++)
+    gnb_bstring->buf[i] = distrib(gen);
 
-  uint8_t *buf2 = (uint8_t *)"747";
+  gnb_bstring->bits_unused = 7 - gnb_bstring->size;
+
   OCTET_STRING_t *plmn = (OCTET_STRING_t*)calloc(1, sizeof(OCTET_STRING_t));
-  plmn->buf = (uint8_t*)calloc(1,3);
-  memcpy(plmn->buf, buf2, 3);
   plmn->size = 3;
+  plmn->buf = (uint8_t*)calloc(1, plmn->size);
+  for(int i = 0; i < plmn->size; i++)
+    plmn->buf[i] = distrib(gen);
 
   GNB_ID_Choice_t *gnbchoice = (GNB_ID_Choice_t*)calloc(1,sizeof(GNB_ID_Choice_t));
   GNB_ID_Choice_PR pres2 = GNB_ID_Choice_PR_gnb_ID;
@@ -619,8 +623,6 @@ void encoding::generate_e2apv1_subscription_request(E2AP_PDU *e2ap_pdu) {
   ASN_SEQUENCE_ADD(&ricsubreq->protocolIEs.list,ricreqid);
   ASN_SEQUENCE_ADD(&ricsubreq->protocolIEs.list,ricsubrid);
 
-
-
   InitiatingMessage__value_PR pres4;
   pres4 = InitiatingMessage__value_PR_RICsubscriptionRequest;
   InitiatingMessage_t *initmsg = (InitiatingMessage_t*)calloc(1, sizeof(InitiatingMessage_t));
@@ -639,11 +641,13 @@ void encoding::generate_e2apv1_subscription_request(E2AP_PDU *e2ap_pdu) {
   char error_buf[300] = {0, };
   size_t errlen = 0;
 									  
-  asn_check_constraints(&asn_DEF_E2AP_PDU, e2ap_pdu, error_buf, &errlen);
-  printf("error length %d\n", errlen);
-  printf("error buf %s\n", error_buf);
+  int ret = asn_check_constraints(&asn_DEF_E2AP_PDU, e2ap_pdu, error_buf, &errlen);
 
-
+  if (ret) {
+    xer_fprint(stderr, &asn_DEF_E2AP_PDU, e2ap_pdu);
+    LOG_I("Constraint validation of E2AP PDU subscription message failed: %s.", error_buf);
+    exit(1);
+  }
 }
 
 void encoding::generate_e2apv1_subscription_response_success(E2AP_PDU *e2ap_pdu, long reqActionIdsAccepted[],
@@ -796,7 +800,7 @@ void encoding::generate_e2apv1_subscription_response(E2AP_PDU *e2ap_pdu, E2AP_PD
         long requestorId = reqId.ricRequestorID;
         long instanceId = reqId.ricInstanceID;
 
-        LOG_I("RequestorId %d, InstanceId: %d", requestorId, instanceId);
+        LOG_I("RequestorId %ld, InstanceId: %ld", requestorId, instanceId);
         
         responseRequestorId = requestorId;
         responseInstanceId = instanceId;

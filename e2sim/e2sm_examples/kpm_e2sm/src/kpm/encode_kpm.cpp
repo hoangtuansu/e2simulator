@@ -320,7 +320,7 @@ void ue_meas_kpm_report_indication_message_initialized(
 
   if (ret) {
     xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, indicationmessage);
-    LOG_I("Constraint validation of indication message failed: %s", error_buf);
+    LOG_I("Constraint validation of indication message failed: %s.", error_buf);
     exit(1);
   }
 }

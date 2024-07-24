@@ -40,13 +40,13 @@ std::unordered_map<long, OCTET_STRING_t*> E2Sim::getRegistered_ran_functions() {
 }
 
 void E2Sim::register_subscription_callback(long func_id, SubscriptionCallback cb) {
-  LOG_I("About to register callback for subscription for RAN function with ID %d", func_id);
+  LOG_I("About to register callback for subscription for RAN function with ID %ld", func_id);
   subscription_callbacks[func_id] = cb;
   
 }
 
 SubscriptionCallback E2Sim::get_subscription_callback(long func_id) {
-  LOG_I("We are getting the subscription callback for func id %d", func_id);
+  LOG_I("We are getting the subscription callback for func id %ld", func_id);
   SubscriptionCallback cb;
 
   try {
@@ -62,7 +62,7 @@ void E2Sim::register_e2sm(long func_id, OCTET_STRING_t *ostr) {
 
   //Error conditions:
   //If we already have an entry for func_id
-  LOG_I("About to register E2SM RAN function description with ID %d", func_id);
+  LOG_I("About to register E2SM RAN function description with ID %ld", func_id);
   ran_functions_registered[func_id] = ostr;
 }
 
@@ -161,24 +161,27 @@ int E2Sim::run_loop(int argc, char* argv[]){
   LOG_I("Generate E2AP v1 setup request for all registered RAN functions");
   generate_e2apv1_setup_request_parameterized(pdu_setup, all_funcs);
 
-  xer_fprint(stderr, &asn_DEF_E2AP_PDU, pdu_setup);
-
   auto buffer_size = MAX_SCTP_BUFFER;
   unsigned char buffer[MAX_SCTP_BUFFER];
   
   sctp_buffer_t data;
 
-  char error_buf[300] = {0, };
+  char error_buf[300];
   size_t errlen = 0;
 
-  asn_check_constraints(&asn_DEF_E2AP_PDU, pdu_setup, error_buf, &errlen);
-  LOG_I("Error length %d, error buf %s", errlen, error_buf);
+  int ret = asn_check_constraints(&asn_DEF_E2AP_PDU, pdu_setup, error_buf, &errlen);
+
+  if (ret) {
+    xer_fprint(stderr, &asn_DEF_E2AP_PDU, pdu_setup);
+    fprintf(stderr, "Constraint validation of E2AP PDU SETUP message failed: %s", error_buf);
+    exit(1);
+  }
 
   auto er = asn_encode_to_buffer(nullptr, ATS_ALIGNED_BASIC_PER, &asn_DEF_E2AP_PDU, pdu_setup, buffer, buffer_size);
 
   data.len = er.encoded;
 
-  LOG_I("Error encoded %d", er.encoded);
+  LOG_D("Error encoded %ld", er.encoded);
 
   memcpy(data.buffer, buffer, er.encoded);
 

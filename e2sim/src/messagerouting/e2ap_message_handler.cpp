@@ -99,12 +99,12 @@ void e2ap_handle_sctp_data(int& socket_fd, sctp_buffer_t& data, bool xmlenc, E2S
       switch (index) {
         case E2AP_PDU_PR_initiatingMessage: {  // initiatingMessage
           long func_id = encoding::get_function_id_from_subscription(pdu);
-          LOG_I("Received RIC subscription request for function with ID %d", func_id);
+          LOG_I("Received RIC subscription request for function with ID %ld", func_id);
 
           try {
             SubscriptionCallback cb;
             cb = e2sim->get_subscription_callback(func_id);
-            LOG_I("Calling callback subscription function to handle subscription request to function with ID %d", func_id);
+            LOG_I("Calling callback subscription function to handle subscription request to function with ID %ld", func_id);
             cb(pdu);
           } catch (const std::out_of_range& e) {
             LOG_E("No RAN Function with this ID exists\n");
@@ -234,9 +234,13 @@ void e2ap_handle_E2SeviceRequest(E2AP_PDU_t* pdu, int& socket_fd, E2Sim* e2sim) 
   };
   size_t errlen = 0;
 
-  asn_check_constraints(&asn_DEF_E2AP_PDU, res_pdu, error_buf, &errlen);
-  printf("error length %d\n", errlen);
-  printf("error buf %s\n", error_buf);
+  int ret = asn_check_constraints(&asn_DEF_E2AP_PDU, res_pdu, error_buf, &errlen);
+
+  if (ret) {
+    xer_fprint(stderr, &asn_DEF_E2AP_PDU, res_pdu);
+    LOG_I("Constraint validation of E2 service message failed: %s.", error_buf);
+    exit(1);
+  }
 
   auto er = asn_encode_to_buffer(nullptr, ATS_ALIGNED_BASIC_PER, &asn_DEF_E2AP_PDU, res_pdu, buffer, buffer_size);
   
@@ -244,7 +248,7 @@ void e2ap_handle_E2SeviceRequest(E2AP_PDU_t* pdu, int& socket_fd, E2Sim* e2sim) 
     LOG_E("Failed to serialize message. Detail: %s.\n", asn_DEF_E2AP_PDU.name);
     exit(1);
   } else if (er.encoded > buffer_size) {
-    LOG_E("Buffer of size %zu is too small for %s, need %zu\n", buffer_size, asn_DEF_E2AP_PDU.name, er.encoded);
+    LOG_E("Buffer of size %u is too small for %s, need %zu\n", buffer_size, asn_DEF_E2AP_PDU.name, er.encoded);
     exit(1);
   }
 
@@ -286,7 +290,7 @@ void e2ap_send_e2nodeConfigUpdate(int& socket_fd) {
     LOG_E("Failed to serialize message. Detail: %s.\n", asn_DEF_E2AP_PDU.name);
     exit(1);
   } else if (er.encoded > buffer_size) {
-    LOG_E("Buffer of size %zu is too small for %s, need %zu\n", buffer_size, asn_DEF_E2AP_PDU.name, er.encoded);
+    LOG_E("Buffer of size %u is too small for %s, need %zu\n", buffer_size, asn_DEF_E2AP_PDU.name, er.encoded);
     exit(1);
   }
 
@@ -320,7 +324,7 @@ void e2ap_handle_E2SetupRequest(E2AP_PDU_t* pdu, int& socket_fd) {
     LOG_E("Failed to serialize message. Detail: %s.\n", asn_DEF_E2AP_PDU.name);
     exit(1);
   } else if (er.encoded > buffer_size) {
-    LOG_E("Buffer of size %zu is too small for %s, need %zu\n", buffer_size, asn_DEF_E2AP_PDU.name, er.encoded);
+    LOG_E("Buffer of size %u is too small for %s, need %zu\n", buffer_size, asn_DEF_E2AP_PDU.name, er.encoded);
     exit(1);
   }
 
@@ -356,7 +360,7 @@ void e2ap_handle_E2SetupRequest(E2AP_PDU_t* pdu, int& socket_fd) {
     LOG_E("Failed to serialize message. Detail: %s.\n", asn_DEF_E2AP_PDU.name);
     exit(1);
   } else if (er2.encoded > buffer_size2) {
-    LOG_E("Buffer of size %zu is too small for %s, need %zu\n", buffer_size2, asn_DEF_E2AP_PDU.name, er2.encoded);
+    LOG_E("Buffer of size %u is too small for %s, need %zu\n", buffer_size2, asn_DEF_E2AP_PDU.name, er2.encoded);
     exit(1);
   }
 
@@ -366,7 +370,7 @@ void e2ap_handle_E2SetupRequest(E2AP_PDU_t* pdu, int& socket_fd) {
   if (sctp_send_data(socket_fd, data2) > 0) {
     LOG_I("Sent E2-SUBSCRIPTION-REQUEST");
   } else {
-    LOG_E("[SCTP] Unable to send E2-SUBSCRIPTION-REQUEST to peer");
+    LOG_E("Unable to send E2-SUBSCRIPTION-REQUEST to peer");
   }
 }
 
