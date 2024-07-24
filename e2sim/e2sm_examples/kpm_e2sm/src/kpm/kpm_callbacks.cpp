@@ -47,6 +47,8 @@ extern "C" {
 #include <nlohmann/json.hpp>
 #include <thread>
 #include <chrono>
+#include <time.h>
+#include <random>
 
 #include "viavi_connector.hpp"
 #include "errno.h"
@@ -122,8 +124,12 @@ int main(int argc, char* argv[]) {
   ranfunc_ostr->size = er.encoded;
   memcpy(ranfunc_ostr->buf, e2smbuffer, er.encoded);
 
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> distrib(0, 4095); // range [0, 255]
+
   const char* func_id_str = std::getenv("RAN_FUNC_ID");
-  ::gFuncId = func_id_str == nullptr ? rand()%4096 : std::stoi(func_id_str);
+  ::gFuncId = func_id_str == nullptr ? distrib(gen) : std::stoi(func_id_str);
 
   e2sim.register_e2sm(gFuncId, ranfunc_ostr);
   e2sim.register_subscription_callback(gFuncId, &callback_kpm_subscription_request);
