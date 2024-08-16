@@ -52,7 +52,7 @@ void encode_kpm_report_style1(E2SM_KPM_IndicationMessage_t* indicationmessage);
 
 void kpm_report_indication_header_initialized(E2SM_KPM_IndicationHeader_t *ihead, uint8_t *plmnid_buf, uint8_t *sst_buf, uint8_t *sd_buf, long fqival, long qcival, uint8_t *nrcellid_buf, uint8_t *gnbid_buf, int gnbid_unused, int16_t *cuupid_buf, int16_t *duid_buf, uint8_t *cuupname_buf);
 
-void ue_meas_kpm_report_indication_message_initialized(E2SM_KPM_IndicationMessage_t* indicationmessage,uint8_t *nrcellid_buf,uint8_t *crnti_buf,const uint8_t *serving_buf, const uint8_t *neighbor_buf);
+void ue_meas_kpm_report_indication_message_initialized(E2SM_KPM_IndicationMessage_t* indicationmessage,uint8_t *nrcellid_buf,uint8_t *crnti_buf,const uint8_t *serving_buf, const uint8_t *neighbor_buf, json::json_pointer * type, json::json_pointer * size);
 
 void cell_meas_kpm_report_indication_message_style_1_initialized(E2SM_KPM_IndicationMessage_t* indicationmessage, long fiveqi, long dl_prb_usage, long ul_prb_usage, uint8_t* nrcellid_buf, long *dl_prbs, long *ul_prbs);
 

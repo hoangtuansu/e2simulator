@@ -296,6 +296,11 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
 				
 				json::json_pointer p11(std::string("/ueMeasReport/ueMeasReportList/") + std::to_string(i)
 						+"/neighbourCellList/" + std::to_string(j) + "/nbCellRfReport/rssinr");
+
+				json::json_pointer cell_type(std::string("/ueMeasReport/cell_type/"));
+				json::json_pointer cell_size(std::string("/ueMeasReport/celL_size/"));
+
+
 				nextNbRssinr = all_ues_json[p11].get<int>();
 				
 				if (j != 0) {
@@ -350,7 +355,7 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
 			E2SM_KPM_IndicationMessage_t *ind_msg_cucp_ue =
 				(E2SM_KPM_IndicationMessage_t*)calloc(1,sizeof(E2SM_KPM_IndicationMessage_t));
 			
-			ue_meas_kpm_report_indication_message_initialized(ind_msg_cucp_ue, nrcellid_buf, crnti_buf, serving_buf, neighbor_buf);
+			ue_meas_kpm_report_indication_message_initialized(ind_msg_cucp_ue, nrcellid_buf, crnti_buf, serving_buf, neighbor_buf, cell_type, cell_size);
 
 			uint8_t e2sm_message_buf_cucp_ue[8192] = {0, };
 			size_t e2sm_message_buf_size_cucp_ue = 8192;

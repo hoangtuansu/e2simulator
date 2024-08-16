@@ -39,10 +39,12 @@ const char* performance_measurements[] = {
   "DRB.PacketLossRateULDist",
   "L1M.DL-SS-RSRP.SSB",
   "L1M.DL-SS-SINR.SSB",
-  "L1M.UL-SRS-RSRP"
+  "L1M.UL-SRS-RSRP",
+  "cell_type",
+  "cell_size"
   };
 
-int NUMBER_MEASUREMENTS = 9;
+int NUMBER_MEASUREMENTS = 11;
 
 void encode_kpm_function_description(E2SM_KPM_RANfunction_Description_t* ranfunc_desc) {
   uint8_t* short_name = (uint8_t*)"ORAN-E2SM-KPM";
@@ -251,14 +253,25 @@ void kpm_report_indication_header_initialized(E2SM_KPM_IndicationHeader_t* ihead
 
 void ue_meas_kpm_report_indication_message_initialized(
     E2SM_KPM_IndicationMessage_t* indicationmessage, uint8_t* nrcellid_buf, uint8_t* crnti_buf,
-    const uint8_t* serving_buf, const uint8_t* neighbor_buf) {
+    const uint8_t* serving_buf, const uint8_t* neighbor_buf, 
+    json::json_pointer * type, json::json_pointer * size) {
   
   MeasurementRecord_t* measDataItem_record = (MeasurementRecord_t*)calloc(1, sizeof(MeasurementRecord_t));
-  for (size_t i = 0; i < NUMBER_MEASUREMENTS; i++)
+  for (size_t i = 0; i < (NUMBER_MEASUREMENTS); i++)
   {
     MeasurementRecordItem_t* measDataRecordItem = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     measDataRecordItem->present = MeasurementRecordItem_PR_integer;
     measDataRecordItem->choice.integer = 1;
+
+    if (performance_measurements[i] == 'cell_type') {
+      measDataRecordItem->present = MeasurementRecordItem_PR_integer;
+      measDataRecordItem->choice.integer = int(type);
+    }
+
+    if (performance_measurements[i] == 'cell_size') {
+      measDataRecordItem->present = MeasurementRecordItem_PR_integer;
+      measDataRecordItem->choice.integer = int(size);
+    }
 
     ASN_SEQUENCE_ADD(&measDataItem_record->list, measDataRecordItem);
   }
@@ -327,7 +340,7 @@ void ue_meas_kpm_report_indication_message_initialized(
 
 void cell_meas_kpm_report_indication_message_style_1_initialized(
     E2SM_KPM_IndicationMessage_t* indicationmessage, long fiveqi, long dl_prb_usage,
-    long ul_prb_usage, uint8_t* nrcellid_buf, long* dl_prbs, long* ul_prbs) {
+    long ul_prb_usage, uint8_t* nrcellid_buf, long* dl_prbs, long* ul_prbs, cell_type, cell_sze) {
   LOG_I("Preparing indication message for cell measurement report");
 
   asn_codec_ctx_t* opt_cod;
@@ -390,13 +403,33 @@ void cell_meas_kpm_report_indication_message_style_1_initialized(
 
   labelItem->measLabel = *measLabel;
   ASN_SEQUENCE_ADD(&labelList->list, labelItem);
-  measItem->labelInfoList = *labelList;
-  if (labelList) free(labelList);
-  MeasurementType_t measType;
-  measType.present = MeasurementType_PR_measID;
-  measType.choice.measID = 1;
-  measItem->measType = measType;
-  ASN_SEQUENCE_ADD(&measList->list, measItem);
+
+  for (size_t i = 0; i < NUMBER_MEASUREMENTS; i++)
+  {
+    MeasurementLabel_t* measLabel = (MeasurementLabel_t*)calloc(1, sizeof(MeasurementLabel_t));
+    measLabel->noLabel = (long *)calloc(1, sizeof(long));
+    *measLabel->noLabel = 0;
+
+    LabelInfoItem_t* labelItem = (LabelInfoItem_t*)calloc(1, sizeof(LabelInfoItem_t));
+    labelItem->measLabel = *measLabel;
+
+    LabelInfoList_t* labelList = (LabelInfoList_t*)calloc(1, sizeof(LabelInfoList_t));
+    ASN_SEQUENCE_ADD(&labelList->list, labelItem);
+
+    MeasurementType_t measType;
+    measType.present = MeasurementType_PR_measName;
+    uint8_t* metrics = (uint8_t *)performance_measurements[i];
+    measType.choice.measName.buf = (uint8_t*)calloc(1, strlen((char*)metrics));
+    memcpy(measType.choice.measName.buf, metrics, strlen((char*)metrics));
+    measType.choice.measName.size = strlen((char*)metrics);
+
+    MeasurementInfoItem_t* measItem = (MeasurementInfoItem_t*)calloc(1, sizeof(MeasurementInfoItem_t));
+    measItem->measType = measType;
+    measItem->labelInfoList = *labelList;
+    if (labelList) free(labelList);
+    
+    ASN_SEQUENCE_ADD(&measList->list, measItem);
+  }
 
   format->measInfoList = measList;
 

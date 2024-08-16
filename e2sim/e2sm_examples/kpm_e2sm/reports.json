@@ -11,3 +11,4 @@
 {"cellMeasReport":{"du-id":1004,"measTimeStampRf":"2020-11-05T15:39:58.859766","cellMeasReportList":[{"nrCellIdentity":4,"throughput":0.3,"pdcpByteMeasReport":{"measPeriodPdcpBytes":10,"pdcpBytesDl":307.2,"pdcpBytesUl":307.2},"prbMeasReport":{"measPeriodPrb":10,"availPrbDl":250,"availPrbUl":250}}]}}
 {"cellMeasReport":{"du-id":1003,"measTimeStampRf":"2020-11-05T15:39:58.859766","cellMeasReportList":[{"nrCellIdentity":3,"throughput":0.3,"pdcpByteMeasReport":{"measPeriodPdcpBytes":10,"pdcpBytesDl":307.2,"pdcpBytesUl":307.2},"prbMeasReport":{"measPeriodPrb":10,"availPrbDl":250,"availPrbUl":250}}]}}
 {"cellMeasReport":{"du-id":1008,"measTimeStampRf":"2020-11-05T15:39:58.859766","cellMeasReportList":[{"nrCellIdentity":8,"throughput":0.3,"pdcpByteMeasReport":{"measPeriodPdcpBytes":10,"pdcpBytesDl":307.2,"pdcpBytesUl":307.2},"prbMeasReport":{"measPeriodPrb":10,"availPrbDl":250,"availPrbUl":250}}]}}
+
