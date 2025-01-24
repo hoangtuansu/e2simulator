@@ -1,16 +1,24 @@
 # Build and deploy
+## Prequitisites
 
+```
+export IMAGE_NAME=hoangtuansu/e2sim
+export IMAGE_TAG=0.7
+export RAN_NS=ran
+```
+
+## Build
 Run the following command to build and push to Docker registry:
+
 ```
-docker build -f Dockerfile_kpm -t e2_sim . && docker image tag e2_sim:latest <your-repo>/
-e2sim:0.0 && docker push <your-repo>/e2sim:0.0
+docker build -t $IMAGE_NAME:$IMAGE_TAG . && docker push $IMAGE_NAME:$IMAGE_TAG
 ```
 
-To set the ID of RAN function, use environment variable `RAN_FUNC_ID`. If it is not set, the ID will be assigned to a random value between 0 and 4095.
+## Deploy
 
-In K8s environment, multiple instances of E2Sim can run in parallel to simulate an environment with multiple cells/UEs. Each instance will have a random RAN function ID and random `gnb` name.
+To deploy e2sim in K8s, open file `helm\e2sim.yaml` and modify the value `E2NODE_ID` and `RAN_FUNC_ID` to make sure it is not used by any other e2sim instance.
 
-# Other
+# Explain E2Sim's Functionalities
 This is an update to E2 Simulator, based on E2AP v1 defined in ORAN
 E2 Simulator is built as a library that supports basic functions and is
 linked by an E2 Simulation application.
@@ -63,60 +71,6 @@ E2SM Callback Functions:
   CONTROL message associated with INSERT
 * Base E2 simulator should not be concerned with these details; only specific E2SM code should be responsible for any messaging
 
+In K8s environment, multiple instances of E2Sim can run in parallel to simulate an environment with multiple cells/UEs. Each instance will have a random RAN function ID and random `gnb` name.
 
-# INSTALLATION Instructions (tested on Ubuntu 16.04)
-  1. Install dependencies
-    $ sudo apt-get update
-    $ sudo apt-get install -y
-        build-essential
-        git
-        cmake
-        libsctp-dev
-        lksctp-tools
-        autoconf
-        automake
-        libtool
-        bison
-        flex
-        libboost-all-dev
-    $ sudo apt-get clean
-
-  2. Build the official e2sim
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ make package
-    $ cmake .. -DDEV_PKG=1
-    $ make package
-
-# Building docker image and running simulator instance
-
-To start building docker image one should generate the `.deb` packages using following
-commands :
-
-```
-$ cd build          // create folder if not present
-```
-
-Generate .deb packages and move it to `e2sm_examples/kpm_e2sm` folder :
-```
-cmake .. && make package && cmake .. -DDEV_PKG=1 && make package
-cp *.deb ../e2sm_examples/kpm_e2sm/
-```
-
-Now we are ready to build the docker image using below command :
-```
-cd ../e2sm_examples/kpm_e2sm/
-docker build -t <simulator-image-name> .
-```
-
-if you wish to change the e2t address to connect then modify the `Dockerfile` in `e2sm_examples/kpm_e2sm/` path.
-```
-CMD kpm_sim 10.110.102.29 36422
-```
-Create instance of simulator :
-```
-$ docker run <simulator-image-name>
-``` 
-
-It will connect to specified e2t instance.
+To set the ID of RAN function, use environment variable `RAN_FUNC_ID`. If it is not set, the ID will be assigned to a random value between 0 and 4095.

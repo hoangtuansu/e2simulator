@@ -17,9 +17,9 @@
 
 add_executable( kpm_sim kpm_callbacks.cpp encode_kpm.cpp )
 
-add_dependencies( kpm_sim asn1_objects )
+#add_dependencies( kpm_sim asn1_objects )
 include_directories(.)
-include_directories(../../asn1c)
+include_directories(asn1c)
 include_directories(/usr/local/include/e2sim)
 include_directories(/usr/local/include)
 

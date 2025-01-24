@@ -67,6 +67,8 @@ long encoding::get_function_id_from_subscription(E2AP_PDU_t *e2ap_pdu) {
 
   RICsubscriptionRequest_t orig_req =
     e2ap_pdu->choice.initiatingMessage->value.choice.RICsubscriptionRequest;
+  LOG_D("Subscription request content")
+  xer_fprint(stderr, &asn_DEF_RICsubscriptionRequest, &orig_req); 
 
   int count = orig_req.protocolIEs.list.count;
   int size = orig_req.protocolIEs.list.size;
