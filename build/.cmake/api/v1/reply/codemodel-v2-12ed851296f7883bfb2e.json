@@ -1,0 +1,214 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-9d7d09d43c1c1d4480eb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "asn1c",
+					"jsonFile" : "directory-asn1c-Debug-5dd1ffb657ceba09984a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "asn1c",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "src/DEF",
+					"jsonFile" : "directory-src.DEF-Debug-3ff6944aa66bcc54e2b3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src/DEF",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "src/SCTP",
+					"jsonFile" : "directory-src.SCTP-Debug-fe7b37ec366debd6d2ab.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src/SCTP",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "src/messagerouting",
+					"jsonFile" : "directory-src.messagerouting-Debug-e5d3852f6b0b073b11c7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src/messagerouting",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "src/base",
+					"jsonFile" : "directory-src.base-Debug-85461d0ec0c55311a4f7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src/base",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "src/encoding",
+					"jsonFile" : "directory-src.encoding-Debug-829257d50b6e41bfe4f1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src/encoding",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					],
+					"name" : "e2sim",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "asn1_objects::@5db270b6e7b332e5ced8",
+					"jsonFile" : "target-asn1_objects-Debug-f052d869376882080474.json",
+					"name" : "asn1_objects",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "base_objects::@da17c8cd1000ca7e4b79",
+					"jsonFile" : "target-base_objects-Debug-9dc22e37239d0ad978c8.json",
+					"name" : "base_objects",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "def_objects::@ecadf42a7aa8544819a1",
+					"jsonFile" : "target-def_objects-Debug-3785da2cbb0e5a526b48.json",
+					"name" : "def_objects",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "e2sim_shared::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-e2sim_shared-Debug-ef703bbbb011207cf96d.json",
+					"name" : "e2sim_shared",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "encoding_objects::@e22dcdb1c25669001e93",
+					"jsonFile" : "target-encoding_objects-Debug-c54e7528758ef70feed3.json",
+					"name" : "encoding_objects",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "messagerouting_objects::@57a8f9eeed79545279c5",
+					"jsonFile" : "target-messagerouting_objects-Debug-1c4514e98937c21c404d.json",
+					"name" : "messagerouting_objects",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "sctp_objects::@3b4d58499c1cf4643b10",
+					"jsonFile" : "target-sctp_objects-Debug-892c7ad774e8abc680c6.json",
+					"name" : "sctp_objects",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/system/workspace/e2sim/build",
+		"source" : "/home/system/workspace/e2sim/e2sim"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

@@ -1,0 +1,12 @@
+{
+  "pm": [
+    "throughput", 
+    "pdcpBytesDl", 
+    "pdcpBytesUl", 
+    "availPrbDl", 
+    "availPrbUl",
+    "rsrp",
+    "rsrq",
+    "rssinr"
+  ]
+}
