@@ -49,7 +49,7 @@ char* time_stamp(void);
         else { \
             fileName = file; \
         } \
-        fprintf(stderr, "[%s:%d] [INFO] ", fileName, __LINE__); \
+        fprintf(stderr, "[%s] [%s:%d] [INFO] ", time_stamp(), fileName, __LINE__); \
         fprintf(stderr, format, ##__VA_ARGS__); \
         fprintf(stderr, "\n"); \
     } while (0);
@@ -64,7 +64,7 @@ char* time_stamp(void);
         else { \
             fileName = file; \
         } \
-        fprintf(stderr, "[%s:%d] [DEBUG] ", fileName, __LINE__); \
+        fprintf(stderr, "[%s] [%s:%d] [DEBUG] ", time_stamp(), fileName, __LINE__); \
         fprintf(stderr, format, ##__VA_ARGS__); \
         fprintf(stderr, "\n"); \
     } while (0);
@@ -79,10 +79,21 @@ char* time_stamp(void);
         else { \
             fileName = file; \
         } \
-        fprintf(stderr, "[%s:%d] [ERROR] ", fileName, __LINE__); \
+        fprintf(stderr, "[%s] [%s:%d] [ERROR] ", time_stamp(), fileName, __LINE__); \
         fprintf(stderr, format, ##__VA_ARGS__); \
         fprintf(stderr, "\n"); \
     } while (0);
+
+
+char* time_stamp() {
+    static char buffer[20];  // Buffer to store timestamp in format "YYYY-MM-DD HH:MM:SS"
+    time_t t = time(NULL);
+    struct tm *tm_info = localtime(&t);
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
+    return buffer;
+}
+
+
 
 typedef struct SCTP_DATA {
   unsigned char *data;
