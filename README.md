@@ -5,9 +5,16 @@
 export IMAGE_NAME=hoangtuansu/e2sim
 export IMAGE_TAG=0.7
 export RAN_NS=ran
+export K8S_IP=10.180.113.156
 ```
 
 ## Build
+Make sure config template file is updated with actual values:
+
+```
+envsubst < helm/e2sim.template > helm/e2sim.yaml
+```
+
 Run the following command to build and push to Docker registry:
 
 ```
@@ -16,7 +23,12 @@ docker build -t $IMAGE_NAME:$IMAGE_TAG . && docker push $IMAGE_NAME:$IMAGE_TAG
 
 ## Deploy
 
-To deploy e2sim in K8s, open file `helm\e2sim.yaml` and modify the value `E2NODE_ID` and `RAN_FUNC_ID` to make sure it is not used by any other e2sim instance.
+To deploy e2sim in K8s, run following command:
+
+```
+kubectl apply -f helm/e2sim.yaml -n $RAN_NS
+```
+
 
 # Explain E2Sim's Functionalities
 This is an update to E2 Simulator, based on E2AP v1 defined in ORAN

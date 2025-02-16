@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: e2sim
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: e2sim
@@ -14,17 +14,12 @@ spec:
     spec:
       containers:
         - name: e2sim-container
-          image: hoangtuansu/e2sim:0.7
+          image: ${IMAGE_NAME}:${IMAGE_TAG}
           command:
             - sh
             - '-c'
-            - sleep infinity && kpm_sim 10.180.113.156 32222
-          env:
-            - name: E2NODE_ID
-              value: "1011"
-            - name: RAN_FUNC_ID
-              value: "1234"
+            - sleep infinity && kpm_sim ${K8S_IP} 32222
           terminationMessagePolicy: File
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
       restartPolicy: Always
 
