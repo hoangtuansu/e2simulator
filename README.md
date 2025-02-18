@@ -2,10 +2,10 @@
 ## Prequitisites
 
 ```
-export IMAGE_NAME=hoangtuansu/e2sim
-export IMAGE_TAG=0.7
+export IMAGE_NAME=<your-repo>/<image-name>
+export IMAGE_TAG=<tag-image>
 export RAN_NS=ran
-export K8S_IP=10.180.113.156
+export K8S_IP=x.y.z.a
 ```
 
 ## Build
@@ -28,7 +28,6 @@ To deploy e2sim in K8s, run following command:
 ```
 kubectl apply -f helm/e2sim.yaml -n $RAN_NS
 ```
-
 
 # Explain E2Sim's Functionalities
 This is an update to E2 Simulator, based on E2AP v1 defined in ORAN
