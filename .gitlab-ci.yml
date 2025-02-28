@@ -16,7 +16,7 @@ variables:
 build:
   stage: build
   tags:
-    - dev-runners # Use your specific tag
+    - oran-runner # Use your specific tag
   script:
     - sleep 10
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -29,7 +29,7 @@ deploy:
   stage: deploy
   image: bitnami/kubectl:1.32.2
   tags:
-    - dev-runners # Use your specific tag
+    - oran-runner # Use your specific tag
   script:
     - export IMAGE_NAME=$IMAGE_NAME
     - export IMAGE_TAG=$CI_COMMIT_SHA
