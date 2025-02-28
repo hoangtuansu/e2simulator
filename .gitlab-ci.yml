@@ -1,0 +1,42 @@
+image: docker:24.0.5  # Use the Docker image for building
+
+services:
+  - docker:dind  # Use the Docker-in-Docker service
+
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "" # Important for Docker-in-Docker
+  IMAGE_NAME: $CI_REGISTRY_IMAGE/e2sim # Replace with your desired image name
+
+build:
+  stage: build
+  tags:
+    - dev-runners # Use your specific tag
+  script:
+    - sleep 10
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA .
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: bitnami/kubectl:1.32.2
+  tags:
+    - dev-runners # Use your specific tag
+  script:
+    - export IMAGE_NAME=$IMAGE_NAME
+    - export IMAGE_TAG=$CI_COMMIT_SHA
+    - envsubst < helm/manifest.template.yaml > helm/manifest.yml
+    - cat helm/manifest.yml
+    - kubectl apply -f helm/manifest.yml -n ran
+  only:
+    - main
+  dependencies:
+    - build

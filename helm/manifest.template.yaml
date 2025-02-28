@@ -18,7 +18,7 @@ spec:
           command:
             - sh
             - '-c'
-            - sleep infinity && kpm_sim ${K8S_IP} 32222
+            - kpm_sim ${K8S_IP} 32222
           terminationMessagePolicy: File
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
