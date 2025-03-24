@@ -40,12 +40,3 @@ COPY ./asn1c/ /opt/e2sim/kpm_e2sm/asn1c/
 
 WORKDIR /opt/e2sim/kpm_e2sm/.build
 RUN cmake .. && make install
-
-#CMD kpm_sim 10.111.138.172 32222
-RUN apt-get update && apt-get install -y --no-install-recommends \
-	iputils-ping \
-	nano \
-	nmap \
-	tcpdump \
-	vim \
-	&& rm -rf /var/lib/apt/lists/*
