@@ -5,7 +5,7 @@ stages:
 variables:
   IMAGE_NAME: $REGISTRY_URL/$CI_COMMIT_BRANCH/$CI_PROJECT_NAME # Replace with your desired image name
 
-build:
+build_job:
   image: quay.io/podman/stable
   stage: build
   tags:
@@ -26,7 +26,7 @@ build:
     - /^refs\/heads\/oran-student-.*/
 
 
-deploy:
+deploy_job:
   stage: deploy
   when: manual
   image: bitnami/kubectl:1.32.2
