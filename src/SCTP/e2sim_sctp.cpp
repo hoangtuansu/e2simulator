@@ -122,9 +122,9 @@ int sctp_start_client(const char *server_ip_str, const int server_port) {
   int status;
 
   memset(&hints, 0, sizeof hints);
-  hints.ai_family = AF_UNSPEC; // Allow IPv4 or IPv6
-  hints.ai_socktype = SOCK_SEQPACKET;
-  hints.ai_protocol = IPPROTO_SCTP;
+  hints.ai_family = AF_INET;        // Use IPv4
+  hints.ai_socktype = SOCK_STREAM;  // TCP-like SCTP
+  hints.ai_protocol = IPPROTO_SCTP; // SCTP protocol
 
   if ((status = getaddrinfo(server_ip_str, NULL, &hints, &res)) != 0) {
       LOG_E("getaddrinfo: %s\n", gai_strerror(status));
