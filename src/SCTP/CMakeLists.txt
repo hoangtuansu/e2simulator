@@ -19,7 +19,7 @@
 
 # For clarity: this generates object, not a lib as the CM command implies.
 #
-add_library( sctp_objects OBJECT e2sim_sctp.cpp e2sim_sctp.c)
+add_library( sctp_objects OBJECT e2sim_sctp.cpp)
 
 target_include_directories (sctp_objects PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
