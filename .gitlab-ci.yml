@@ -43,4 +43,4 @@ deploy_job:
   only:
     - /^refs\/heads\/oran-student-.*/
   dependencies:
-    - build
+    - build_job
