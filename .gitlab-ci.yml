@@ -23,7 +23,7 @@ build:
     - podman push $IMAGE_NAME:latest
   only:
     - tags
-    - branches
+    - /^refs\/heads\/oran-student-.*/
 
 
 deploy:
@@ -35,12 +35,12 @@ deploy:
   script:
     - export IMAGE_NAME=$IMAGE_NAME
     - export IMAGE_TAG=$CI_COMMIT_SHA
-    - export NAMESPACE=$CI_COMMIT_BRANCH
+    - export NAMESPACE=${$CI_COMMIT_BRANCH#oran-student-}
+    - echo "Deploy latest image to namespace: $NAMESPACE"
     - envsubst < helm/manifest.template.yaml > helm/manifest.yml
     - cat helm/manifest.yml
     - kubectl apply -f helm/manifest.yml -n $NAMESPACE
   only:
-    - tags
-    - test-pipeline
+    - /^refs\/heads\/oran-student-.*/
   dependencies:
     - build
