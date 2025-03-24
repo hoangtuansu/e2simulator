@@ -35,8 +35,8 @@ deploy:
   script:
     - export IMAGE_NAME=$IMAGE_NAME
     - export IMAGE_TAG=$CI_COMMIT_SHA
-    - export NAMESPACE=${$CI_COMMIT_BRANCH#oran-student-}
-    - echo "Deploy latest image to namespace: $NAMESPACE"
+    - export NAMESPACE=${CI_COMMIT_BRANCH#oran-student-}
+    - echo "Deploy latest image to namespace: \"$NAMESPACE\""
     - envsubst < helm/manifest.template.yaml > helm/manifest.yml
     - cat helm/manifest.yml
     - kubectl apply -f helm/manifest.yml -n $NAMESPACE
