@@ -12,7 +12,7 @@ export K8S_IP=x.y.z.a
 Make sure config template file is updated with actual values:
 
 ```
-envsubst < helm/e2sim.template > helm/e2sim.yaml
+envsubst < helm/manifest.template.yaml > helm/e2sim.yaml
 ```
 
 Run the following command to build and push to Docker registry:
