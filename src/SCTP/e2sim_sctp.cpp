@@ -38,6 +38,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <netdb.h>
 
 int sctp_start_server(const char *server_ip_str, const int server_port)
 {
