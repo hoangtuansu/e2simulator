@@ -23,7 +23,7 @@ build_job:
     - podman push $IMAGE_NAME:latest
   only:
     - tags
-    - /^refs\/heads\/oran-student-.*/
+    - /^oran-student-.*/
 
 
 deploy_job:
@@ -36,11 +36,11 @@ deploy_job:
     - export IMAGE_NAME=$IMAGE_NAME
     - export IMAGE_TAG=$CI_COMMIT_SHA
     - export NAMESPACE=${CI_COMMIT_BRANCH#oran-student-}
-    - echo $NAMESPACE
+    - echo "NAMESPACE value: [$NAMESPACE]"
     - envsubst < helm/manifest.template.yaml > helm/manifest.yml
     - cat helm/manifest.yml
     - kubectl apply -f helm/manifest.yml -n $NAMESPACE
   only:
-    - /^refs\/heads\/oran-student-.*/
+    - /^oran-student-.*/
   dependencies:
     - build_job
