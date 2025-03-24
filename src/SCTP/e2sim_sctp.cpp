@@ -112,7 +112,81 @@ int sctp_start_server(const char *server_ip_str, const int server_port)
   return server_fd;
 }
 
-int sctp_start_client(const char *server_ip_str, const int server_port)
+int sctp_start_client(const char *server_ip_str, const int server_port) {
+  int client_fd;
+  struct sockaddr *server_addr;
+  size_t addr_len;
+  struct addrinfo hints, *res, *p;
+  int status;
+
+  if ((status = getaddrinfo(server_ip_str, NULL, &hints, &res)) != 0) {
+      fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
+      return -1;
+  }
+
+  // Loop through the results and connect to the first we can
+  for (p = res; p != NULL; p = p->ai_next) {
+      if (p->ai_family == AF_INET || p->ai_family == AF_INET6) {
+          server_addr = p->ai_addr;
+          addr_len = p->ai_addrlen;
+
+          if (p->ai_family == AF_INET) {
+              ((struct sockaddr_in *)server_addr)->sin_port = htons(server_port);
+          } else {
+              ((struct sockaddr_in6 *)server_addr)->sin6_port = htons(server_port);
+          }
+
+          if ((client_fd = socket(p->ai_family, SOCK_STREAM, IPPROTO_SCTP)) == -1) {
+              perror("socket");
+              continue; // Try next address
+          }
+
+           //Bind before connect
+          int optval = 1;
+          if( setsockopt(client_fd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval) != 0 ){
+              perror("setsockopt port");
+              close(client_fd);
+              continue;
+          }
+
+          if( setsockopt(client_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval) != 0 ){
+              perror("setsockopt addr");
+              close(client_fd);
+              continue;
+          }
+
+          struct sockaddr_in6 client6_addr = {};
+          client6_addr.sin6_family = AF_INET6;
+          client6_addr.sin6_port  = htons(RIC_SCTP_SRC_PORT);
+          client6_addr.sin6_addr  = in6addr_any;
+
+          LOG_I("[SCTP] Binding client socket to source port %d", RIC_SCTP_SRC_PORT);
+          if(bind(client_fd, (struct sockaddr*)&client6_addr, sizeof(client6_addr)) == -1) {
+              perror("bind");
+              close(client_fd);
+              continue;
+          }
+          // end binding ---------------------
+
+          LOG_I("[SCTP] Connecting to server at %s:%d ...", server_ip_str, server_port);
+          if (connect(client_fd, server_addr, addr_len) == 0) {
+              assert(client_fd != 0);
+              LOG_I("[SCTP] Connection established");
+              freeaddrinfo(res);
+              return client_fd;
+          } else {
+              perror("connect");
+              close(client_fd);
+          }
+      }
+  }
+
+  freeaddrinfo(res);
+  fprintf(stderr, "Failed to connect to server\n");
+  return -1;
+}
+
+int sctp_start_client1(const char *server_ip_str, const int server_port)
 {
   int client_fd, af;
 

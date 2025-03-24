@@ -26,6 +26,7 @@
 #include <netinet/sctp.h>
 #include <arpa/inet.h>	//for inet_ntop()
 #include <assert.h>
+#include <netdb.h>
 
 #include "e2sim_sctp.h"
 
@@ -68,7 +69,67 @@ int sctp_start_server(const char *server_ip_str, const int server_port)
   return server_fd;
 }
 
-int sctp_start_client(const char *server_ip_str, const int server_port)
+int sctp_start_client(const char *server_name, const int server_port) {
+  int client_fd;
+  struct addrinfo hints, *server_info, *p;
+  int rv;
+  char port_str[6]; // Enough for 5 digits plus null terminator
+
+  // Convert port to string for getaddrinfo
+  snprintf(port_str, sizeof(port_str), "%d", server_port);
+
+  // Initialize hints structure
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;     // IPv4
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_protocol = IPPROTO_SCTP;
+
+  // Get address information
+  fprintf(stderr, "Resolving hostname %s...", server_name);
+  if ((rv = getaddrinfo(server_name, port_str, &hints, &server_info)) != 0) {
+      fprintf(stderr, "Failed: %s\n", gai_strerror(rv));
+      return -1;
+  }
+  fprintf(stderr, "OK\n");
+
+  // Loop through all the results and connect to the first one we can
+  for (p = server_info; p != NULL; p = p->ai_next) {
+      if ((client_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
+          perror("socket");
+          continue;
+      }
+
+      // Get the human-readable address for display
+      char ip_str[INET_ADDRSTRLEN];
+      struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
+      inet_ntop(AF_INET, &(ipv4->sin_addr), ip_str, INET_ADDRSTRLEN);
+      
+      fprintf(stderr, "Connecting to server at %s:%d...", ip_str, server_port);
+      if (connect(client_fd, p->ai_addr, p->ai_addrlen) == -1) {
+          perror("connect");
+          close(client_fd);
+          continue;
+      }
+
+      // If we got here, we successfully connected
+      break;
+  }
+
+  // Check if we connected successfully
+  if (p == NULL) {
+      fprintf(stderr, "Failed to connect to %s:%d\n", server_name, server_port);
+      freeaddrinfo(server_info);
+      return -1;
+  }
+
+  freeaddrinfo(server_info);
+
+  assert(client_fd != 0);
+  fprintf(stderr, "OK\n");
+  return client_fd;
+}
+
+int sctp_start_client1(const char *server_ip_str, const int server_port)
 {
   int client_fd;
 

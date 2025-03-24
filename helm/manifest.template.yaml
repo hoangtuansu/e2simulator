@@ -19,7 +19,7 @@ spec:
           command:
             - sh
             - '-c'
-            - kpm_sim ${K8S_IP} 32222
+            - kpm_sim service-ricplt-e2term-sctp-alpha.ricplt.svc 36422
           terminationMessagePolicy: File
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
