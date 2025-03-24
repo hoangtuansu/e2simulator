@@ -21,7 +21,7 @@ RUN mkdir -p /opt/e2sim/asn1c \
 	/usr/local/include/nlohmann \
 	/opt/e2sim/build
 
-COPY src/nlohmann_json.hpp /usr/local/include/nlohmann/
+COPY src/nlohmann_json.hpp /usr/local/include/nlohmann/json.hpp
 COPY CMakeLists.txt /opt/e2sim/
 COPY asn1c/ /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
