@@ -30,7 +30,6 @@ target_include_directories (sctp_objects PUBLIC
 if( DEV_PKG )
   install( FILES
     e2sim_sctp.hpp
-    e2sim_sctp.h
     DESTINATION ${install_inc}
     )
 endif()
