@@ -1,30 +1,41 @@
-FROM debian:bullseye
+FROM debian:bullseye-slim
+	
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	autoconf \
+	automake \
+	bison \
+	build-essential \
+	cmake \
+	flex \
+	git \
+	libboost-all-dev \
+	libsctp-dev \
+	libtool \
+	lksctp-tools \
+	net-tools \
+	&& rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update \
-	&& apt-get install -y build-essential git cmake libsctp-dev lksctp-tools autoconf automake \
-	libtool bison flex libboost-all-dev iputils-ping \
-	net-tools nano vim tcpdump net-tools nmap \
-  	&& apt-get clean
+RUN mkdir -p /opt/e2sim/asn1c \
+	/opt/e2sim/src \
+	/usr/local/include/nlohmann \
+	/opt/e2sim/build
 
-RUN mkdir -p /opt/e2sim/asn1c /opt/e2sim/kpm_e2sm /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/src /usr/local/include/nlohmann
-
-RUN git clone https://github.com/azadkuh/nlohmann_json_release.git
-RUN cp nlohmann_json_release/json.hpp /usr/local/include/nlohmann
-
+COPY src/nlohmann_json.hpp /usr/local/include/nlohmann/json.hpp
 COPY CMakeLists.txt /opt/e2sim/
 COPY asn1c/ /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
 
-RUN mkdir /opt/e2sim/build && cd /opt/e2sim/build \
-	&& cmake .. && make package && cmake .. -DDEV_PKG=1 && make package
+WORKDIR /opt/e2sim/build
+RUN cmake .. && make package \
+&& cmake .. -DDEV_PKG=1 && make package \
+&& dpkg -i e2sim_1.0.0_amd64.deb e2sim-dev_1.0.0_amd64.deb \
+&& rm -f *.deb
+	
+RUN mkdir -p /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/kpm_e2sm/.build
 
-RUN dpkg -i /opt/e2sim/build/e2sim_1.0.0_amd64.deb /opt/e2sim/build/e2sim-dev_1.0.0_amd64.deb
-
-COPY ./kpm_e2sm/ /opt/e2sim/kpm_e2sm
+COPY ./kpm_e2sm/ /opt/e2sim/kpm_e2sm/
 COPY ./kpm_e2sm/src/kpm/config.json /opt/e2sim/kpm_e2sm/
-COPY ./asn1c/ /opt/e2sim/kpm_e2sm/asn1c
 
-RUN mkdir /opt/e2sim/kpm_e2sm/.build && cd /opt/e2sim/kpm_e2sm/.build \
-	&& cmake .. && make install
-
-#CMD kpm_sim 10.111.138.172 32222
+WORKDIR /opt/e2sim/kpm_e2sm/.build
+RUN cmake .. && make install

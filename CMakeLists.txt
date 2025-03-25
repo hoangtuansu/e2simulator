@@ -70,7 +70,7 @@ set ( srcd "${CMAKE_CURRENT_SOURCE_DIR}" )
 # but Cmake insists on having these exist when we add them to include directories to
 # enable code to find them after we build them.
 #
-include_directories( "${srcd}/src/DEF;${srcd}/src/SCTP;${srcd}/src/messagerouting;${srcd}/src/base;${srcd}/src/encoding" )
+include_directories( "asn1c;${srcd}/src/DEF;${srcd}/src/SCTP;${srcd}/src/messagerouting;${srcd}/src/base;${srcd}/src/encoding" )
 
 
 # Compiler flags
@@ -88,7 +88,7 @@ else()
 endif()
 unset( GPROF CACHE )					# we don't want this to persist
 
-add_subdirectory(./asn1c)
+add_subdirectory(asn1c)
 add_subdirectory(src/DEF)
 add_subdirectory(src/SCTP)
 add_subdirectory(src/messagerouting)
@@ -98,7 +98,7 @@ add_subdirectory(src/encoding)
 
 add_library( e2sim_shared SHARED
 
-"$<TARGET_OBJECTS:def_objects>;$<TARGET_OBJECTS:sctp_objects>;$<TARGET_OBJECTS:messagerouting_objects>;$<TARGET_OBJECTS:encoding_objects>;$<TARGET_OBJECTS:base_objects>"
+"$<TARGET_OBJECTS:asn1_objects>;$<TARGET_OBJECTS:def_objects>;$<TARGET_OBJECTS:sctp_objects>;$<TARGET_OBJECTS:messagerouting_objects>;$<TARGET_OBJECTS:encoding_objects>;$<TARGET_OBJECTS:base_objects>"
 
 )
 
@@ -106,7 +106,7 @@ add_library( e2sim_shared SHARED
 # we only build/export the static archive (.a) if generating a dev package
 if( DEV_PKG )
     	add_library( e2sim_static STATIC
-        	     "$<TARGET_OBJECTS:def_objects>;$<TARGET_OBJECTS:sctp_objects>;$<TARGET_OBJECTS:messagerouting_objects>;$<TARGET_OBJECTS:encoding_objects>;$<TARGET_OBJECTS:base_objects>"
+        	     "$<TARGET_OBJECTS:asn1_objects>;$<TARGET_OBJECTS:def_objects>;$<TARGET_OBJECTS:sctp_objects>;$<TARGET_OBJECTS:messagerouting_objects>;$<TARGET_OBJECTS:encoding_objects>;$<TARGET_OBJECTS:base_objects>"
 	)
 
 	set_target_properties( e2sim_static
@@ -116,7 +116,7 @@ if( DEV_PKG )
    			       VERSION ${major_version}.${minor_version}.${patch_level}
 	)
 
-	target_include_directories( e2sim_static PUBLIC "src/DEF" "src/SCTP" "src/messagerouting" "src/base" "src/encoding" )	
+	target_include_directories( e2sim_static PUBLIC "asn1c" "src/DEF" "src/SCTP" "src/messagerouting" "src/base" "src/encoding" )	
 endif()
 
 

@@ -122,7 +122,7 @@ int E2Sim::run_loop(int argc, char* argv[]){
 
   options_t ops = read_input_options(argc, argv);
 
-  LOG_I("After reading input options");
+  LOG_I("After reading input options: %s, %d", ops.server_ip, ops.server_port);
 
   //E2 Agent will automatically restart upon sctp disconnection
   //  int server_fd = sctp_start_server(ops.server_ip, ops.server_port);
