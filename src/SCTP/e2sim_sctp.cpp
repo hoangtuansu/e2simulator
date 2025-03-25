@@ -38,6 +38,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <netdb.h>
 
 int sctp_start_server(const char *server_ip_str, const int server_port)
 {
@@ -112,89 +113,89 @@ int sctp_start_server(const char *server_ip_str, const int server_port)
   return server_fd;
 }
 
-int sctp_start_client(const char *server_ip_str, const int server_port)
-{
-  int client_fd, af;
-
-  struct sockaddr* server_addr;
+int sctp_start_client(const char *server_str, const int server_port) {
+  LOG_I("[SCTP] Initialize SCTP client");
+  int client_fd;
+  struct sockaddr *server_addr;
   size_t addr_len;
+  struct addrinfo hints, *res, *p;
+  int status;
 
-  struct sockaddr_in  server4_addr;
-  memset(&server4_addr, 0, sizeof(struct sockaddr_in));
+  memset(&hints, 0, sizeof hints);
+  hints.ai_family = AF_INET;        // Use IPv4
+  hints.ai_socktype = SOCK_STREAM;  // TCP-like SCTP
+  hints.ai_protocol = IPPROTO_SCTP; // SCTP protocol
 
-  struct sockaddr_in6 server6_addr;
-  memset(&server6_addr, 0, sizeof(struct sockaddr_in6));
-
-  if(inet_pton(AF_INET, server_ip_str, &server4_addr.sin_addr) == 1)
-  {
-    server4_addr.sin_family = AF_INET;
-    server4_addr.sin_port   = htons(server_port);
-    server_addr = (struct sockaddr*)&server4_addr;
-    addr_len    = sizeof(server4_addr);
-  }
-  else if(inet_pton(AF_INET6, server_ip_str, &server6_addr.sin6_addr) == 1)
-  {
-    server6_addr.sin6_family = AF_INET6;
-    server6_addr.sin6_port   = htons(server_port);
-    server_addr = (struct sockaddr*)&server6_addr;
-    addr_len    = sizeof(server6_addr);
-  }
-  else {
-    perror("inet_pton()");
-    exit(1);
+  if ((status = getaddrinfo(server_str, NULL, &hints, &res)) != 0) {
+      LOG_E("getaddrinfo: %s\n", gai_strerror(status));
+      return -1;
   }
 
-  if((client_fd = socket(AF_INET6, SOCK_STREAM, IPPROTO_SCTP)) == -1)
-  {
-     perror("socket");
-     exit(1);
+  // Loop through the results and connect to the first we can
+  for (p = res; p != NULL; p = p->ai_next) {
+      if (p->ai_family == AF_INET || p->ai_family == AF_INET6) {
+          server_addr = p->ai_addr;
+          addr_len = p->ai_addrlen;
+
+          if (p->ai_family == AF_INET) {
+              ((struct sockaddr_in *)server_addr)->sin_port = htons(server_port);
+          } else {
+              ((struct sockaddr_in6 *)server_addr)->sin6_port = htons(server_port);
+          }
+
+          if ((client_fd = socket(p->ai_family, SOCK_STREAM, IPPROTO_SCTP)) == -1) {
+              perror("socket");
+              continue; // Try next address
+          }
+
+           //Bind before connect
+          int optval = 1;
+          if( setsockopt(client_fd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval) != 0 ){
+              perror("setsockopt port");
+              close(client_fd);
+              continue;
+          }
+
+          if( setsockopt(client_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval) != 0 ){
+              perror("setsockopt addr");
+              close(client_fd);
+              continue;
+          }
+
+          struct sockaddr_in client4_addr;
+          memset(&client4_addr, 0, sizeof(client4_addr)); // Initialize to zero
+
+          client4_addr.sin_family = AF_INET;
+          client4_addr.sin_port = htons(RIC_SCTP_SRC_PORT);
+          client4_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+
+          LOG_I("[SCTP] Binding client socket to source port %d", RIC_SCTP_SRC_PORT);
+          if(bind(client_fd, (struct sockaddr*)&client4_addr, sizeof(client4_addr)) == -1) {
+              perror("bind");
+              close(client_fd);
+              continue;
+          }
+          // end binding ---------------------
+
+          LOG_I("[SCTP] Connecting to server at %s:%d ...", server_str, server_port);
+          if (connect(client_fd, server_addr, addr_len) == 0) {
+              assert(client_fd != 0);
+              LOG_I("[SCTP] Connection established");
+              freeaddrinfo(res);
+              return client_fd;
+          } else {
+              perror("connect");
+              close(client_fd);
+          }
+      }
   }
 
-  // int sendbuff = 10000;
-  // socklen_t optlen = sizeof(sendbuff);
-  // if(getsockopt(client_fd, SOL_SOCKET, SO_SNDBUF, &sendbuff, &optlen) == -1) {
-  //   perror("getsockopt send");
-  //   exit(1);
-  // }
-  // else
-  //   LOG_D("[SCTP] send buffer size = %d\n", sendbuff);
-
-  //--------------------------------
-  //Bind before connect
-  auto optval = 1;
-  if( setsockopt(client_fd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval) != 0 ){
-    perror("setsockopt port");
-    exit(1);
-  }
-
-  if( setsockopt(client_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval) != 0 ){
-    perror("setsockopt addr");
-    exit(1);
-  }
-
-  struct sockaddr_in6  client6_addr {};
-  client6_addr.sin6_family = AF_INET6;
-  client6_addr.sin6_port   = htons(RIC_SCTP_SRC_PORT);
-  client6_addr.sin6_addr   = in6addr_any;
-
-  LOG_I("[SCTP] Binding client socket to source port %d", RIC_SCTP_SRC_PORT);
-  if(bind(client_fd, (struct sockaddr*)&client6_addr, sizeof(client6_addr)) == -1) {
-    perror("bind");
-    exit(1);
-  }
-  // end binding ---------------------
-
-  LOG_I("[SCTP] Connecting to server at %s:%d ...", server_ip_str, server_port);
-  if(connect(client_fd, server_addr, addr_len) == -1) {
-    perror("connect");
-    exit(1);
-  }
-  assert(client_fd != 0);
-
-  LOG_I("[SCTP] Connection established");
-
-  return client_fd;
+  freeaddrinfo(res);
+  fprintf(stderr, "Failed to connect to server\n");
+  return -1;
 }
+
 
 int sctp_accept_connection(const char *server_ip_str, const int server_fd)
 {
