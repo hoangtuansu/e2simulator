@@ -81,7 +81,6 @@ endif()
 unset( GPROF CACHE )					# ensure this does not persist
 
 # each binary is built from a subset
-add_subdirectory( asn1c )
 add_subdirectory( src/kpm )
 
 
