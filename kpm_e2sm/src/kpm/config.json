@@ -1,12 +1,158 @@
 {
-  "pm": [
-    "throughput", 
-    "pdcpBytesDl", 
-    "pdcpBytesUl", 
-    "availPrbDl", 
-    "availPrbUl",
-    "rsrp",
-    "rsrq",
-    "rssinr"
+  "eMBB": [
+    {
+      "timestamp": "2025-03-27T19:40:23.732583",
+      "rx_brate_uplink_Mbps": 134.51,
+      "ul_n_samples": 235
+    },
+    {
+      "timestamp": "2025-03-27T19:40:23.982583",
+      "rx_brate_uplink_Mbps": 125.1,
+      "ul_n_samples": 121
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.232583",
+      "rx_brate_uplink_Mbps": 118.29,
+      "ul_n_samples": 221
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.482583",
+      "rx_brate_uplink_Mbps": 124.13,
+      "ul_n_samples": 259
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.732583",
+      "rx_brate_uplink_Mbps": 121.99,
+      "ul_n_samples": 126
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.982583",
+      "rx_brate_uplink_Mbps": 59.28,
+      "ul_n_samples": 284
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.232583",
+      "rx_brate_uplink_Mbps": 68.5,
+      "ul_n_samples": 251
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.482583",
+      "rx_brate_uplink_Mbps": 146.35,
+      "ul_n_samples": 163
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.732583",
+      "rx_brate_uplink_Mbps": 99.34,
+      "ul_n_samples": 298
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.982583",
+      "rx_brate_uplink_Mbps": 104.81,
+      "ul_n_samples": 284
+    }
+  ],
+  "mMTC": [
+    {
+      "timestamp": "2025-03-27T19:40:23.732583",
+      "rx_brate_uplink_Mbps": 0.112,
+      "ul_n_samples": 1
+    },
+    {
+      "timestamp": "2025-03-27T19:40:23.982583",
+      "rx_brate_uplink_Mbps": 0.15,
+      "ul_n_samples": 6
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.232583",
+      "rx_brate_uplink_Mbps": 0.105,
+      "ul_n_samples": 8
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.482583",
+      "rx_brate_uplink_Mbps": 0.459,
+      "ul_n_samples": 5
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.732583",
+      "rx_brate_uplink_Mbps": 0.313,
+      "ul_n_samples": 9
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.982583",
+      "rx_brate_uplink_Mbps": 0.382,
+      "ul_n_samples": 10
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.232583",
+      "rx_brate_uplink_Mbps": 0.44,
+      "ul_n_samples": 1
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.482583",
+      "rx_brate_uplink_Mbps": 0.444,
+      "ul_n_samples": 6
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.732583",
+      "rx_brate_uplink_Mbps": 0.436,
+      "ul_n_samples": 2
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.982583",
+      "rx_brate_uplink_Mbps": 0.343,
+      "ul_n_samples": 3
+    }
+  ],
+  "URLLC": [
+    {
+      "timestamp": "2025-03-27T19:40:23.732583",
+      "rx_brate_uplink_Mbps": 4.82,
+      "ul_n_samples": 89
+    },
+    {
+      "timestamp": "2025-03-27T19:40:23.982583",
+      "rx_brate_uplink_Mbps": 3.15,
+      "ul_n_samples": 84
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.232583",
+      "rx_brate_uplink_Mbps": 4.58,
+      "ul_n_samples": 63
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.482583",
+      "rx_brate_uplink_Mbps": 5.97,
+      "ul_n_samples": 63
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.732583",
+      "rx_brate_uplink_Mbps": 6.06,
+      "ul_n_samples": 61
+    },
+    {
+      "timestamp": "2025-03-27T19:40:24.982583",
+      "rx_brate_uplink_Mbps": 5.47,
+      "ul_n_samples": 72
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.232583",
+      "rx_brate_uplink_Mbps": 4.4,
+      "ul_n_samples": 54
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.482583",
+      "rx_brate_uplink_Mbps": 4.18,
+      "ul_n_samples": 62
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.732583",
+      "rx_brate_uplink_Mbps": 4.46,
+      "ul_n_samples": 73
+    },
+    {
+      "timestamp": "2025-03-27T19:40:25.982583",
+      "rx_brate_uplink_Mbps": 1.44,
+      "ul_n_samples": 78
+    }
   ]
 }
