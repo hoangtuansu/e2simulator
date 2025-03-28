@@ -20,18 +20,16 @@ RUN mkdir -p /opt/e2sim/asn1c /opt/e2sim/kpm_e2sm /opt/e2sim/kpm_e2sm/asn1c /opt
 COPY CMakeLists.txt /opt/e2sim/
 COPY asn1c/ /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
+COPY kpm_e2sm/src/kpm /opt/e2sim/kpm_e2sm/src/kpm  # ✅ Ce COPY est maintenant à la bonne place
 
-# ✅ Ajouter le dossier kpm_e2sm/src/kpm requis pour le build principal
-COPY kpm_e2sm/src/kpm /opt/e2sim/kpm_e2sm/src/kpm
-
-# Construire e2sim principal
+# Construire e2sim principal (avec le dossier requis disponible)
 RUN mkdir /opt/e2sim/build && cd /opt/e2sim/build \
   && cmake .. && make package && cmake .. -DDEV_PKG=1 && make package
 
-# Installer les paquets DEB générés (librairies ASN.1 nécessaires)
+# Installer les paquets DEB générés
 RUN dpkg -i /opt/e2sim/build/e2sim_1.0.0_amd64.deb /opt/e2sim/build/e2sim-dev_1.0.0_amd64.deb
 
-# Copier les fichiers spécifiques au simulateur KPM personnalisé
+# Copier les fichiers spécifiques au simulateur KPM
 COPY ./kpm_e2sm/kpi_traces.json /opt/e2sim/kpm_e2sm/kpi_traces.json
 COPY ./kpm_e2sm/src/kpm/kpm_callbacks.cpp /opt/e2sim/kpm_e2sm/src/kpm/kpm_callbacks.cpp
 COPY ./kpm_e2sm/src/kpm/encode_kpm_indication.cpp /opt/e2sim/kpm_e2sm/src/kpm/encode_kpm_indication.cpp
@@ -40,9 +38,9 @@ COPY ./kpm_e2sm/src/kpm/CMakeLists.txt /opt/e2sim/kpm_e2sm/src/kpm/CMakeLists.tx
 COPY ./asn1c/ /opt/e2sim/kpm_e2sm/asn1c
 COPY build_and_run.sh /opt/e2sim/build_and_run.sh
 
-# Construire le simulateur complet avec envoi SCTP et encapsulation E2AP
+# Construire le simulateur final
 RUN mkdir /opt/e2sim/kpm_e2sm/.build && cd /opt/e2sim/kpm_e2sm/.build \
   && cmake .. && make install
 
-# Lancement par défaut (modifiable via arguments IP/port)
+# Lancement automatique
 CMD ["/opt/e2sim/kpm_e2sm/.build/e2sim_simulator"]
