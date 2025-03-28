@@ -5,7 +5,7 @@ stages:
 variables:
   IMAGE_NAME: $REGISTRY_URL/$CI_COMMIT_BRANCH/$CI_PROJECT_NAME # Replace with your desired image name
 
-build_job:
+build_job: 
   image: quay.io/podman/stable
   stage: build
   tags:
@@ -44,3 +44,5 @@ deploy_job:
     - /^oran-student-.*/
   dependencies:
     - build_job
+
+#jklmbjnk,lmùklm
