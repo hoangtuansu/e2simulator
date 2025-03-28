@@ -113,3 +113,4 @@ der_encode_primitive(const asn_TYPE_descriptor_t *td, const void *sptr,
     erval.encoded += st->size;
     ASN__ENCODED_OK(erval);
 }
+

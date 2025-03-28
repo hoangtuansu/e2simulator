@@ -43,3 +43,4 @@ per_type_encoder_f AMF_UE_NGAP_ID_encode_aper;
 
 #endif	/* _AMF_UE_NGAP_ID_H_ */
 #include "asn_internal.h"
+

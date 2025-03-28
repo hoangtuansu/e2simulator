@@ -43,3 +43,4 @@ per_type_encoder_f AMFPointer_encode_aper;
 
 #endif	/* _AMFPointer_H_ */
 #include "asn_internal.h"
+

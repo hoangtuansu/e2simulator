@@ -64,3 +64,4 @@ asn_random_between(intmax_t lb, intmax_t rb) {
         return lb + (intmax_t)(value % (range + 1));
     }
 }
+

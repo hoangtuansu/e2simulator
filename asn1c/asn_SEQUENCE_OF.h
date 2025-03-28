@@ -50,3 +50,4 @@ typedef A_SEQUENCE_OF(void) asn_anonymous_sequence_;
 #endif
 
 #endif	/* ASN_SEQUENCE_OF_H */
+

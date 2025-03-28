@@ -82,3 +82,4 @@ int ANY_to_type_aper(ANY_t *, asn_TYPE_descriptor_t *td, void **struct_ptr);
 #endif
 
 #endif	/* ASN_TYPE_ANY_H */
+

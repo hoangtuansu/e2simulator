@@ -61,3 +61,4 @@ aper_encode_to_new_buffer(
 #endif
 
 #endif	/* _APER_ENCODER_H_ */
+

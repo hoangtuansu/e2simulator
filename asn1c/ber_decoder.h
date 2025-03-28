@@ -64,3 +64,4 @@ asn_dec_rval_t ber_check_tags(
 #endif
 
 #endif	/* _BER_DECODER_H_ */
+

@@ -70,3 +70,4 @@ typedef A_SET_OF(void) asn_anonymous_set_;
 #endif
 
 #endif	/* ASN_SET_OF_H */
+

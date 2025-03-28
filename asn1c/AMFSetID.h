@@ -43,3 +43,4 @@ per_type_encoder_f AMFSetID_encode_aper;
 
 #endif	/* _AMFSetID_H_ */
 #include "asn_internal.h"
+

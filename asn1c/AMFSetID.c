@@ -75,3 +75,4 @@ asn_TYPE_descriptor_t asn_DEF_AMFSetID = {
 	&asn_SPC_BIT_STRING_specs	/* Additional specs */
 };
 
+

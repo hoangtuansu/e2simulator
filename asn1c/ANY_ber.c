@@ -114,3 +114,4 @@ ANY_to_type(ANY_t *st, asn_TYPE_descriptor_t *td, void **struct_ptr) {
         return -1;
     }
 }
+

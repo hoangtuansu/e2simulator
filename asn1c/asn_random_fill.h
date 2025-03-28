@@ -49,3 +49,4 @@ int asn_random_fill(const struct asn_TYPE_descriptor_s *td, void **struct_ptr,
 intmax_t asn_random_between(intmax_t min, intmax_t max);
 
 #endif	/* ASN_RANDOM_FILL */
+

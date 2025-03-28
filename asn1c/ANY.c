@@ -78,3 +78,4 @@ asn_TYPE_descriptor_t asn_DEF_ANY = {
     0, 0,  /* No members */
     &asn_SPC_ANY_specs,
 };
+

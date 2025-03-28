@@ -54,3 +54,4 @@ asn_dec_rval_t xer_decode_primitive(
 #endif
 
 #endif	/* ASN_CODECS_PRIM_H */
+

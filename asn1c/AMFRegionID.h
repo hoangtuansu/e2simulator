@@ -43,3 +43,4 @@ per_type_encoder_f AMFRegionID_encode_aper;
 
 #endif	/* _AMFRegionID_H_ */
 #include "asn_internal.h"
+

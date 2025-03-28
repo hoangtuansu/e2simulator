@@ -81,3 +81,4 @@ int asn_put_aligned_flush(asn_bit_outp_t *);
 #endif
 
 #endif	/* ASN_BIT_DATA */
+

@@ -114,3 +114,4 @@ asn_TYPE_descriptor_t asn_DEF_AMFName = {
 	0	/* No specifics */
 };
 
+

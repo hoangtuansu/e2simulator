@@ -106,3 +106,4 @@ typedef struct asn_dec_rval_s {
 #endif
 
 #endif	/* ASN_CODECS_H */
+

@@ -281,3 +281,4 @@ ber_check_tags(const asn_codec_ctx_t *opt_codec_ctx,
 
 	RETURN(RC_OK);
 }
+

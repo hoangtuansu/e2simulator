@@ -75,3 +75,4 @@ asn_TYPE_descriptor_t asn_DEF_AMF_UE_NGAP_ID = {
 	0	/* No specifics */
 };
 
+

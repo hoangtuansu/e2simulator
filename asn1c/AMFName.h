@@ -43,3 +43,4 @@ per_type_encoder_f AMFName_encode_aper;
 
 #endif	/* _AMFName_H_ */
 #include "asn_internal.h"
+

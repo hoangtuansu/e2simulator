@@ -171,3 +171,4 @@ typedef void (asn_app_constraint_failed_f)(void *application_specific_key,
 #include "constr_TYPE.h"	/* for asn_TYPE_descriptor_t */
 
 #endif	/* ASN_APPLICATION_H */
+
