@@ -21,6 +21,9 @@ COPY CMakeLists.txt /opt/e2sim/
 COPY asn1c/ /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
 
+# ✅ Ajouter le dossier kpm_e2sm/src/kpm requis pour le build principal
+COPY kpm_e2sm/src/kpm /opt/e2sim/kpm_e2sm/src/kpm
+
 # Construire e2sim principal
 RUN mkdir /opt/e2sim/build && cd /opt/e2sim/build \
   && cmake .. && make package && cmake .. -DDEV_PKG=1 && make package
@@ -35,14 +38,11 @@ COPY ./kpm_e2sm/src/kpm/encode_kpm_indication.cpp /opt/e2sim/kpm_e2sm/src/kpm/en
 COPY ./kpm_e2sm/src/kpm/build_e2ap_indication.cpp /opt/e2sim/kpm_e2sm/src/kpm/build_e2ap_indication.cpp
 COPY ./kpm_e2sm/src/kpm/CMakeLists.txt /opt/e2sim/kpm_e2sm/src/kpm/CMakeLists.txt
 COPY ./asn1c/ /opt/e2sim/kpm_e2sm/asn1c
-
-# Construire le simulateur complet avec envoi SCTP et encapsulation E2AP
 COPY build_and_run.sh /opt/e2sim/build_and_run.sh
 
+# Construire le simulateur complet avec envoi SCTP et encapsulation E2AP
 RUN mkdir /opt/e2sim/kpm_e2sm/.build && cd /opt/e2sim/kpm_e2sm/.build \
   && cmake .. && make install
 
 # Lancement par défaut (modifiable via arguments IP/port)
 CMD ["/opt/e2sim/kpm_e2sm/.build/e2sim_simulator"]
-
-
