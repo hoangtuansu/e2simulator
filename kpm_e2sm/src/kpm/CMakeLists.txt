@@ -23,6 +23,6 @@ add_executable(e2sim_simulator
 # Lier la bibliothèque JSON (sous-module)
 target_link_libraries(e2sim_simulator
   nlohmann_json::nlohmann_json
+  asn1c_library_name   # <- à adapter à ton projet ASN.1
 )
-
 
