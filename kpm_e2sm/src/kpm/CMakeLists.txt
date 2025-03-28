@@ -13,16 +13,20 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #==================================================================================
-cmake_minimum_required(VERSION 3.10)
+#
 
-# Ajouter un exécutable pour le simulateur de KPI
-add_executable(e2sim_simulator
-  kpm_callbacks.cpp
-)
+add_executable( kpm_sim kpm_callbacks.cpp encode_kpm.cpp )
 
-# Lier la bibliothèque JSON (sous-module)
-target_link_libraries(e2sim_simulator
-  nlohmann_json::nlohmann_json
-  asn1c_library_name   # <- à adapter à ton projet ASN.1
+include_directories(.)
+include_directories(/opt/e2sim/build/asn1c)
+include_directories(/usr/local/include/e2sim)
+include_directories(/usr/local/include)
+
+target_link_libraries( kpm_sim e2sim )
+target_link_libraries( kpm_sim pthread)
+
+install( 
+    TARGETS kpm_sim
+    DESTINATION ${install_bin}
 )
 
