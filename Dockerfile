@@ -1,27 +1,41 @@
-FROM ubuntu:22.04
-
+FROM debian:bullseye-slim
+	
 ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	autoconf \
+	automake \
+	bison \
+	build-essential \
+	cmake \
+	flex \
+	git \
+	libboost-all-dev \
+	libsctp-dev \
+	libtool \
+	lksctp-tools \
+	net-tools \
+	&& rm -rf /var/lib/apt/lists/*
 
-# Installer dépendances
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    cmake \
-    git \
-    wget \
-    libssl-dev \
-    libboost-all-dev \
-    libnlohmann-json-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /opt/e2sim/asn1c \
+	/opt/e2sim/src \
+	/usr/local/include/nlohmann \
+	/opt/e2sim/build
 
-# Créer répertoire de travail
-WORKDIR /opt/e2sim
+COPY src/nlohmann_json.hpp /usr/local/include/nlohmann/json.hpp
+COPY CMakeLists.txt /opt/e2sim/
+COPY asn1c/ /opt/e2sim/asn1c
+COPY src/ /opt/e2sim/src
 
-# Copier le simulateur et les fichiers
-COPY kpm_e2sm/src/kpm/kpm_callbacks_custom.cpp ./kpm_callbacks_custom.cpp
-COPY kpm_e2sm/kpi_traces.json ./kpi_traces.json
+WORKDIR /opt/e2sim/build
+RUN cmake .. && make package \
+&& cmake .. -DDEV_PKG=1 && make package \
+&& dpkg -i e2sim_1.0.0_amd64.deb e2sim-dev_1.0.0_amd64.deb \
+&& rm -f *.deb
+	
+RUN mkdir -p /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/kpm_e2sm/.build
 
-# Compiler le simulateur
-RUN g++ -std=c++17 kpm_callbacks_custom.cpp -o kpm_trace_simulator -lnlohmann_json -pthread
+COPY ./kpm_e2sm/ /opt/e2sim/kpm_e2sm/
+COPY ./kpm_e2sm/src/kpm/config.json /opt/e2sim/kpm_e2sm/
 
-# Commande de lancement
-CMD ["./kpm_trace_simulator"]
+WORKDIR /opt/e2sim/kpm_e2sm/.build
+RUN cmake .. && make install
