@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: e2sim-kpm
+  name: e2sim
   namespace: mory
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: e2sim-kpm
+      app: e2sim
   template:
     metadata:
       labels:
-        app: e2sim-kpm
+        app: e2sim
     spec:
       containers:
-        - name: e2sim-kpm
+        - name: e2sim-container
           image: registry.hub.docker.com/morymoussanabe1/e2sim_simulator:0.5
           command:
             - sh
             - '-c'
-            - ./build_and_run.sh service-ricplt-e2term-sctp-headless.ricplt.svc 36422
+            - kpm_sim 10.180.113.156 32222
           env:
             - name: E2NODE_ID
               value: '1011'
