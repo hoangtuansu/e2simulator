@@ -13,14 +13,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #==================================================================================
-cmake_minimum_required(VERSION 3.10)
+#
 
-# Ajouter un exécutable pour le simulateur de KPI
 add_executable(e2sim_simulator
   kpm_callbacks.cpp
 )
-
-# Lier la bibliothèque JSON (sous-module)
 target_link_libraries(e2sim_simulator
   nlohmann_json::nlohmann_json
 )
