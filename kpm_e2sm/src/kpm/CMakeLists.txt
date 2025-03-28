@@ -15,10 +15,10 @@
 #==================================================================================
 #
 
-add_executable(e2sim_simulator
-  kpm_callbacks.cpp
+add_executable(kpm_trace_simulator
+  kpm_callbacks_custom.cpp
 )
-target_link_libraries(e2sim_simulator
+target_link_libraries(kpm_trace_simulator
   nlohmann_json::nlohmann_json
 )
 
