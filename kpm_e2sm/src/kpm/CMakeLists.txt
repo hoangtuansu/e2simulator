@@ -15,11 +15,18 @@
 #==================================================================================
 #
 
-add_executable(kpm_trace_simulator
-  kpm_callbacks_custom.cpp
-)
-target_link_libraries(kpm_trace_simulator
-  nlohmann_json::nlohmann_json
-)
+add_executable( kpm_sim kpm_callbacks.cpp encode_kpm.cpp )
 
+include_directories(.)
+include_directories(/opt/e2sim/build/asn1c)
+include_directories(/usr/local/include/e2sim)
+include_directories(/usr/local/include)
+
+target_link_libraries( kpm_sim e2sim )
+target_link_libraries( kpm_sim pthread)
+
+install( 
+    TARGETS kpm_sim
+    DESTINATION ${install_bin}
+)
 
