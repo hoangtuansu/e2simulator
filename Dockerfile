@@ -14,7 +14,7 @@ RUN mkdir -p /usr/local/include/nlohmann && \
     cp nlohmann_json_release/json.hpp /usr/local/include/nlohmann
 
 # Créer les répertoires nécessaires
-RUN mkdir -p /opt/e2sim/asn1c /opt/e2sim/kpm_e2sm /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/src /opt/e2sim/kpm_e2sm/src/kpm
+RUN mkdir -p /opt/e2sim/asn1c /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/src /opt/e2sim/kpm_e2sm/src/kpm
 
 # Copier les sources de e2sim (core)
 COPY CMakeLists.txt /opt/e2sim/
