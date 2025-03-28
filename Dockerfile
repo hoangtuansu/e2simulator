@@ -44,3 +44,5 @@ RUN mkdir /opt/e2sim/kpm_e2sm/.build && cd /opt/e2sim/kpm_e2sm/.build \
 
 # Lancement par défaut (modifiable via arguments IP/port)
 CMD ["/opt/e2sim/kpm_e2sm/.build/e2sim_simulator"]
+
+
