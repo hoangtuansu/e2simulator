@@ -20,7 +20,7 @@ COPY CMakeLists.txt /opt/e2sim/
 COPY asn1c/ /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
 COPY kpm_e2sm/src/kpm/ /opt/e2sim/kpm_e2sm/src/kpm/
-COPY kpm_e2sm/kpi_traces.json /opt/e2sim/kpm_e2sm/src/kpm/kpi_traces.json
+COPY kpm_e2sm/src/kpm/kpi_traces.json /opt/e2sim/kpm_e2sm/src/kpm/kpi_traces.json
 COPY build_and_run.sh /opt/e2sim/build_and_run.sh
 
 # Construire e2sim (core + simulateur personnalisé)
