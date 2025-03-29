@@ -20,10 +20,12 @@ add_executable(e2sim_simulator
   kpm_callbacks.cpp
 )
 
-# Lier la bibliothèque JSON (sous-module)
+# Ajouter l'inclusion manuelle de json.hpp
+target_include_directories(e2sim_simulator PRIVATE /usr/local/include)
+
+# Lier uniquement les bibliothèques nécessaires
 target_link_libraries(e2sim_simulator
-  nlohmann_json::nlohmann_json
-  asn1c_library_name   # <- à adapter à ton projet ASN.1
+  asn1c_library_name  # <- à adapter à ton projet ASN.1
 )
 
 
