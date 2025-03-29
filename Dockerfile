@@ -33,7 +33,7 @@ RUN dpkg -i /opt/e2sim/build/e2sim_1.0.0_amd64.deb \
            /opt/e2sim/build/e2sim-dev_1.0.0_amd64.deb
 
 # Compiler le simulateur KPM spécifique
-RUN mkdir -p /opt/e2sim/kpm_e2sm/.build && cd /opt/e2sim/kpm_e2sm/.build && \
+RUN mkdir -p /opt/e2sim/kpm_e2sm/src/kpm/.build && cd /opt/e2sim/kpm_e2sm/src/kpm/.build && \
   cmake .. && make install
 
 # Script utilitaire
