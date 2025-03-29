@@ -20,7 +20,7 @@ RUN mkdir -p /opt/e2sim/asn1c /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/src /opt/e2si
 COPY CMakeLists.txt /opt/e2sim/
 COPY asn1c/ /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
-COPY kpm_e2sm/src/kpm /opt/e2sim/kpm_e2sm/src/kpm  # ✅ Ce COPY est maintenant à la bonne place
+COPY kpm_e2sm/src/kpm /opt/e2sim/kpm_e2sm/src/kpm 
 
 # Construire e2sim principal (avec le dossier requis disponible)
 RUN mkdir /opt/e2sim/build && cd /opt/e2sim/build \
