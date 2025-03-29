@@ -22,7 +22,7 @@ COPY src/ /opt/e2sim/src/
 
 # Copier les fichiers personnalisés pour le simulateur KPM
 COPY kpm_e2sm/src/kpm/ /opt/e2sim/kpm_e2sm/src/kpm/
-COPY kpm_e2sm/kpi_traces.json /opt/e2sim/kpm_e2sm/kpi_traces.json
+COPY kpm_e2sm/src/kpm/kpi_traces.json /opt/e2sim/kpm_e2sm/src/kpm/kpi_traces.json
 
 # Compilation du simulateur e2sim principal
 RUN mkdir /opt/e2sim/build && cd /opt/e2sim/build && \
