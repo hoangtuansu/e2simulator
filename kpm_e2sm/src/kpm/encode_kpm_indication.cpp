@@ -13,7 +13,7 @@
 #include "OCTET_STRING.h"
 #include "INTEGER.h"
 #include "asn_SEQUENCE_OF.h"
-#include "asn_CODECs.h"
+#include "asn_codecs.h"
 
 #include <cstdlib>
 #include <cstring>
