@@ -22,11 +22,6 @@
 #include <vector>
 #include <cstdint>
 
-// Encode un message E2SM-KPM Indication
-// - kpi_name : nom de la métrique (ex: "PRB_Utilization")
-// - value1   : valeur de type réel
-// - value2   : valeur de type entier
-// - buffer   : contiendra les octets APER encodés
 bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t value2, std::vector<unsigned char>& buffer);
 
 #endif // ENCODE_KPM_INDICATION_HPP
