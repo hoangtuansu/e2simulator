@@ -16,85 +16,57 @@
 #                                                                            *
 ******************************************************************************/
 #include "encode_kpm_indication.hpp"
-
 #include "E2SM-KPM-IndicationMessage.h"
 #include "E2SM-KPM-IndicationMessage-Format1.h"
-#include "MeasurementData.h"
-#include "MeasurementRecord.h"
+#include "MeasurementInfoItem.h"
 #include "MeasurementRecordItem.h"
-
-#include <iostream>
-#include <vector>
-#include <cstdlib>   // Pour calloc, free
-#include <cstring>   // Pour memcpy
-
-extern "C" {
+#include "MeasurementData.h"
+#include "MeasurementDataItem.h"
 #include "asn_application.h"
 #include "asn_internal.h"
-}
+#include <vector>
+#include <iostream>
+#include <cstdlib>  // For calloc
 
 using namespace std;
 
-bool encode_kpm_indication(const string& metricName, double metricValue, int timestamp, std::vector<unsigned char>& buffer)
-{
-    // Créer le message d’indication principal
+bool encode_kpm_indication(const string& measurement_name, double value1, int64_t value2, vector<unsigned char>& buffer) {
+    // Allocation du message d'indication principal
     E2SM_KPM_IndicationMessage_t* ind_msg = (E2SM_KPM_IndicationMessage_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_t));
     if (!ind_msg) return false;
 
-    ind_msg->present = E2SM_KPM_IndicationMessage_PR_indicationMessage_formats;
-    ind_msg->choice.indicationMessage_formats.present = E2SM_KPM_IndicationMessage_Format_PR_indicationMessage_Format1;
+    ind_msg->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format1;
 
     E2SM_KPM_IndicationMessage_Format1_t* format1 = (E2SM_KPM_IndicationMessage_Format1_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
     if (!format1) return false;
 
-    // Créer les données de mesure
-    MeasurementData_t* measData = (MeasurementData_t*)calloc(1, sizeof(MeasurementData_t));
-    if (!measData) return false;
-
-    // Créer un élément de mesure
+    // Données de mesure
     MeasurementDataItem_t* measItem = (MeasurementDataItem_t*)calloc(1, sizeof(MeasurementDataItem_t));
     if (!measItem) return false;
 
-    // Créer des valeurs de mesure
-    MeasurementRecord_t* measRecord = &measItem->measRecord;
-
-    // Élément 1 : valeur réelle
+    // Mesure 1 (valeur float)
     MeasurementRecordItem_t* mri1 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     mri1->present = MeasurementRecordItem_PR_real;
-    mri1->choice.real = metricValue;
+    mri1->choice.real = value1;
 
-    ASN_SEQUENCE_ADD(&measRecord->list, mri1);
-
-    // Élément 2 : valeur entière
+    // Mesure 2 (valeur entiere)
     MeasurementRecordItem_t* mri2 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     mri2->present = MeasurementRecordItem_PR_integer;
-    mri2->choice.integer = timestamp;
+    ASN_STRUCT_RESET(asn_DEF_INTEGER, &mri2->choice.integer);
+    if (asn_long2INTEGER(&mri2->choice.integer, value2) != 0) return false;
 
-    ASN_SEQUENCE_ADD(&measRecord->list, mri2);
+    // Ajout dans le record
+    ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri1);
+    ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri2);
 
-    ASN_SEQUENCE_ADD(&measData->list, measItem);
+    // Ajout dans MeasurementData
+    ASN_SEQUENCE_ADD(&format1->measData.list, measItem);
 
-    format1->measData = *measData;  // Copie du contenu (pas pointeur)
-    ind_msg->choice.indicationMessage_formats.choice.indicationMessage_Format1 = *format1;
+    // Assignation finale
+    ind_msg->indicationMessage_formats.choice.indicationMessage_Format1 = *format1;
 
-    // Encoder
-    asn_enc_rval_t ec;
-    unsigned char temp_buf[4096];
-    ec = asn_encode_to_buffer(nullptr, ATS_ALIGNED_BASIC_PER, &asn_DEF_E2SM_KPM_IndicationMessage, ind_msg, temp_buf, sizeof(temp_buf));
-    if (ec.encoded == -1) {
-        std::cerr << "ASN.1 encode failed." << std::endl;
-        return false;
-    }
+    // Encodage ASN.1
+    asn_enc_rval_t ec = der_encode_to_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, ind_msg, buffer.data(), buffer.size());
 
-    buffer.assign(temp_buf, temp_buf + ec.encoded);
-
-    // Libération mémoire
-    ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
-    free(format1);
-    free(measData);
-
-    return true;
+    return ec.encoded > 0;
 }
-
-
-
