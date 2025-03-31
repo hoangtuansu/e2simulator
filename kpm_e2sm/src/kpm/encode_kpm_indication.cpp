@@ -1,5 +1,4 @@
 #include "encode_kpm_indication.hpp" 
-
 #include "E2SM-KPM-IndicationMessage.h"
 #include "E2SM-KPM-IndicationMessage-Format1.h"
 #include "MeasurementDataItem.h"
@@ -8,7 +7,7 @@
 #include "MeasurementLabel.h"
 #include "MeasurementType.h"
 #include "MeasurementTypeName.h"
-#include "MeasurementInfoList.h"
+
 #include "asn_application.h"
 #include "asn_internal.h"
 #include "aper_encoder.h"
@@ -44,14 +43,11 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
     }
 
     MeasurementInfoItem_t* measInfoItem = (MeasurementInfoItem_t*)calloc(1, sizeof(MeasurementInfoItem_t));
-    if (!measInfoItem) return false;
-
     measInfoItem->measType.present = MeasurementType_PR_measName;
     OCTET_STRING_fromString(&measInfoItem->measType.choice.measName, kpi_name.c_str());
     ASN_SEQUENCE_ADD(&format1->measInfoList->list, measInfoItem);
 
     MeasurementDataItem_t* measItem = (MeasurementDataItem_t*)calloc(1, sizeof(MeasurementDataItem_t));
-    if (!measItem) return false;
 
     MeasurementRecordItem_t* mri1 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     mri1->present = MeasurementRecordItem_PR_real;
@@ -59,7 +55,7 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     MeasurementRecordItem_t* mri2 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     mri2->present = MeasurementRecordItem_PR_integer;
-    asn_long2INTEGER(&(mri2->choice.integer), (long)value2);
+    asn_long2INTEGER(&mri2->choice.integer, value2);
 
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri1);
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri2);
@@ -67,20 +63,15 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     ind_msg->indicationMessage_formats.choice.indicationMessage_Format1 = format1;
 
-    void* encoded_buf = nullptr;
-    asn_enc_rval_t enc_ret = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, nullptr, ind_msg, &encoded_buf);
+    asn_enc_rval_t enc_ret = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, nullptr, ind_msg, (void**)&buffer);
 
-    if (enc_ret.encoded <= 0 || !encoded_buf) {
+    if (enc_ret.encoded <= 0) {
         std::cerr << "Failed to encode KPM indication" << std::endl;
         ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
         return false;
     }
 
-    uint8_t* encoded_bytes = (uint8_t*)encoded_buf;
-    size_t encoded_len = (enc_ret.encoded + 7) / 8;
-    buffer.assign(encoded_bytes, encoded_bytes + encoded_len);
-
-    free(encoded_buf);
     ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
+
     return true;
 }
