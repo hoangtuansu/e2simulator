@@ -13,7 +13,9 @@
 #include "OCTET_STRING.h"
 #include "INTEGER.h"
 #include "asn_SEQUENCE_OF.h"
-#include "asn_codecs_aper.h"  // Utiliser APER spécifique pour aper_encode_to_new_buffer
+#include "aper_encoder.h"
+#include "aper_support.h"
+//#include "asn_codecs.h"  // Utiliser APER spécifique pour aper_encode_to_new_buffer
 
 #include <cstdlib>
 #include <cstring>
