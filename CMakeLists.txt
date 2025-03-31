@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10) 
+cmake_minimum_required(VERSION 3.10)
 project(e2sim_simulator)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -20,6 +20,10 @@ include_directories(
 # --- Fichiers sources ---
 file(GLOB_RECURSE CORE_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
 file(GLOB_RECURSE KPM_SOURCES ${CMAKE_SOURCE_DIR}/kpm_e2sm/src/kpm/*.cpp)
+file(GLOB ASN1C_SOURCES ${CMAKE_SOURCE_DIR}/asn1c/*.c)
+
+# --- Création d'une bibliothèque statique avec les fichiers ASN.1 générés ---
+add_library(asn1c STATIC ${ASN1C_SOURCES})
 
 # --- Exécutable final ---
 add_executable(e2sim_simulator ${CORE_SOURCES} ${KPM_SOURCES})
@@ -28,12 +32,10 @@ add_executable(e2sim_simulator ${CORE_SOURCES} ${KPM_SOURCES})
 add_library(nlohmann_json INTERFACE)
 target_include_directories(nlohmann_json INTERFACE /usr/local/include)
 
-# --- ASN.1 (à adapter si lib statique personnalisée) ---
-# add_library(asn1c STATIC IMPORTED) # si précompilée
-
 # --- Liens des bibliothèques ---
 target_link_libraries(e2sim_simulator
   nlohmann_json
+  asn1c
   sctp
 )
 
