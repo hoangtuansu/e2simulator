@@ -22,6 +22,7 @@
 #include <vector>
 #include <cstdint>
 
+// Encodage d'un message E2SM-KPM-Indication avec nom de KPI, valeurs, et buffer de sortie
 bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t value2, std::vector<unsigned char>& buffer);
 
 #endif // ENCODE_KPM_INDICATION_HPP
