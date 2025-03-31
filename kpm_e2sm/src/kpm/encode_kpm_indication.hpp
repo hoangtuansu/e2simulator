@@ -15,24 +15,13 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-#ifndef ENCODE_KPM_HPP
-#define ENCODE_KPM_HPP
+#ifndef ENCODE_KPM_INDICATION_HPP
+#define ENCODE_KPM_INDICATION_HPP
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
-// La fonction encode les valeurs JSON dans un message E2SM-KPM IndicationMessage (Format1)
-// et retourne le message encodé dans le buffer (en octets)
-//
-// Paramètres :
-//   - kpi_name : le nom du KPI ("throughput", "latency", etc.)
-//   - value : la valeur du KPI (ex: 34.5 Mbps ou 1.2 ms)
-//   - id : l'identifiant de mesure
-//   - buffer : où sera stocké le message ASN.1 encodé
-//
-// Retour : true si le message a été encodé avec succès
+bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t value2, std::vector<unsigned char>& buffer);
 
-bool encode_kpm_indication(const std::string& kpi_name, double value, int id,
-                           std::vector<unsigned char>& buffer);
-
-#endif // ENCODE_KPM_HPP
+#endif // ENCODE_KPM_INDICATION_HPP
