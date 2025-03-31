@@ -8,6 +8,9 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/asn1c
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/DEF
+  ${CMAKE_SOURCE_DIR}/src/base
+  ${CMAKE_SOURCE_DIR}/src/encoding
+  ${CMAKE_SOURCE_DIR}/src/messagerouting
   ${CMAKE_SOURCE_DIR}/src/SCTP
   ${CMAKE_SOURCE_DIR}/kpm_e2sm/src/kpm
   /usr/local/include
