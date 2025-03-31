@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 # --- Répertoires d'inclusion ---
 include_directories(
   ${CMAKE_SOURCE_DIR}/asn1c
+  ${CMAKE_SOURCE_DIR}/asn1c/asn/v03
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/DEF
   ${CMAKE_SOURCE_DIR}/src/base

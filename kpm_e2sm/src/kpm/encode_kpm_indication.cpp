@@ -15,65 +15,85 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
+#include "encode_kpm_indication.hpp"
 
-#include <iostream>
-#include <vector>
-#include <cstring>
-
-extern "C" {
 #include "E2SM-KPM-IndicationMessage.h"
 #include "E2SM-KPM-IndicationMessage-Format1.h"
 #include "MeasurementData.h"
-#include "MeasurementDataItem.h"
 #include "MeasurementRecord.h"
 #include "MeasurementRecordItem.h"
+
+#include <iostream>
+#include <vector>
+#include <cstdlib>   // Pour calloc, free
+#include <cstring>   // Pour memcpy
+
+extern "C" {
 #include "asn_application.h"
 #include "asn_internal.h"
 }
 
-bool encode_kpm_indication(
-    const std::string& slice_type,
-    double rx_brate_uplink_Mbps,
-    int ul_n_samples,
-    std::vector<uint8_t>& encoded_output
-) {
+using namespace std;
+
+bool encode_kpm_indication(const string& metricName, double metricValue, int timestamp, std::vector<unsigned char>& buffer)
+{
+    // Créer le message d’indication principal
     E2SM_KPM_IndicationMessage_t* ind_msg = (E2SM_KPM_IndicationMessage_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_t));
     if (!ind_msg) return false;
 
-    ind_msg->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format1;
+    ind_msg->present = E2SM_KPM_IndicationMessage_PR_indicationMessage_formats;
+    ind_msg->choice.indicationMessage_formats.present = E2SM_KPM_IndicationMessage_Format_PR_indicationMessage_Format1;
+
     E2SM_KPM_IndicationMessage_Format1_t* format1 = (E2SM_KPM_IndicationMessage_Format1_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
     if (!format1) return false;
 
-    format1->measData = (MeasurementData_t*)calloc(1, sizeof(MeasurementData_t));
+    // Créer les données de mesure
+    MeasurementData_t* measData = (MeasurementData_t*)calloc(1, sizeof(MeasurementData_t));
+    if (!measData) return false;
 
+    // Créer un élément de mesure
     MeasurementDataItem_t* measItem = (MeasurementDataItem_t*)calloc(1, sizeof(MeasurementDataItem_t));
-    measItem->measRecord.numberOfItems = 2;
-    ASN_SEQUENCE_ADD(&format1->measData->list, measItem);
+    if (!measItem) return false;
 
+    // Créer des valeurs de mesure
+    MeasurementRecord_t* measRecord = &measItem->measRecord;
+
+    // Élément 1 : valeur réelle
     MeasurementRecordItem_t* mri1 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
-    mri1->present = MeasurementRecordItem__present_real;
-    mri1->choice.real = rx_brate_uplink_Mbps;
-    ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri1);
+    mri1->present = MeasurementRecordItem_PR_real;
+    mri1->choice.real = metricValue;
 
+    ASN_SEQUENCE_ADD(&measRecord->list, mri1);
+
+    // Élément 2 : valeur entière
     MeasurementRecordItem_t* mri2 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
-    mri2->present = MeasurementRecordItem__present_integer;
-    mri2->choice.integer = ul_n_samples;
-    ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri2);
+    mri2->present = MeasurementRecordItem_PR_integer;
+    mri2->choice.integer = timestamp;
 
-    ind_msg->indicationMessage_formats.choice.indicationMessage_Format1 = *format1;
+    ASN_SEQUENCE_ADD(&measRecord->list, mri2);
 
-    uint8_t buffer[2048];
-    asn_enc_rval_t er = asn_encode_to_buffer(nullptr, ATS_ALIGNED_BASIC_PER,
-        &asn_DEF_E2SM_KPM_IndicationMessage, ind_msg, buffer, sizeof(buffer));
+    ASN_SEQUENCE_ADD(&measData->list, measItem);
 
-    if (er.encoded > 0) {
-        encoded_output.assign(buffer, buffer + er.encoded);
-        ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
-        return true;
-    } else {
-        ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
+    format1->measData = *measData;  // Copie du contenu (pas pointeur)
+    ind_msg->choice.indicationMessage_formats.choice.indicationMessage_Format1 = *format1;
+
+    // Encoder
+    asn_enc_rval_t ec;
+    unsigned char temp_buf[4096];
+    ec = asn_encode_to_buffer(nullptr, ATS_ALIGNED_BASIC_PER, &asn_DEF_E2SM_KPM_IndicationMessage, ind_msg, temp_buf, sizeof(temp_buf));
+    if (ec.encoded == -1) {
+        std::cerr << "ASN.1 encode failed." << std::endl;
         return false;
     }
+
+    buffer.assign(temp_buf, temp_buf + ec.encoded);
+
+    // Libération mémoire
+    ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
+    free(format1);
+    free(measData);
+
+    return true;
 }
 
 
