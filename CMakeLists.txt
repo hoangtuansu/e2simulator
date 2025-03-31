@@ -20,27 +20,21 @@ include_directories(
 # --- Fichiers sources ---
 file(GLOB_RECURSE CORE_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
 file(GLOB_RECURSE KPM_SOURCES ${CMAKE_SOURCE_DIR}/kpm_e2sm/src/kpm/*.cpp)
-file(GLOB ASN1C_SOURCES ${CMAKE_SOURCE_DIR}/asn1c/*.c)
+file(GLOB_RECURSE ASN1C_SOURCES ${CMAKE_SOURCE_DIR}/asn1c/*.c)
 
-# --- Création d'une bibliothèque statique avec les fichiers ASN.1 générés ---
+# --- Compilation de la lib ASN.1 ---
 add_library(asn1c STATIC ${ASN1C_SOURCES})
-
-# --- Exécutable final ---
-add_executable(e2sim_simulator ${CORE_SOURCES} ${KPM_SOURCES})
 
 # --- Bibliothèque JSON header-only ---
 add_library(nlohmann_json INTERFACE)
 target_include_directories(nlohmann_json INTERFACE /usr/local/include)
 
-# --- Liens des bibliothèques ---
+# --- Exécutable principal ---
+add_executable(e2sim_simulator ${CORE_SOURCES} ${KPM_SOURCES})
+
+# --- Lien des bibliothèques ---
 target_link_libraries(e2sim_simulator
-  nlohmann_json
   asn1c
+  nlohmann_json
   sctp
 )
-
-
-
-
-
-
