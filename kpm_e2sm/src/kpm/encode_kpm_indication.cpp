@@ -30,8 +30,8 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
         return false;
     }
 
-    format1->measInfoList = (MeasurementInfoList_t*)calloc(1, sizeof(MeasurementInfoList_t));
-    format1->measData = (MeasurementData_t*)calloc(1, sizeof(MeasurementData_t));
+    format1->measInfoList = (MeasurementInfoList*)calloc(1, sizeof(MeasurementInfoList));
+    format1->measData = (MeasurementData*)calloc(1, sizeof(MeasurementData));
 
     if (!format1->measInfoList || !format1->measData) {
         ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage_Format1, format1);
@@ -54,7 +54,9 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     MeasurementRecordItem_t* mri2 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     mri2->present = MeasurementRecordItem_PR_integer;
-    asn_long2INTEGER(&mri2->choice.integer, value2);
+    INTEGER_t tmp_integer;
+    asn_long2INTEGER(&tmp_integer, value2);
+    mri2->choice.integer = tmp_integer;
 
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri1);
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri2);
@@ -64,7 +66,7 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     // --- Encodage ---
     void* encoded_buf = nullptr;
-    asn_enc_rval_t enc_ret = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, nullptr, ind_msg, &encoded_buf);
+    asn_enc_rval_t enc_ret = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, 0, ind_msg, &encoded_buf);
 
     if (enc_ret.encoded <= 0 || !encoded_buf) {
         std::cerr << "Failed to encode KPM indication" << std::endl;
