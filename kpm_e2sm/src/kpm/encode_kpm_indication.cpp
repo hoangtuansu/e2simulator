@@ -32,9 +32,10 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
         return false;
     }
 
-    format1->measInfoList = (MeasurementInfoList_t*)calloc(1, sizeof(MeasurementInfoList_t));
-    format1->measData = (MeasurementData_t*)calloc(1, sizeof(MeasurementData_t));
-    
+    // Allocation correcte des listes selon les structures générées par asn1c
+    format1->measInfoList = (MeasurementInfoList*)calloc(1, sizeof(MeasurementInfoList));
+    format1->measData = (MeasurementData*)calloc(1, sizeof(MeasurementData));
+
     if (!format1->measInfoList || !format1->measData) {
         ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
         free(format1);
@@ -56,9 +57,10 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     MeasurementRecordItem_t* mri2 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     mri2->present = MeasurementRecordItem_PR_integer;
+    
     INTEGER_t tmp_integer;
     asn_long2INTEGER(&tmp_integer, value2);
-    mri2->choice.integer = tmp_integer;
+    mri2->choice.integer = tmp_integer;  // Bonne affectation
 
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri1);
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri2);
@@ -68,15 +70,14 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     // --- Encodage APER ---
     uint8_t* encoded_buf = nullptr;
-    asn_enc_rval_t enc_ret = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, 0, ind_msg, (void**)&encoded_buf);
+    ssize_t encoded_size = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, nullptr, ind_msg, (void**)&encoded_buf);
 
-    if (enc_ret.encoded <= 0 || !encoded_buf) {
+    if (encoded_size <= 0 || !encoded_buf) {
         std::cerr << "Échec d'encodage APER" << std::endl;
         ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
         return false;
     }
 
-    size_t encoded_size = (enc_ret.encoded + 7) / 8;
     buffer.assign(encoded_buf, encoded_buf + encoded_size);
 
     free(encoded_buf);
