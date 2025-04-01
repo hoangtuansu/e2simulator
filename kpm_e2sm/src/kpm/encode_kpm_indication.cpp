@@ -32,23 +32,25 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
         return false;
     }
 
-    // ✅ Allocation correcte (scénario 1,2,3,4)
+    // ✅ Allocation correcte et complète des structures ASN.1
     format1->measInfoList = (MeasurementInfoList*)calloc(1, sizeof(MeasurementInfoList));
     format1->measData = (MeasurementData*)calloc(1, sizeof(MeasurementData));
 
     if (!format1->measInfoList || !format1->measData) {
         ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
+        free(format1->measInfoList);
+        free(format1->measData);
         free(format1);
         return false;
     }
 
-    // ✅ Measurement Info correctement initialisé
+    // ✅ MeasurementInfoItem allocation et initialisation
     MeasurementInfoItem_t* measInfoItem = (MeasurementInfoItem_t*)calloc(1, sizeof(MeasurementInfoItem_t));
     measInfoItem->measType.present = MeasurementType_PR_measName;
     OCTET_STRING_fromString(&measInfoItem->measType.choice.measName, kpi_name.c_str());
     ASN_SEQUENCE_ADD(&format1->measInfoList->list, measInfoItem);
 
-    // ✅ Measurement Data correctement initialisé
+    // ✅ MeasurementDataItem allocation et initialisation
     MeasurementDataItem_t* measItem = (MeasurementDataItem_t*)calloc(1, sizeof(MeasurementDataItem_t));
 
     MeasurementRecordItem_t* mri1 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
@@ -57,10 +59,9 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     MeasurementRecordItem_t* mri2 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     mri2->present = MeasurementRecordItem_PR_integer;
-    
-    INTEGER_t tmp_integer;
-    asn_long2INTEGER(&tmp_integer, value2);
-    mri2->choice.integer = tmp_integer;
+
+    // ✅ INTEGER_t initialisation sécurisée et correcte
+    asn_long2INTEGER(&mri2->choice.integer, value2);
 
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri1);
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri2);
@@ -68,9 +69,9 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     ind_msg->indicationMessage_formats.choice.indicationMessage_Format1 = format1;
 
-    // ✅ Encodage APER correctement réalisé (gestion correcte des types et pointeurs)
+    // ✅ Encodage APER strictement correct
     uint8_t* encoded_buf = nullptr;
-    ssize_t encoded_size = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, nullptr, ind_msg, (void**)&encoded_buf);
+    ssize_t encoded_size = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, 0, ind_msg, (void**)&encoded_buf);
 
     if (encoded_size <= 0 || !encoded_buf) {
         std::cerr << "Échec de l'encodage APER" << std::endl;
