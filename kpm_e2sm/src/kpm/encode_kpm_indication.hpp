@@ -20,7 +20,6 @@
 
 #include <string>
 #include <vector>
-#include <cstdint>
 
 bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t value2, std::vector<unsigned char>& buffer);
 
