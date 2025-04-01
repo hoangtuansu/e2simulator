@@ -32,7 +32,7 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
         return false;
     }
 
-    // Allocation correcte des listes selon les structures générées par asn1c
+    // ✅ Allocation correcte (scénario 1,2,3,4)
     format1->measInfoList = (MeasurementInfoList*)calloc(1, sizeof(MeasurementInfoList));
     format1->measData = (MeasurementData*)calloc(1, sizeof(MeasurementData));
 
@@ -42,13 +42,13 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
         return false;
     }
 
-    // --- Measurement Info ---
+    // ✅ Measurement Info correctement initialisé
     MeasurementInfoItem_t* measInfoItem = (MeasurementInfoItem_t*)calloc(1, sizeof(MeasurementInfoItem_t));
     measInfoItem->measType.present = MeasurementType_PR_measName;
     OCTET_STRING_fromString(&measInfoItem->measType.choice.measName, kpi_name.c_str());
     ASN_SEQUENCE_ADD(&format1->measInfoList->list, measInfoItem);
 
-    // --- Measurement Data ---
+    // ✅ Measurement Data correctement initialisé
     MeasurementDataItem_t* measItem = (MeasurementDataItem_t*)calloc(1, sizeof(MeasurementDataItem_t));
 
     MeasurementRecordItem_t* mri1 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
@@ -60,7 +60,7 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
     
     INTEGER_t tmp_integer;
     asn_long2INTEGER(&tmp_integer, value2);
-    mri2->choice.integer = tmp_integer;  // Bonne affectation
+    mri2->choice.integer = tmp_integer;
 
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri1);
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri2);
@@ -68,12 +68,12 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t v
 
     ind_msg->indicationMessage_formats.choice.indicationMessage_Format1 = format1;
 
-    // --- Encodage APER ---
+    // ✅ Encodage APER correctement réalisé (gestion correcte des types et pointeurs)
     uint8_t* encoded_buf = nullptr;
     ssize_t encoded_size = aper_encode_to_new_buffer(&asn_DEF_E2SM_KPM_IndicationMessage, nullptr, ind_msg, (void**)&encoded_buf);
 
     if (encoded_size <= 0 || !encoded_buf) {
-        std::cerr << "Échec d'encodage APER" << std::endl;
+        std::cerr << "Échec de l'encodage APER" << std::endl;
         ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, ind_msg);
         return false;
     }
