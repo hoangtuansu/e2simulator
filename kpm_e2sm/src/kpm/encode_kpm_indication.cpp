@@ -21,7 +21,7 @@
 #include <vector>
 #include <iostream>
 
-bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t value2, std::vector<unsigned char>& buffer)
+bool encode_kpm_indication(const std::string& kpi_name, double value1, unsigned long value2, std::vector<unsigned char>& buffer)
 {
     E2SM_KPM_IndicationMessage_t* ind_msg = (E2SM_KPM_IndicationMessage_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_t));
     if (!ind_msg) return false;

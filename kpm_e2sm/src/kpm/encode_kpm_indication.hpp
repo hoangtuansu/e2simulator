@@ -21,6 +21,6 @@
 #include <string>
 #include <vector>
 
-bool encode_kpm_indication(const std::string& kpi_name, double value1, int64_t value2, std::vector<unsigned char>& buffer);
+bool encode_kpm_indication(const std::string& kpi_name, double value1, unsigned long value2, std::vector<unsigned char>& buffer);
 
 #endif // ENCODE_KPM_INDICATION_HPP

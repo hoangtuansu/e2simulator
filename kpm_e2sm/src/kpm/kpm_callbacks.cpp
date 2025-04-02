@@ -36,7 +36,7 @@ using namespace std;
 struct KPIEntry {
   std::string timestamp;
   double rx_brate_uplink_Mbps;
-  int ul_n_samples;
+  unsigned long ul_n_samples;
 };
 
 int create_sctp_socket(const std::string& ip, int port) {
