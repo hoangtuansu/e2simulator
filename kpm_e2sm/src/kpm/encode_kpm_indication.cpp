@@ -64,7 +64,7 @@ bool encode_kpm_indication(const std::string& kpi_name, double value1, unsigned 
 
     MeasurementRecordItem_t* mri2 = (MeasurementRecordItem_t*)calloc(1, sizeof(MeasurementRecordItem_t));
     mri2->present = MeasurementRecordItem_PR_integer;
-    asn_long2INTEGER(&mri2->choice.integer, value2);
+    mri2->choice.integer = value2;
 
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri1);
     ASN_SEQUENCE_ADD(&measItem->measRecord.list, mri2);
