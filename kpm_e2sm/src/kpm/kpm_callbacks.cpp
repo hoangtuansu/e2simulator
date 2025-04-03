@@ -15,114 +15,69 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-#include <iostream>
+#include "kpm_callbacks.hpp"
+#include "encode_kpm_indication.hpp"
+#include "E2AP-PDU.h"
+#include "InitiatingMessage.h"
+#include "RICsubscriptionRequest.h"
+#include "RICindication.h"
+#include "encode_e2apv1.hpp"
+#include "e2sim_defs.h"
+
 #include <fstream>
+#include <nlohmann/json.hpp>
 #include <thread>
 #include <chrono>
-#include <vector>
-#include <map>
-#include <string>
-#include <nlohmann/json.hpp>
-#include <netinet/sctp.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-
-#include "encode_kpm_indication.cpp"
-#include "build_e2ap_indication.cpp"
 
 using json = nlohmann::json;
-using namespace std;
+extern int global_sock;
+extern long global_ran_function_id;
+extern uint16_t global_ran_node_id;
 
-struct KPIEntry {
-  std::string timestamp;
-  double rx_brate_uplink_Mbps;
-  unsigned long ul_n_samples;
-};
-
-int create_sctp_socket(const std::string& ip, int port) {
-  int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_SCTP);
-  if (sock < 0) {
-    perror("socket");
-    return -1;
-  }
-  sockaddr_in serv_addr{};
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_port = htons(port);
-  inet_pton(AF_INET, ip.c_str(), &serv_addr.sin_addr);
-  if (connect(sock, (sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
-    perror("connect");
-    close(sock);
-    return -1;
-  }
-  return sock;
-}
-
-void send_kpm_sctp(int sock, const std::vector<uint8_t>& msg) {
-  ssize_t sent = sctp_sendmsg(sock, msg.data(), msg.size(), nullptr, 0, 0, 0, 0, 0, 0);
-  if (sent < 0) perror("sctp_sendmsg");
-}
-
-std::map<std::string, std::vector<KPIEntry>> load_kpi_data(const std::string& filepath) {
-  std::ifstream ifs(filepath);
-  json kpi_json = json::parse(ifs);
-  std::map<std::string, std::vector<KPIEntry>> traces;
-  for (const auto& [slice_type, entries] : kpi_json.items()) {
-    for (const auto& entry : entries) {
-      KPIEntry kpi {
-        entry["timestamp"],
-        entry["rx_brate_uplink_Mbps"],
-        entry["ul_n_samples"]
-      };
-      traces[slice_type].push_back(kpi);
+void kpm_callbacks::generate_and_send_kpm_report() {
+    std::ifstream file("kpi_traces.json");
+    if (!file.is_open()) {
+        std::cerr << "Erreur: Impossible d'ouvrir le fichier KPI." << std::endl;
+        return;
     }
-  }
-  return traces;
-}
 
-void simulate_kpi_transmission(const std::map<std::string, std::vector<KPIEntry>>& traces, int sctp_sock) {
-  const int interval_ms = 250;
-  size_t max_entries = 0;
-  for (const auto& [slice, vec] : traces)
-    max_entries = std::max(max_entries, vec.size());
+    json traces;
+    file >> traces;
 
-  for (size_t i = 0; i < max_entries; ++i) {
-    for (const auto& [slice, vec] : traces) {
-      if (i < vec.size()) {
-        const auto& kpi = vec[i];
-        std::vector<uint8_t> kpm_encoded, e2ap_encoded;
-        if (encode_kpm_indication(slice, kpi.rx_brate_uplink_Mbps, kpi.ul_n_samples, kpm_encoded)) {
-          std::cout << "[ENCODED] Slice: " << slice << " | KPM Bytes: " << kpm_encoded.size();
-          if (build_e2ap_indication(kpm_encoded, e2ap_encoded)) {
-            std::cout << " | E2AP Bytes: " << e2ap_encoded.size() << std::endl;
-            send_kpm_sctp(sctp_sock, e2ap_encoded);
-          } else {
-            std::cerr << "\n[ERROR] Failed to build E2AP Indication message" << std::endl;
-          }
-        } else {
-          std::cerr << "[ERROR] Failed to encode KPM message for slice: " << slice << std::endl;
+    for (const auto& timestamp_entry : traces) {
+        std::string ts = timestamp_entry["timestamp"];
+
+        for (auto& category : {"eMBB", "mMTC", "URLLC"}) {
+            if (!timestamp_entry.contains(category)) continue;
+            for (auto& metric : timestamp_entry[category].items()) {
+                std::string kpi_name = std::string(category) + "." + metric.key();
+                auto value = metric.value();
+
+                // Encode message
+                std::vector<unsigned char> kpm_buf;
+                bool success = false;
+
+                if (value.is_number_float()) {
+                    success = encode_kpm_indication(kpi_name, value.get<double>(), 0, kpm_buf);
+                } else if (value.is_number_unsigned()) {
+                    success = encode_kpm_indication(kpi_name, 0.0, value.get<unsigned>(), kpm_buf);
+                } else if (value.is_number_integer()) {
+                    int64_t signed_val = value.get<int64_t>();
+                    success = encode_kpm_indication(kpi_name, 0.0, static_cast<unsigned>(signed_val), kpm_buf);
+                }
+
+                if (!success) {
+                    std::cerr << "Erreur: Encodage KPM échoué pour " << kpi_name << std::endl;
+                    continue;
+                }
+
+                // Préparer et envoyer le message E2AP
+                E2AP_PDU_t* pdu = (E2AP_PDU_t*)calloc(1, sizeof(E2AP_PDU_t));
+                e2ap_encode_and_send_sctp(pdu, kpm_buf, global_sock, global_ran_function_id);
+                std::cout << "Message KPM envoyé pour KPI: " << kpi_name << " (" << ts << ")" << std::endl;
+
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
         }
-      }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
-  }
 }
-
-int main(int argc, char* argv[]) {
-  std::string trace_file = "/opt/e2sim/kpm_e2sm/kpi_traces.json";
-  std::string ric_ip = "service-ricplt-e2term-sctp-headless.ricplt.svc";
-  int ric_port = 36422;
-  if (argc >= 2) ric_ip = argv[1];
-  if (argc >= 3) ric_port = std::stoi(argv[2]);
-  int sctp_sock = create_sctp_socket(ric_ip, ric_port);
-  if (sctp_sock < 0) {
-    std::cerr << "[FATAL] Could not connect to RIC at " << ric_ip << ":" << ric_port << std::endl;
-    return 1;
-  }
-  auto traces = load_kpi_data(trace_file);
-  simulate_kpi_transmission(traces, sctp_sock);
-  close(sctp_sock);
-  return 0;
-}
-
-
-

@@ -17,9 +17,25 @@
 ******************************************************************************/
 
 
-#include "e2sim.hpp"
+#ifndef KPM_CALLBACKS_HPP
+#define KPM_CALLBACKS_HPP
 
+#include "e2sim.hpp"
+#include <string>
+
+/// Gère l’arrivée d’un message de type KPM Subscription Request
 void callback_kpm_subscription_request(E2AP_PDU_t *pdu);
 
+/// Lance la boucle d’envoi périodique des indications KPM (non utilisée si on injecte depuis un JSON externe)
 void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long actionId);
+
+/// Charge le fichier JSON de KPI et commence l’injection automatique toutes les secondes.
+/// Envoie un message E2SM-KPM par KPI, un par seconde.
+/// @param json_path Chemin vers le fichier JSON contenant les traces KPI.
+/// @param ricAddress Adresse IP du RIC.
+/// @param ricPort Port SCTP du RIC.
+void start_kpi_injection(const std::string& json_path, const std::string& ricAddress, int ricPort);
+
+#endif  // KPM_CALLBACKS_HPP
+
 
