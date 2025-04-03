@@ -15,8 +15,10 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
+#include "e2sim_sctp.hpp"
 #include "kpm_callbacks.hpp" 
 #include "encode_kpm_indication.hpp"
+#include "build_e2ap_indication.hpp"
 #include "encode_e2apv1.hpp"
 #include "E2AP-PDU.h"
 #include "InitiatingMessage.h"
