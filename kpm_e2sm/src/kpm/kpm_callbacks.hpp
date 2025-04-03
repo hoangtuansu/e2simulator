@@ -29,6 +29,7 @@ void callback_kpm_subscription_request(E2AP_PDU_t *pdu);
 /// Lance la boucle d’envoi périodique des indications KPM (non utilisée si on injecte depuis un JSON externe)
 void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long actionId);
 
+void generate_and_send_kpm_report();  // ✅ À ajouter si manquant
 /// Charge le fichier JSON de KPI et commence l’injection automatique toutes les secondes.
 /// Envoie un message E2SM-KPM par KPI, un par seconde.
 /// @param json_path Chemin vers le fichier JSON contenant les traces KPI.

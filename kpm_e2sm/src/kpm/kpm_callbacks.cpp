@@ -23,7 +23,9 @@
 #include "RICindication.h"
 #include "encode_e2apv1.hpp"
 #include "e2sim_defs.h"
+#include "e2sim.hpp"  // ou adapte selon la localisation de ta fonction
 
+#include <iostream>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <thread>
@@ -34,7 +36,7 @@ extern int global_sock;
 extern long global_ran_function_id;
 extern uint16_t global_ran_node_id;
 
-void kpm_callbacks::generate_and_send_kpm_report() {
+void generate_and_send_kpm_report() {
     std::ifstream file("kpi_traces.json");
     if (!file.is_open()) {
         std::cerr << "Erreur: Impossible d'ouvrir le fichier KPI." << std::endl;
