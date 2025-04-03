@@ -17,11 +17,11 @@
 ******************************************************************************/
 #include "kpm_callbacks.hpp"
 #include "encode_kpm_indication.hpp"
+#include "encode_e2apv1.hpp"
 #include "E2AP-PDU.h"
 #include "InitiatingMessage.h"
 #include "RICsubscriptionRequest.h"
 #include "RICindication.h"
-#include "encode_e2apv1.hpp"
 #include "e2sim_defs.h"
 #include "e2sim.hpp"  // ou adapte selon la localisation de ta fonction
 
