@@ -15,10 +15,11 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
+
 #include "kpm_callbacks.hpp"
 #include "encode_kpm_indication.hpp"
-#include "encode_e2apv1.hpp"
-#include "e2sim_sctp.hpp"              // ✅ Ajout ici
+#include "build_e2ap_indication.hpp"
+#include "e2sim_sctp.hpp"
 #include "E2AP-PDU.h"
 #include "InitiatingMessage.h"
 #include "RICsubscriptionRequest.h"
@@ -36,12 +37,6 @@ using json = nlohmann::json;
 extern int global_sock;
 extern long global_ran_function_id;
 extern uint16_t global_ran_node_id;
-
-bool encode_and_send_e2ap_sctp(const std::vector<uint8_t>& e2ap_buf, int socket_fd) {
-    // Envoie brut via SCTP
-    int sent = sctp_send_data(socket_fd, e2ap_buf);
-    return sent > 0;
-}
 
 void generate_and_send_kpm_report() {
     std::ifstream file("kpi_traces.json");
@@ -62,7 +57,6 @@ void generate_and_send_kpm_report() {
                 std::string kpi_name = std::string(category) + "." + metric.key();
                 auto value = metric.value();
 
-                // Encode message KPM
                 std::vector<unsigned char> kpm_buf;
                 bool success = false;
 
@@ -71,8 +65,8 @@ void generate_and_send_kpm_report() {
                 } else if (value.is_number_unsigned()) {
                     success = encode_kpm_indication(kpi_name, 0.0, value.get<unsigned>(), kpm_buf);
                 } else if (value.is_number_integer()) {
-                    int64_t signed_val = value.get<int64_t>();
-                    success = encode_kpm_indication(kpi_name, 0.0, static_cast<unsigned>(signed_val), kpm_buf);
+                    unsigned converted_val = static_cast<unsigned>(value.get<int64_t>());
+                    success = encode_kpm_indication(kpi_name, 0.0, converted_val, kpm_buf);
                 }
 
                 if (!success) {
@@ -80,23 +74,26 @@ void generate_and_send_kpm_report() {
                     continue;
                 }
 
-                // Encoder le message E2AP
+                std::vector<uint8_t> kpm_buf_uint(kpm_buf.begin(), kpm_buf.end());
                 std::vector<uint8_t> e2ap_buf;
-                bool ok = build_e2ap_indication(kpm_buf, e2ap_buf, global_ran_function_id, global_ran_node_id);
+
+                bool ok = build_e2ap_indication(kpm_buf_uint, e2ap_buf, global_ran_function_id, global_ran_node_id);
                 if (!ok) {
-                    std::cerr << "Erreur: E2AP build échoué pour KPI: " << kpi_name << std::endl;
+                    std::cerr << "Erreur: build_e2ap_indication a échoué" << std::endl;
                     continue;
                 }
 
-                // Envoi SCTP
-                bool sent = encode_and_send_e2ap_sctp(e2ap_buf, global_sock);
-                if (!sent) {
-                    std::cerr << "Erreur: Envoi SCTP échoué pour KPI: " << kpi_name << std::endl;
+                sctp_buffer_t sctp_data;
+                sctp_data.len = e2ap_buf.size();
+                memcpy(sctp_data.buffer, e2ap_buf.data(), sctp_data.len);
+
+                int sent = sctp_send_data(global_sock, sctp_data);
+                if (sent <= 0) {
+                    std::cerr << "Erreur: Envoi SCTP échoué pour " << kpi_name << std::endl;
                     continue;
                 }
 
                 std::cout << "Message KPM envoyé pour KPI: " << kpi_name << " (" << ts << ")" << std::endl;
-
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
         }

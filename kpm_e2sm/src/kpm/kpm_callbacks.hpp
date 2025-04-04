@@ -18,14 +18,16 @@
 #ifndef KPM_CALLBACKS_HPP
 #define KPM_CALLBACKS_HPP
 
-#include "E2AP-PDU.h"
 #include <vector>
-#include "e2sim_sctp.hpp"  // nécessaire pour sctp_send_data()
+#include <string>
+#include <cstdint>
+#include "E2AP-PDU.h"
 
-// Fonction principale de génération/envoi des rapports KPM
+// Déclaration de la fonction principale de génération et d'envoi des rapports KPM
 void generate_and_send_kpm_report();
 
-// Fonction interne : encode un PDU E2AP et l'envoie via SCTP
-bool encode_and_send_e2ap_sctp(E2AP_PDU_t* pdu, int socket_fd);
+// Encodage et envoi via SCTP (E2AP wrapper)
+bool encode_and_send_e2ap_sctp(const std::vector<unsigned char>& kpm_encoded, int socket_fd);
 
 #endif // KPM_CALLBACKS_HPP
+
