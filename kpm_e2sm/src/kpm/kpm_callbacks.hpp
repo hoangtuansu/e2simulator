@@ -15,28 +15,17 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-
-
 #ifndef KPM_CALLBACKS_HPP
 #define KPM_CALLBACKS_HPP
 
-#include "e2sim.hpp"
-#include <string>
+#include "E2AP-PDU.h"
+#include <vector>
+#include "e2sim_sctp.hpp"  // nécessaire pour sctp_send_data()
 
-/// Gère l’arrivée d’un message de type KPM Subscription Request
-void callback_kpm_subscription_request(E2AP_PDU_t *pdu);
+// Fonction principale de génération/envoi des rapports KPM
+void generate_and_send_kpm_report();
 
-/// Lance la boucle d’envoi périodique des indications KPM (non utilisée si on injecte depuis un JSON externe)
-void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long actionId);
+// Fonction interne : encode un PDU E2AP et l'envoie via SCTP
+bool encode_and_send_e2ap_sctp(E2AP_PDU_t* pdu, int socket_fd);
 
-void generate_and_send_kpm_report();  // ✅ À ajouter si manquant
-/// Charge le fichier JSON de KPI et commence l’injection automatique toutes les secondes.
-/// Envoie un message E2SM-KPM par KPI, un par seconde.
-/// @param json_path Chemin vers le fichier JSON contenant les traces KPI.
-/// @param ricAddress Adresse IP du RIC.
-/// @param ricPort Port SCTP du RIC.
-void start_kpi_injection(const std::string& json_path, const std::string& ricAddress, int ricPort);
-
-#endif  // KPM_CALLBACKS_HPP
-
-
+#endif // KPM_CALLBACKS_HPP

@@ -15,11 +15,10 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-#include "e2sim_sctp.hpp"
-#include "kpm_callbacks.hpp" 
+#include "kpm_callbacks.hpp"
 #include "encode_kpm_indication.hpp"
-#include "build_e2ap_indication.hpp"
 #include "encode_e2apv1.hpp"
+#include "e2sim_sctp.hpp"              // ✅ Ajout ici
 #include "E2AP-PDU.h"
 #include "InitiatingMessage.h"
 #include "RICsubscriptionRequest.h"
@@ -32,34 +31,15 @@
 #include <nlohmann/json.hpp>
 #include <thread>
 #include <chrono>
-#include <cstring>  // pour memcpy
-
-extern "C" {
-    #include "asn_application.h"
-    #include "asn_internal.h"
-    #include "per_encoder.h"
-}
 
 using json = nlohmann::json;
 extern int global_sock;
 extern long global_ran_function_id;
 extern uint16_t global_ran_node_id;
 
-// ✅ Fonction encodage + envoi E2AP sur SCTP
-bool encode_and_send_e2ap_sctp(E2AP_PDU_t* pdu, int socket_fd) {
-    uint8_t buffer[4096];
-    asn_enc_rval_t er = asn_encode_to_buffer(nullptr, ATS_ALIGNED_BASIC_PER,
-                                             &asn_DEF_E2AP_PDU, pdu, buffer, sizeof(buffer));
-    if (er.encoded <= 0) {
-        std::cerr << "[E2AP ERROR] Échec d'encodage du message E2AP." << std::endl;
-        return false;
-    }
-
-    sctp_buffer_t sctp_data;
-    memcpy(sctp_data.buffer, buffer, er.encoded);
-    sctp_data.len = er.encoded;
-
-    int sent = sctp_send_data(socket_fd, sctp_data);
+bool encode_and_send_e2ap_sctp(const std::vector<uint8_t>& e2ap_buf, int socket_fd) {
+    // Envoie brut via SCTP
+    int sent = sctp_send_data(socket_fd, e2ap_buf);
     return sent > 0;
 }
 
@@ -82,7 +62,7 @@ void generate_and_send_kpm_report() {
                 std::string kpi_name = std::string(category) + "." + metric.key();
                 auto value = metric.value();
 
-                // Encode message
+                // Encode message KPM
                 std::vector<unsigned char> kpm_buf;
                 bool success = false;
 
@@ -100,15 +80,23 @@ void generate_and_send_kpm_report() {
                     continue;
                 }
 
-                // Construire et envoyer le message E2AP
-                E2AP_PDU_t* pdu = build_e2ap_indication(global_ran_function_id, global_ran_node_id, kpm_buf);
-                if (!encode_and_send_e2ap_sctp(pdu, global_sock)) {
-                    std::cerr << "[E2AP ERROR] Échec d'envoi du message pour " << kpi_name << std::endl;
-                } else {
-                    std::cout << "Message KPM envoyé pour KPI: " << kpi_name << " (" << ts << ")" << std::endl;
+                // Encoder le message E2AP
+                std::vector<uint8_t> e2ap_buf;
+                bool ok = build_e2ap_indication(kpm_buf, e2ap_buf, global_ran_function_id, global_ran_node_id);
+                if (!ok) {
+                    std::cerr << "Erreur: E2AP build échoué pour KPI: " << kpi_name << std::endl;
+                    continue;
                 }
 
-                ASN_STRUCT_FREE(asn_DEF_E2AP_PDU, pdu);
+                // Envoi SCTP
+                bool sent = encode_and_send_e2ap_sctp(e2ap_buf, global_sock);
+                if (!sent) {
+                    std::cerr << "Erreur: Envoi SCTP échoué pour KPI: " << kpi_name << std::endl;
+                    continue;
+                }
+
+                std::cout << "Message KPM envoyé pour KPI: " << kpi_name << " (" << ts << ")" << std::endl;
+
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
         }
