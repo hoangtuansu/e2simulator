@@ -19,6 +19,7 @@ include_directories(
 
 # --- Fichiers sources ---
 file(GLOB_RECURSE CORE_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE CORE_C_SOURCES ${CMAKE_SOURCE_DIR}/src/*.c)
 file(GLOB_RECURSE KPM_SOURCES ${CMAKE_SOURCE_DIR}/kpm_e2sm/src/kpm/*.cpp)
 file(GLOB_RECURSE ASN1C_SOURCES ${CMAKE_SOURCE_DIR}/asn1c/*.c)
 
@@ -30,11 +31,11 @@ add_library(nlohmann_json INTERFACE)
 target_include_directories(nlohmann_json INTERFACE /usr/local/include)
 
 # --- Exécutable principal ---
-add_executable(e2sim_simulator ${CORE_SOURCES} ${KPM_SOURCES})
+add_executable(e2sim_simulator ${CORE_SOURCES} ${CORE_C_SOURCES} ${KPM_SOURCES})
+target_link_libraries(e2sim_simulator asn1c nlohmann_json)
 
-# --- Lien des bibliothèques ---
-target_link_libraries(e2sim_simulator
-  asn1c
-  nlohmann_json
-  sctp
-)
+# Pour le SCTP (ajoute cette ligne si nécessaire)
+find_library(SCTP_LIBRARY sctp)
+if(SCTP_LIBRARY)
+  target_link_libraries(e2sim_simulator ${SCTP_LIBRARY})
+endif()
