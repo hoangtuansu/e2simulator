@@ -169,4 +169,9 @@ IF( EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
 	#set( CPACK_COMPONENTS_ALL Libraries ApplicationData )
 
 	INCLUDE( CPack )
+
+  # Installer le binaire e2sim_simulator s’il est compilé ailleurs (ex: dans /build/)
+install(PROGRAMS ${CMAKE_BINARY_DIR}/e2sim_simulator DESTINATION bin)
+
+
 ENDIF()
