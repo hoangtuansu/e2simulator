@@ -5,8 +5,8 @@ IMAGE_NAME="e2sim_simulator"
 CONTAINER_NAME="e2sim-kpm"
 
 # Adresse du RIC (SCTP endpoint dans le cluster O-RAN)
-RIC_HOST="service-ricplt-e2term-sctp-headless.ricplt.svc"
-RIC_PORT=36422
+RIC_HOST="kpm_sim 10.180.113.156"
+RIC_PORT=32222
 
 # Construire l'image Docker
 echo "🔨 Construction de l'image Docker..."
