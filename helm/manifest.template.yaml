@@ -1,33 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: e2sim-kpm
-  namespace: mory
+  name: e2sim
+  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: e2sim-kpm
+      app: e2sim
   template:
     metadata:
       labels:
-        app: e2sim-kpm
+        app: e2sim
     spec:
       containers:
-        - name: e2sim-kpm
-          image: registry.hub.docker.com/morymoussanabe1/e2sim_simulator:0.5
+        - name: e2sim-container
+          image: ${IMAGE_NAME}:${IMAGE_TAG}
           command:
             - sh
             - '-c'
-            - kpm_sim 10.180.113.156 32222
-          env:
-            - name: E2NODE_ID
-              value: '1011'
-            - name: RAN_FUNC_ID
-              value: '1234'
+            - kpm_sim service-ricplt-e2term-sctp-headless.ricplt.svc 36422
           terminationMessagePolicy: File
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
-
-
 

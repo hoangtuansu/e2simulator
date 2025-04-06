@@ -1,30 +1,41 @@
-FROM debian:bullseye
+FROM debian:bullseye-slim
+	
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	autoconf \
+	automake \
+	bison \
+	build-essential \
+	cmake \
+	flex \
+	git \
+	libboost-all-dev \
+	libsctp-dev \
+	libtool \
+	lksctp-tools \
+	net-tools \
+	&& rm -rf /var/lib/apt/lists/*
 
-# Installer les dépendances
-RUN apt-get update && apt-get install -y \
-  build-essential git cmake libsctp-dev lksctp-tools autoconf automake \
-  libtool bison flex libboost-all-dev iputils-ping \
-  net-tools nano vim tcpdump nmap && \
-  apt-get clean
+RUN mkdir -p /opt/e2sim/asn1c \
+	/opt/e2sim/src \
+	/usr/local/include/nlohmann \
+	/opt/e2sim/build
 
-# Cloner la bibliothèque JSON
-RUN git clone https://github.com/azadkuh/nlohmann_json_release.git
-RUN mkdir -p /usr/local/include/nlohmann && \
-    cp nlohmann_json_release/json.hpp /usr/local/include/nlohmann
-
-# Créer les répertoires nécessaires
-RUN mkdir -p /opt/e2sim/asn1c /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/src /opt/e2sim/kpm_e2sm/src/kpm
-
-# Copier les fichiers sources
+COPY src/nlohmann_json.hpp /usr/local/include/nlohmann/json.hpp
 COPY CMakeLists.txt /opt/e2sim/
 COPY asn1c/ /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
-COPY kpm_e2sm/src/kpm/ /opt/e2sim/kpm_e2sm/src/kpm/
-COPY kpm_e2sm/src/kpm/kpi_traces.json /opt/e2sim/kpm_e2sm/src/kpm/kpi_traces.json
-COPY build_and_run.sh /opt/e2sim/build_and_run.sh
 
-# Construire e2sim (core + simulateur personnalisé)
-RUN mkdir -p /opt/e2sim/build && cd /opt/e2sim/build && cmake .. && make
+WORKDIR /opt/e2sim/build
+RUN cmake .. && make package \
+&& cmake .. -DDEV_PKG=1 && make package \
+&& dpkg -i e2sim_1.0.0_amd64.deb e2sim-dev_1.0.0_amd64.deb \
+&& rm -f *.deb
+	
+RUN mkdir -p /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/kpm_e2sm/.build
 
-# Commande par défaut : simulateur avec envoi SCTP
-CMD ["/opt/e2sim/build/e2sim_simulator"]
+COPY ./kpm_e2sm/ /opt/e2sim/kpm_e2sm/
+COPY ./kpm_e2sm/src/kpm/config.json /opt/e2sim/kpm_e2sm/
+
+WORKDIR /opt/e2sim/kpm_e2sm/.build
+RUN cmake .. && make install
