@@ -45,10 +45,10 @@ RUN dpkg -i e2sim_1.0.0_amd64.deb && \
     dpkg -i e2sim-dev_1.0.0_amd64.deb || true && \
     rm -f *.deb
 
-# Copier les headers ASN.1 générés pour le build KPM
-RUN cp /opt/e2sim/build/asn1c/*.h /opt/e2sim/kpm_e2sm/asn1c/
+# ✅ Solution 2: Copier les headers ASN.1 pour KPM (si nécessaires)
+RUN cp /opt/e2sim/build/asn1c/*.h /opt/e2sim/kpm_e2sm/asn1c/ || true
 
-# Compilation du module KPM (avec accès aux headers ASN.1)
+# Compilation du module KPM (sans make install)
 WORKDIR /opt/e2sim/kpm_e2sm/.build
 RUN cmake .. && make -j$(nproc)
 

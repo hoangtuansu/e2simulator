@@ -16,17 +16,17 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Ajouter un exécutable pour le simulateur de KPI
-add_executable(e2sim_simulator
-  kpm_callbacks.cpp
-)
+#add_executable(e2sim_simulator
+#  kpm_callbacks.cpp
+#)
 
 # Ajouter l'inclusion manuelle de json.hpp
-target_include_directories(e2sim_simulator PRIVATE /usr/local/include)
+#target_include_directories(e2sim_simulator PRIVATE /usr/local/include)
 
 # Lier uniquement les bibliothèques nécessaires
-target_link_libraries(e2sim_simulator
-  asn1c_library_name  # <- à adapter à ton projet ASN.1
-)
+#target_link_libraries(e2sim_simulator
+#  asn1c_library_name  # <- à adapter à ton projet ASN.1
+#)
 
 
 
