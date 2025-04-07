@@ -148,7 +148,7 @@ ENDIF()
 
 
 # Construction de l'exécutable e2sim_simulator
-add_executable(e2sim_simulator src/base/e2sim.cpp)
+add_executable(e2sim_simulator src/main.cpp)
 
 # Lier l'exécutable à la librairie partagée
 target_link_libraries(e2sim_simulator PRIVATE e2sim_shared)
