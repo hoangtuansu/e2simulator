@@ -155,11 +155,13 @@ IF( EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
 ENDIF()
 
 
-# Construction de l'exécutable e2sim_simulator avec support KPM
 add_executable(e2sim_simulator
   src/main.cpp
   kpm_e2sm/src/kpm/kpm_callbacks.cpp
+  kpm_e2sm/src/kpm/encode_kpm_indication.cpp
+  kpm_e2sm/src/kpm/build_e2ap_indication.cpp   # si cette fonction est ici
 )
+
 
 # Lier l'exécutable à la librairie partagée
 target_link_libraries(e2sim_simulator PRIVATE e2sim_shared)
