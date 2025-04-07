@@ -64,7 +64,7 @@ endif()
 
 set ( srcd "${CMAKE_CURRENT_SOURCE_DIR}" )
 
-include_directories( "asn1c;${srcd}/src/DEF;${srcd}/src/SCTP;${srcd}/src/messagerouting;${srcd}/src/base;${srcd}/src/encoding" )
+include_directories( "asn1c;${srcd}/src/DEF;${srcd}/src/SCTP;${srcd}/src/messagerouting;${srcd}/src/base;${srcd}/src/encoding;${srcd}/kpm_e2sm/src/kpm" )
 
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 set( CMAKE_C_FLAGS "-g " )
