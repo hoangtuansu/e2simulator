@@ -33,19 +33,21 @@ COPY kpm_e2sm/ /opt/e2sim/kpm_e2sm/
 
 # Compilation du projet principal (e2sim)
 WORKDIR /opt/e2sim/build
-RUN cmake .. && make -j$(nproc) && make package
+RUN cmake .. && make -j$(nproc) && make package \
+ && cp e2sim_*.deb /tmp/
 
-# Nettoyage entre les deux builds pour éviter les conflits
-RUN rm -rf * && cmake .. -DDEV_PKG=1 && make -j$(nproc) && make package
+# Nettoyage entre les deux builds pour éviter conflits + reconfiguration
+RUN rm -rf * && cmake .. -DDEV_PKG=1 && make -j$(nproc) && make package \
+ && cp /tmp/e2sim_*.deb ./
 
 # Installation des paquets générés sans conflit
 RUN dpkg -i e2sim_1.0.0_amd64.deb && \
     dpkg -i e2sim-dev_1.0.0_amd64.deb || true && \
     rm -f *.deb
 
-# Compilation du module KPM
+# Compilation du module KPM (pas besoin de make install)
 WORKDIR /opt/e2sim/kpm_e2sm/.build
-RUN cmake .. && make install
+RUN cmake .. && make -j$(nproc)
 
 # Lancer automatiquement e2sim_simulator
 CMD ["/usr/local/bin/e2sim_simulator"]
