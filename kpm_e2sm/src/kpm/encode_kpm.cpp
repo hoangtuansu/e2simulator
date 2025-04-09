@@ -31,18 +31,20 @@ using namespace std;
 using namespace std::chrono;
 
 const char* performance_measurements[] = {
-  "DRB.RlcSduTransmittedVolumeDL",
-  "DRB.RlcSduTransmittedVolumeUL",
-  "DRB.PerDataVolumeDLDist.Bin",
-  "DRB.PerDataVolumeULDist.Bin",
-  "DRB.RlcPacketDropRateDLDist",
-  "DRB.PacketLossRateULDist",
-  "L1M.DL-SS-RSRP.SSB",
-  "L1M.DL-SS-SINR.SSB",
-  "L1M.UL-SRS-RSRP"
+    "dl_n_samples",
+    "dl_buffer_bytes",
+    "tx_brate_downlink_mbps",
+    "tx_pkts_downlink",
+    "ul_n_samples",
+    "ul_buffer_bytes",
+    "rx_brate_uplink_mbps",
+    "rx_pkts_uplink",
+    "traffic_type_URLLC",
+    "traffic_type_eMBB",
+    "traffic_type_mMTC"
   };
 
-int NUMBER_MEASUREMENTS = 9;
+int NUMBER_MEASUREMENTS = 11;
 
 void encode_kpm_function_description(E2SM_KPM_RANfunction_Description_t* ranfunc_desc) {
   uint8_t* short_name = (uint8_t*)"ORAN-E2SM-KPM";
