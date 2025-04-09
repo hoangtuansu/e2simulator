@@ -231,3 +231,100 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
     }
   }
 }
+void callback_kpm_subscription_request(E2AP_PDU_t *sub_req_pdu) {
+  RICsubscriptionRequest_t orig_req =
+    sub_req_pdu->choice.initiatingMessage->value.choice.RICsubscriptionRequest;
+
+  int count = orig_req.protocolIEs.list.count;
+  RICsubscriptionRequest_IEs_t **ies = (RICsubscriptionRequest_IEs_t**)orig_req.protocolIEs.list.array;
+
+  long reqRequestorId = 0;
+  long reqInstanceId = 0;
+  long reqActionId = 0;
+
+  std::vector<long> actionIdsAccept;
+  std::vector<long> actionIdsReject;
+
+  for (int i = 0; i < count; i++) {
+    RICsubscriptionRequest_IEs_t *next_ie = ies[i];
+
+    switch (next_ie->value.present) {
+      case RICsubscriptionRequest_IEs__value_PR_RICrequestID: {
+        RICrequestID_t reqId = next_ie->value.choice.RICrequestID;
+        reqRequestorId = reqId.ricRequestorID;
+        reqInstanceId = reqId.ricInstanceID;
+        LOG_I("Received RIC Subscription Request: Requestor ID: %ld, Instance ID: %ld", reqRequestorId, reqInstanceId);
+        break;
+      }
+
+      case RICsubscriptionRequest_IEs__value_PR_RICsubscriptionDetails: {
+        RICsubscriptionDetails_t subDetails = next_ie->value.choice.RICsubscriptionDetails;
+        RICactions_ToBeSetup_List_t actionList = subDetails.ricAction_ToBeSetup_List;
+
+        int actionCount = actionList.list.count;
+        auto **item_array = actionList.list.array;
+
+        bool found = false;
+
+        for (int j = 0; j < actionCount; j++) {
+          auto *next_item = item_array[j];
+          RICactionID_t actionId = ((RICaction_ToBeSetup_ItemIEs*)next_item)->value.choice.RICaction_ToBeSetup_Item.ricActionID;
+          RICactionType_t actionType = ((RICaction_ToBeSetup_ItemIEs*)next_item)->value.choice.RICaction_ToBeSetup_Item.ricActionType;
+
+          RICactionDefinition_t *ricActionDefinition = ((RICaction_ToBeSetup_ItemIEs*)next_item)->value.choice.RICaction_ToBeSetup_Item.ricActionDefinition;
+
+          // Décode l'action definition si présente
+          if (ricActionDefinition) {
+            E2SM_KPM_ActionDefinition *decoded = nullptr;
+            asn_dec_rval_t rval = asn_decode(nullptr, ATS_ALIGNED_BASIC_PER,
+                                             &asn_DEF_E2SM_KPM_ActionDefinition,
+                                             (void**)&decoded,
+                                             ricActionDefinition->buf,
+                                             ricActionDefinition->size);
+
+            if (rval.code != RC_OK) {
+              LOG_E("Failed to decode ActionDefinition.");
+              exit(1);
+            }
+
+            xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, decoded);
+            ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, decoded);
+          }
+
+          if (!found && actionType == RICactionType_report) {
+            reqActionId = actionId;
+            actionIdsAccept.push_back(actionId);
+            found = true;
+          } else {
+            actionIdsReject.push_back(actionId);
+          }
+        }
+        break;
+      }
+
+      default:
+        break;
+    }
+  }
+
+  // Création de la réponse E2AP
+  E2AP_PDU *e2ap_pdu = (E2AP_PDU*)calloc(1, sizeof(E2AP_PDU));
+
+  encoding::generate_e2apv1_subscription_response_success(
+    e2ap_pdu,
+    actionIdsAccept.data(),
+    actionIdsReject.data(),
+    actionIdsAccept.size(),
+    actionIdsReject.size(),
+    reqRequestorId,
+    reqInstanceId
+  );
+
+  LOG_I("Sending E2AP subscription response...");
+  e2sim.encode_and_send_sctp_data(e2ap_pdu);
+
+  // Lance la génération des rapports KPM
+  LOG_I("Starting KPM report loop after subscription...");
+  run_report_loop(reqRequestorId, reqInstanceId, gFuncId, reqActionId);
+}
+
