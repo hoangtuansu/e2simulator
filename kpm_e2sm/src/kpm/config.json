@@ -1,12 +1,15 @@
 {
-  "pm": [
-    "throughput", 
-    "pdcpBytesDl", 
-    "pdcpBytesUl", 
-    "availPrbDl", 
-    "availPrbUl",
-    "rsrp",
-    "rsrq",
-    "rssinr"
-  ]
+"columns": [
+    "dl_n_samples",
+    "dl_buffer_bytes",
+    "tx_brate_downlink_mbps",
+    "tx_pkts_downlink",
+    "ul_n_samples",
+    "ul_buffer_bytes",
+    "rx_brate_uplink_mbps",
+    "rx_pkts_uplink",
+    "traffic_type_URLLC",
+    "traffic_type_eMBB",
+    "traffic_type_mMTC"
+  ] 
 }
