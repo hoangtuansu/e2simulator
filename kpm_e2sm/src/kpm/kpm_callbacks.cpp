@@ -15,87 +15,315 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-
-#include "kpm_callbacks.hpp"
-#include "encode_kpm_indication.hpp"
-#include "build_e2ap_indication.hpp"
-#include "e2sim_sctp.hpp"
-#include "E2AP-PDU.h"
-#include "InitiatingMessage.h"
-#include "RICsubscriptionRequest.h"
-#include "RICindication.h"
-#include "e2sim_defs.h"
-#include "e2sim.hpp"
-
+#include <chrono>
 #include <iostream>
 #include <fstream>
+#include <vector>
+
+extern "C" {
+  #include "OCTET_STRING.h"
+  #include "asn_application.h"
+  #include "E2SM-KPM-IndicationMessage.h"
+  #include "E2SM-KPM-RANfunction-Description.h"
+  #include "E2SM-KPM-IndicationHeader-Format1.h"
+  #include "E2SM-KPM-ActionDefinition.h"
+  #include "E2SM-KPM-IndicationHeader.h"
+  #include "E2AP-PDU.h"
+  #include "RICsubscriptionRequest.h"
+  #include "RICsubscriptionResponse.h"
+  #include "RICactionType.h"
+  #include "ProtocolIE-Field.h"
+  #include "ProtocolIE-SingleContainer.h"
+  #include "InitiatingMessage.h"
+}
+
+#include "kpm_callbacks.hpp"
+#include "encode_kpm.hpp"
+#include "encode_e2apv1.hpp"
+
 #include <nlohmann/json.hpp>
 #include <thread>
 #include <chrono>
+#include <time.h>
+#include <random>
+
+#include "viavi_connector.hpp"
+#include "errno.h"
+#include "e2sim_defs.h"
+#include <cstdlib>
 
 using json = nlohmann::json;
-extern int global_sock;
-extern long global_ran_function_id;
-extern uint16_t global_ran_node_id;
+using namespace std;
+using namespace std::chrono;
 
-void generate_and_send_kpm_report() {
-    std::ifstream file("kpi_traces.json");
-    if (!file.is_open()) {
-        std::cerr << "Erreur: Impossible d'ouvrir le fichier KPI." << std::endl;
-        return;
-    }
+class E2Sim;
+int gFuncId;
 
-    json traces;
-    file >> traces;
+E2Sim e2sim;
 
-    for (const auto& timestamp_entry : traces) {
-        std::string ts = timestamp_entry["timestamp"];
+int main(int argc, char* argv[]) {
+  LOG_I("Starting KPM simulator");
 
-        for (auto& category : {"eMBB", "mMTC", "URLLC"}) {
-            if (!timestamp_entry.contains(category)) continue;
-            for (auto& metric : timestamp_entry[category].items()) {
-                std::string kpi_name = std::string(category) + "." + metric.key();
-                auto value = metric.value();
+  uint8_t *nrcellid_buf = (uint8_t*)calloc(1, 5);
+  nrcellid_buf[0] = 0x22;
+  nrcellid_buf[1] = 0x5B;
+  nrcellid_buf[2] = 0xD6;
+  nrcellid_buf[3] = 0x00;
+  nrcellid_buf[4] = 0x70;
 
-                std::vector<unsigned char> kpm_buf;
-                bool success = false;
+  std::ifstream ifs("/opt/e2sim/kpm_e2sm/config.json");
+  json e2sim_config = json::parse(ifs);
 
-                if (value.is_number_float()) {
-                    success = encode_kpm_indication(kpi_name, value.get<double>(), 0, kpm_buf);
-                } else if (value.is_number_unsigned()) {
-                    success = encode_kpm_indication(kpi_name, 0.0, value.get<unsigned>(), kpm_buf);
-                } else if (value.is_number_integer()) {
-                    unsigned converted_val = static_cast<unsigned>(value.get<int64_t>());
-                    success = encode_kpm_indication(kpi_name, 0.0, converted_val, kpm_buf);
-                }
+  int numPMs = e2sim_config["pm"].size();
+  LOG_D("There are %d metrics", numPMs);
 
-                if (!success) {
-                    std::cerr << "Erreur: Encodage KPM échoué pour " << kpi_name << std::endl;
-                    continue;
-                }
+  std::string pms[numPMs];
+  std::string pm_str = "";
 
-                std::vector<uint8_t> kpm_buf_uint(kpm_buf.begin(), kpm_buf.end());
-                std::vector<uint8_t> e2ap_buf;
+  for (int i = 0; i < numPMs; i++) {
+    json::json_pointer pm(std::string("/pm/") + std::to_string(i));
+    pms[i] = e2sim_config[pm].get<std::string>();
+    pm_str = pm_str + pms[i] + (i == (numPMs - 1) ? "" : ", ");
+  }
 
-                bool ok = build_e2ap_indication(kpm_buf_uint, e2ap_buf, global_ran_function_id, global_ran_node_id);
-                if (!ok) {
-                    std::cerr << "Erreur: build_e2ap_indication a échoué" << std::endl;
-                    continue;
-                }
+  LOG_I("List of metrics: %s", pm_str.c_str());
 
-                sctp_buffer_t sctp_data;
-                sctp_data.len = e2ap_buf.size();
-                memcpy(sctp_data.buffer, e2ap_buf.data(), sctp_data.len);
+  asn_codec_ctx_t *opt_cod;
 
-                int sent = sctp_send_data(global_sock, sctp_data);
-                if (sent <= 0) {
-                    std::cerr << "Erreur: Envoi SCTP échoué pour " << kpi_name << std::endl;
-                    continue;
-                }
+  E2SM_KPM_RANfunction_Description_t *ranfunc_desc =
+    (E2SM_KPM_RANfunction_Description_t*)calloc(1, sizeof(E2SM_KPM_RANfunction_Description_t));
+  encode_kpm_function_description(ranfunc_desc);
 
-                std::cout << "Message KPM envoyé pour KPI: " << kpi_name << " (" << ts << ")" << std::endl;
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-            }
+  uint8_t e2smbuffer[8192] = {0, };
+  size_t e2smbuffer_size = 8192;
+
+  asn_enc_rval_t er =
+    asn_encode_to_buffer(opt_cod,
+                         ATS_ALIGNED_BASIC_PER,
+                         &asn_DEF_E2SM_KPM_RANfunction_Description,
+                         ranfunc_desc, e2smbuffer, e2smbuffer_size);
+
+  if (er.encoded == -1) {
+    LOG_I("Failed to serialize function description data. Detail: %s.", asn_DEF_E2SM_KPM_RANfunction_Description.name);
+  } else if (er.encoded > e2smbuffer_size) {
+    LOG_I("Buffer of size %zu is too small for %s, need %zu", e2smbuffer_size, asn_DEF_E2SM_KPM_RANfunction_Description.name, er.encoded);
+  }
+
+  uint8_t *ranfuncdesc = (uint8_t*)calloc(1, er.encoded);
+  memcpy(ranfuncdesc, e2smbuffer, er.encoded);
+
+  OCTET_STRING_t *ranfunc_ostr = (OCTET_STRING_t*)calloc(1, sizeof(OCTET_STRING_t));
+  ranfunc_ostr->buf = (uint8_t*)calloc(1, er.encoded);
+  ranfunc_ostr->size = er.encoded;
+  memcpy(ranfunc_ostr->buf, e2smbuffer, er.encoded);
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> distrib(0, 4095);
+
+  const char* func_id_str = std::getenv("RAN_FUNC_ID");
+  ::gFuncId = func_id_str == nullptr ? distrib(gen) : std::stoi(func_id_str);
+
+  e2sim.register_e2sm(gFuncId, ranfunc_ostr);
+  e2sim.register_subscription_callback(gFuncId, &callback_kpm_subscription_request);
+  e2sim.run_loop(argc, argv);
+}
+
+void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long actionId) {
+  std::ifstream config_file("/opt/e2sim/kpm_e2sm/config.json");
+  if (!config_file.is_open()) {
+    LOG_E("Unable to open config.json");
+    exit(1);
+  }
+
+  json config_json;
+  config_file >> config_json;
+  std::vector<std::string> metric_names = config_json["columns"].get<std::vector<std::string>>();
+  config_file.close();
+
+  std::ifstream reports_file("/opt/e2sim/kpm_e2sm/cellmeasreport.json");
+  if (!reports_file.is_open()) {
+    LOG_E("Can't open cellmeasreport.json, exiting ...");
+    exit(1);
+  }
+
+  json all_reports_json;
+  reports_file >> all_reports_json;
+  reports_file.close();
+
+  long seqNum = 1;
+  std::vector<std::string> traffic_types = {"eMBB", "URLLC", "mMTC"};
+
+  for (const auto& traffic : traffic_types) {
+    const auto& report_list = all_reports_json[traffic];
+
+    for (const auto& report_entry : report_list) {
+      std::vector<double> metric_values;
+
+      for (const auto& metric : metric_names) {
+        try {
+          double value = report_entry.at(metric).get<double>();
+          metric_values.push_back(value);
+        } catch (...) {
+          LOG_D("Metric %s not found in traffic type %s. Inserting 0.0 as default.", metric.c_str(), traffic.c_str());
+          metric_values.push_back(0.0);
         }
+      }
+
+      LOG_I("Sending E2Node report for traffic type: %s", traffic.c_str());
+
+      E2SM_KPM_IndicationMessage_t *ind_message_style1 = (E2SM_KPM_IndicationMessage_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_t));
+      E2AP_PDU *pdu_style1 = (E2AP_PDU*)calloc(1, sizeof(E2AP_PDU));
+
+      const char** cell_pms_labels = new const char*[metric_names.size()];
+      for (size_t i = 0; i < metric_names.size(); ++i) {
+        cell_pms_labels[i] = metric_names[i].c_str();
+      }
+
+      kpm_report_indication_message_initialized(ind_message_style1, cell_pms_labels, metric_values.data(), metric_names.size());
+
+      uint8_t e2sm_message_buf_style1[8192] = {0};
+      size_t e2sm_message_buf_size_style1 = 8192;
+      asn_codec_ctx_t *opt_cod2;
+
+      asn_enc_rval_t er_message_style1 = asn_encode_to_buffer(opt_cod2,
+                                                              ATS_ALIGNED_BASIC_PER,
+                                                              &asn_DEF_E2SM_KPM_IndicationMessage,
+                                                              ind_message_style1,
+                                                              e2sm_message_buf_style1, e2sm_message_buf_size_style1);
+
+      if (er_message_style1.encoded <= 0) {
+        LOG_E("Failed to encode E2SM KPM Indication Message.");
+        exit(1);
+      }
+
+      E2SM_KPM_IndicationHeader_t* ind_header_style1 = (E2SM_KPM_IndicationHeader_t*)calloc(1, sizeof(E2SM_KPM_IndicationHeader_t));
+      kpm_report_indication_header_initialized(ind_header_style1);
+
+      uint8_t e2sm_header_buf_style1[8192] = {0};
+      size_t e2sm_header_buf_size_style1 = 8192;
+
+      asn_enc_rval_t er_header_style1 = asn_encode_to_buffer(opt_cod2,
+                                                             ATS_ALIGNED_BASIC_PER,
+                                                             &asn_DEF_E2SM_KPM_IndicationHeader,
+                                                             ind_header_style1,
+                                                             e2sm_header_buf_style1, e2sm_header_buf_size_style1);
+
+      if (er_header_style1.encoded <= 0) {
+        LOG_E("Failed to encode E2SM KPM Indication Header.");
+        exit(1);
+      }
+
+      ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationHeader, ind_header_style1);
+
+      encoding::generate_e2apv1_indication_request_parameterized(pdu_style1, requestorId,
+                                                                 instanceId, ranFunctionId,
+                                                                 actionId, seqNum, e2sm_header_buf_style1,
+                                                                 er_header_style1.encoded,
+                                                                 e2sm_message_buf_style1, er_message_style1.encoded);
+
+      e2sim.encode_and_send_sctp_data(pdu_style1);
+      LOG_I("Sent indication #%ld for %s", seqNum, traffic.c_str());
+      seqNum++;
+
+      delete[] cell_pms_labels;
+      std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     }
+  }
+}
+void callback_kpm_subscription_request(E2AP_PDU_t *sub_req_pdu) {
+  RICsubscriptionRequest_t orig_req =
+    sub_req_pdu->choice.initiatingMessage->value.choice.RICsubscriptionRequest;
+
+  int count = orig_req.protocolIEs.list.count;
+  RICsubscriptionRequest_IEs_t **ies = (RICsubscriptionRequest_IEs_t**)orig_req.protocolIEs.list.array;
+
+  long reqRequestorId = 0;
+  long reqInstanceId = 0;
+  long reqActionId = 0;
+
+  std::vector<long> actionIdsAccept;
+  std::vector<long> actionIdsReject;
+
+  for (int i = 0; i < count; i++) {
+    RICsubscriptionRequest_IEs_t *next_ie = ies[i];
+
+    switch (next_ie->value.present) {
+      case RICsubscriptionRequest_IEs__value_PR_RICrequestID: {
+        RICrequestID_t reqId = next_ie->value.choice.RICrequestID;
+        reqRequestorId = reqId.ricRequestorID;
+        reqInstanceId = reqId.ricInstanceID;
+        LOG_I("Received RIC Subscription Request: Requestor ID: %ld, Instance ID: %ld", reqRequestorId, reqInstanceId);
+        break;
+      }
+
+      case RICsubscriptionRequest_IEs__value_PR_RICsubscriptionDetails: {
+        RICsubscriptionDetails_t subDetails = next_ie->value.choice.RICsubscriptionDetails;
+        RICactions_ToBeSetup_List_t actionList = subDetails.ricAction_ToBeSetup_List;
+
+        int actionCount = actionList.list.count;
+        auto **item_array = actionList.list.array;
+
+        bool found = false;
+
+        for (int j = 0; j < actionCount; j++) {
+          auto *next_item = item_array[j];
+          RICactionID_t actionId = ((RICaction_ToBeSetup_ItemIEs*)next_item)->value.choice.RICaction_ToBeSetup_Item.ricActionID;
+          RICactionType_t actionType = ((RICaction_ToBeSetup_ItemIEs*)next_item)->value.choice.RICaction_ToBeSetup_Item.ricActionType;
+
+          RICactionDefinition_t *ricActionDefinition = ((RICaction_ToBeSetup_ItemIEs*)next_item)->value.choice.RICaction_ToBeSetup_Item.ricActionDefinition;
+
+          // Décode l'action definition si présente
+          if (ricActionDefinition) {
+            E2SM_KPM_ActionDefinition *decoded = nullptr;
+            asn_dec_rval_t rval = asn_decode(nullptr, ATS_ALIGNED_BASIC_PER,
+                                             &asn_DEF_E2SM_KPM_ActionDefinition,
+                                             (void**)&decoded,
+                                             ricActionDefinition->buf,
+                                             ricActionDefinition->size);
+
+            if (rval.code != RC_OK) {
+              LOG_E("Failed to decode ActionDefinition.");
+              exit(1);
+            }
+
+            xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, decoded);
+            ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, decoded);
+          }
+
+          if (!found && actionType == RICactionType_report) {
+            reqActionId = actionId;
+            actionIdsAccept.push_back(actionId);
+            found = true;
+          } else {
+            actionIdsReject.push_back(actionId);
+          }
+        }
+        break;
+      }
+
+      default:
+        break;
+    }
+  }
+
+  // Création de la réponse E2AP
+  E2AP_PDU *e2ap_pdu = (E2AP_PDU*)calloc(1, sizeof(E2AP_PDU));
+
+  encoding::generate_e2apv1_subscription_response_success(
+    e2ap_pdu,
+    actionIdsAccept.data(),
+    actionIdsReject.data(),
+    actionIdsAccept.size(),
+    actionIdsReject.size(),
+    reqRequestorId,
+    reqInstanceId
+  );
+
+  LOG_I("Sending E2AP subscription response...");
+  e2sim.encode_and_send_sctp_data(e2ap_pdu);
+
+  // Lance la génération des rapports KPM
+  LOG_I("Starting KPM report loop after subscription...");
+  run_report_loop(reqRequestorId, reqInstanceId, gFuncId, reqActionId);
 }
