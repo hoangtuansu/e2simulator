@@ -39,3 +39,4 @@ COPY ./kpm_e2sm/src/kpm/config.json /opt/e2sim/kpm_e2sm/
 
 WORKDIR /opt/e2sim/kpm_e2sm/.build
 RUN cmake .. && make install
+
