@@ -15,7 +15,6 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-
 #include <chrono>
 #include <iostream>
 #include <fstream>
@@ -166,7 +165,7 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
           double value = report_entry.at(metric).get<double>();
           metric_values.push_back(value);
         } catch (...) {
-          LOG_W("Metric %s not found in traffic type %s. Inserting 0.0 as default.", metric.c_str(), traffic.c_str());
+          LOG_D("Metric %s not found in traffic type %s. Inserting 0.0 as default.", metric.c_str(), traffic.c_str());
           metric_values.push_back(0.0);
         }
       }
