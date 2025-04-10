@@ -54,8 +54,18 @@ void kpm_report_indication_header_initialized(E2SM_KPM_IndicationHeader_t *ihead
 
 void kpm_report_indication_message_initialized(E2SM_KPM_IndicationMessage_t* indicationmessage, const char** pm_labels, double* pm_values, size_t nbr_pms);
 
-void cell_meas_kpm_report_indication_message_style_1_initialized(E2SM_KPM_IndicationMessage_t* indicationmessage, long dl_n_samples, long dl_buffer_bytes, long tx_brate_downlink_mbps, long tx_pkts_downlink, long ul_n_samples, long ul_buffer_bytes, long rx_brate_uplink_mbps, long rx_pkts_uplink, long traffic_type_URLLC, long traffic_type_eMBB, long traffic_type_mMTC);
-
-
+void cell_meas_kpm_report_indication_message_style_1_initialized(
+  E2SM_KPM_IndicationMessage_t* indicationmessage,
+  long dl_n_samples,
+  long dl_buffer_bytes,
+  long tx_brate_downlink_mbps,
+  long tx_pkts_downlink,
+  long ul_n_samples,
+  long ul_buffer_bytes,
+  long rx_brate_uplink_mbps,
+  long rx_pkts_uplink,
+  long traffic_type_URLLC,
+  long traffic_type_eMBB,
+  long traffic_type_mMTC);
 
 #endif

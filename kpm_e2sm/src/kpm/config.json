@@ -1,5 +1,5 @@
 {
-  "columns": [
+  "pm": [
       "dl_n_samples",
       "dl_buffer_bytes",
       "tx_brate_downlink_mbps",

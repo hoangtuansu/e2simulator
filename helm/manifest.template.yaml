@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: e2sim
-  namespace: ${NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -15,12 +14,17 @@ spec:
     spec:
       containers:
         - name: e2sim-container
-          image: ${IMAGE_NAME}:${IMAGE_TAG}
+          image: registry.hub.docker.com/morymoussanabe1/e2sim:0.3
           command:
             - sh
             - '-c'
-            - kpm_sim service-ricplt-e2term-sctp-headless.ricplt.svc 36422
+            - kpm_sim 10.180.113.156 32222
+          env:
+            - name: E2NODE_ID
+              value: "1011"
+            - name: RAN_FUNC_ID
+              value: "1234"
           terminationMessagePolicy: File
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always
 

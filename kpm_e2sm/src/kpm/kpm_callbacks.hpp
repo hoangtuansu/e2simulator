@@ -15,19 +15,10 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-#ifndef KPM_CALLBACKS_HPP
-#define KPM_CALLBACKS_HPP
 
-#include <vector>
-#include <string>
-#include <cstdint>
-#include "E2AP-PDU.h"
 
-// Déclaration de la fonction principale de génération et d'envoi des rapports KPM
-void generate_and_send_kpm_report();
+#include "e2sim.hpp"
 
-// Encodage et envoi via SCTP (E2AP wrapper)
-bool encode_and_send_e2ap_sctp(const std::vector<unsigned char>& kpm_encoded, int socket_fd);
+void callback_kpm_subscription_request(E2AP_PDU_t *pdu);
 
-#endif // KPM_CALLBACKS_HPP
-
+void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long actionId);

@@ -327,3 +327,4 @@ void callback_kpm_subscription_request(E2AP_PDU_t *sub_req_pdu) {
   LOG_I("Starting KPM report loop after subscription...");
   run_report_loop(reqRequestorId, reqInstanceId, gFuncId, reqActionId);
 }
+

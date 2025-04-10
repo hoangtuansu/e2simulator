@@ -344,7 +344,18 @@ void kpm_report_indication_message_initialized(E2SM_KPM_IndicationMessage_t* ind
 }
 
 void cell_meas_kpm_report_indication_message_style_1_initialized(
-    E2SM_KPM_IndicationMessage_t* indicationmessage, long throughput, long pdcpBytesDl, long pdcpBytesUl, long availPrbDl, long availPrbUl) {
+    E2SM_KPM_IndicationMessage_t* indicationmessage,
+    long dl_n_samples,
+    long dl_buffer_bytes,
+    long tx_brate_downlink_mbps,
+    long tx_pkts_downlink,
+    long ul_n_samples,
+    long ul_buffer_bytes,
+    long rx_brate_uplink_mbps,
+    long rx_pkts_uplink,
+    long traffic_type_URLLC,
+    long traffic_type_eMBB,
+    long traffic_type_mMTC) {
   LOG_I("Preparing indication message for cell measurement report");
 
   asn_codec_ctx_t* opt_cod;
