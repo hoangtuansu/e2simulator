@@ -41,6 +41,6 @@ deploy_job:
     - cat helm/manifest.yml
     - kubectl apply -f helm/manifest.yml -n $NAMESPACE
   only:
-    - /^oran-student-.*/
+    - /^oran-student-jordan.*/
   dependencies:
     - build_job
