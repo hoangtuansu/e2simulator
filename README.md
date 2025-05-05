@@ -1,87 +1,54 @@
-# Build and deploy
-## Prequitisites
+# Automatic build and deploy
 
-```
-export IMAGE_NAME=<your-repo>/<image-name>
-export IMAGE_TAG=<tag-image>
-export RAN_NS=ran
-export K8S_IP=x.y.z.a
-```
+## Gitlab
 
-## Build
-Make sure config template file is updated with actual values:
+Create a branch for yourself by clicking on `plus` button as following:
 
-```
-envsubst < helm/manifest.template.yaml > helm/e2sim.yaml
-```
+![alt text](docs/images/create_branch.png)
 
-Run the following command to build and push to Docker registry:
+Name your branch according to the format `oran-student-???`, make sure `???` is the same as your username to access devvm as well as your namespace created in Kubernetese. For example, my K8s namespace is `tuan`, and my username to devvm is also `tuan`, then my branch name is `oran-student-tuan`.
 
-```
-docker build -t $IMAGE_NAME:$IMAGE_TAG . && docker push $IMAGE_NAME:$IMAGE_TAG
-```
+![alt text](docs/images/name_your_branch.png)
 
-## Deploy
+Now at the left sidebar, go to `Build` -> `Pipelines` and click on `New pipeline`.
 
-To deploy e2sim in K8s, run following command:
+![alt text](docs/images/go_to_pipeline.png)
 
-```
-kubectl apply -f helm/e2sim.yaml -n $RAN_NS
-```
 
-# Explain E2Sim's Functionalities
-This is an update to E2 Simulator, based on E2AP v1 defined in ORAN
-E2 Simulator is built as a library that supports basic functions and is
-linked by an E2 Simulation application.
+Select your own branch and run `New pipeline`.
 
-The E2 Simulator breaks up the simulation roles into two:
-1. Base E2AP support
-2. E2SM Support
+![alt text](docs/images/run_pipeline.png)
 
-#1 is the role supported by E2 Simulator library, while #2 is supported by the
-calling application.  An example of a calling application is provided in this repo
-under the
+After that, you should see this screen. When a job is running, you can click on it to see the detail.
 
-E2 Simulator enables a specific E2SM to be supported by the calling application in
-the following way:
+![alt text](docs/images/running_jobs.png)
 
-* E2SM must be registered by the calling application
-* E2SM-specific code uses callbacks to handle interaction from xApp
-* E2SM-specific code must continuously implement simulation logic
+The detail of a job is like this:
 
-Registration of an E2SM with the E2 Simulator entails the following:
-* RAN function definition
-* Callback functions for any of the following:
-  Subscription
-  Control
-  Any Responses
+![alt text](docs/images/job_details.png)
 
-The following is the E2 Simulator Main Program Flow
-1. Upon startup, Simulator generates E2 Setup Request
-   For each E2SM that is registered, include RAN function definition
+You need to wait until the job is done. If a job is succesful, you will see its message at the end of the terminal area, for example:
 
-2. Upon receiving incoming requests, decode
-   Identify RAN function ID
-   Call appropriate callback function for RAN function ID and request type
-   Provide entire encoded request
-   If no callback is provided, we return an error response
-3. Upon receiving responses, decode:
-   Identify RAN function ID
-   If a callback is registered for this message type, call it based on RAN function ID and request type
-   Provide entire encoded response
-   If no callback is registered, no action is taken
+- A succesful build job
 
-E2SM Callback Functions:
+![alt text](docs/images/success_build_job.png)
 
-* Callback functions are responsible for sending responses
-* They may also need to set up ongoing simulation messaging
-  REPORT Service sends back periodic Indication messages containing REPORT
-  INSERT Service sends back periodic Indication messages containing INSERT
-* They may need to associate incoming messages with existing service invocation
-  Modify Subscription
-  CONTROL message associated with INSERT
-* Base E2 simulator should not be concerned with these details; only specific E2SM code should be responsible for any messaging
+- A succesful deploy job
 
-In K8s environment, multiple instances of E2Sim can run in parallel to simulate an environment with multiple cells/UEs. Each instance will have a random RAN function ID and random `gnb` name.
+![alt text](docs/images/success_deploy_job.png)
 
-To set the ID of RAN function, use environment variable `RAN_FUNC_ID`. If it is not set, the ID will be assigned to a random value between 0 and 4095.
+## Lab Kubernetese
+
+Once the deploy job succeeds in Gitlab, you open Lens and you should see the following:
+
+- `Workloads` -> `Deployments`
+
+![alt text](docs/images/k8s_deployment.png)
+
+- `Workloads` -> `Pods`
+
+![alt text](docs/images/k8s_pod.png)
+
+- Pod details
+
+![alt text](docs/images/pod_details.png)
