@@ -1,6 +1,4 @@
-# Automatic build and deploy
-
-## Gitlab
+## Prepare in Gitlab
 
 Create a branch for yourself by clicking on `plus` button as following:
 
@@ -37,7 +35,7 @@ You need to wait until the job is done. If a job is succesful, you will see its 
 
 ![alt text](docs/images/success_deploy_job.png)
 
-## Lab Kubernetese
+## Verify in lab Kubernetese
 
 Once the deploy job succeeds in Gitlab, you open Lens and you should see the following:
 
