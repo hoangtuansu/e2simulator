@@ -22,8 +22,7 @@ build_job:
     - podman push $IMAGE_NAME:$CI_COMMIT_SHA
     - podman push $IMAGE_NAME:latest
   only:
-    - tags
-    - /^oran-student-.*/
+    - test-ci
 
 
 deploy_job:
@@ -41,6 +40,6 @@ deploy_job:
     - cat helm/manifest.yml
     - kubectl apply -f helm/manifest.yml -n $NAMESPACE
   only:
-    - /^oran-student-.*/
+    - test-ci
   dependencies:
     - build_job
