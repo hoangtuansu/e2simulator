@@ -99,13 +99,14 @@ NeighbourRelation-Info ::= SEQUENCE {
 servingCellPCI ServingCell-PCI,
 servingCellARFCN ServingCell-ARFCN,
 neighbourCell-List NeighbourCell-List,
+...
 }
 RRC-State ::= ENUMERATED {rrc-connected, rrc-inactive, rrc-idle, any, ...}
 -------------------------------
 -- Event Trigger related IEs
 -------------------------------
 EventTrigger-Cell-Info ::= SEQUENCE {
-cellInfo-List SEQUENCE (SIZE(1..maxnoofCellInfo)) OF EventTrigger-Cell-InfoItem,
+cellInfo-List SEQUENCE (SIZE(1..maxnoofCellInfo)) OF EventTrigger-Cell-Info-Item,
 ...
 }
 EventTrigger-Cell-Info-Item ::= SEQUENCE {
@@ -150,12 +151,13 @@ ranParameterTesting RANParameter-Testing,
 ...
 }
 EventTrigger-UEevent-Info ::= SEQUENCE {
-ueEvent-List SEQUENCE (SIZE(1..maxnoofUEeventInfo)) OF EventTrigger-UEeventInfo-Item,
+ueEvent-List SEQUENCE (SIZE(1..maxnoofUEeventInfo)) OF EventTrigger-UEevent-Info-Item,
 ...
 }
 EventTrigger-UEevent-Info-Item ::= SEQUENCE {
 ueEventID RIC-EventTrigger-UEevent-ID,
 logicalOR LogicalOR OPTIONAL,
+...
 }
 -------------------------------
 -- RAN Parameter related IEs
@@ -172,7 +174,7 @@ choiceSTRUCTURE RANParameter-Definition-Choice-STRUCTURE,
 ...
 }
 RANParameter-Definition-Choice-LIST ::= SEQUENCE {
-ranParameter-List SEQUENCE (SIZE(1..maxnoofItemsinList)) OF RANParameterDefinition-Choice-LIST-Item,
+ranParameter-List SEQUENCE (SIZE(1..maxnoofItemsinList)) OF RANParameter-Definition-Choice-LIST-Item,
 ...
 }
 RANParameter-Definition-Choice-LIST-Item ::= SEQUENCE {
@@ -214,8 +216,7 @@ ranParameter-value RANParameter-Value,
 }
 RANParameter-ValueType-Choice-ElementFalse ::= SEQUENCE {
 ranParameter-value RANParameter-Value OPTIONAL,
--- C-ifControl: This IE shall be present if it is part of a RIC Control Request message. Otherwise
-it is optional.
+-- C-ifControl: This IE shall be present if it is part of a RIC Control Request message. Otherwise it is optional.
 ...
 }
 RANParameter-ValueType-Choice-Structure ::= SEQUENCE {
@@ -237,7 +238,7 @@ ranParameter-valueType RANParameter-ValueType,
 ...
 }
 RANParameter-LIST ::= SEQUENCE {
-list-of-ranParameter SEQUENCE (SIZE(1..maxnoofItemsinList)) OF RANParameterSTRUCTURE,
+list-of-ranParameter SEQUENCE (SIZE(1..maxnoofItemsinList)) OF RANParameter-STRUCTURE,
 ...
 }
 RANParameter-Testing ::= SEQUENCE (SIZE(1..maxnoofRANparamTest)) OF RANParameter-Testing-Item
@@ -278,7 +279,7 @@ logicalOR LogicalOR OPTIONAL,
 ...
 }
 RANParameter-Testing-LIST ::= SEQUENCE (SIZE(1..maxnoofItemsinList)) OF RANParameter-Testing-Item
-RANParameter-Testing-STRUCTURE ::= SEQUENCE (SIZE(1..maxnoofParametersinStructure)) OF RANParameterTesting-Item
+RANParameter-Testing-STRUCTURE ::= SEQUENCE (SIZE(1..maxnoofParametersinStructure)) OF RANParameter-Testing-Item
 UE-Group-Definition ::= SEQUENCE {
 ueGroupDefinitionIdentifier-LIST SEQUENCE (SIZE(1..maxGroupDefinitionIdentifierParameters)) OF
 UEGroupDefinitionIdentifier-Item,
@@ -311,7 +312,7 @@ EntityFilter-ID ::= INTEGER (1..255, ...)
 Ric-PolicyConditionID ::= INTEGER (0.. 65535)
 RIC-PolicyAction ::= SEQUENCE {
 ric-PolicyAction-ID RIC-ControlAction-ID,
-ranParameters-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF RICPolicyAction-RANParameter-Item OPTIONAL,
+ranParameters-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF RIC-PolicyAction-RANParameter-Item OPTIONAL,
 ...,
 ric-PolicyDecision ENUMERATED {accept, reject, ...} OPTIONAL
 }
@@ -322,7 +323,7 @@ ranParameter-valueType RANParameter-ValueType,
 }
 UE-Filter-ID ::= INTEGER (1..65535, ...)
 Associated-UE-Info ::= SEQUENCE {
-associatedUEInfo-List SEQUENCE (SIZE(1..maxnoofUEInfo)) OF Associated-UE-InfoItem,
+associatedUEInfo-List SEQUENCE (SIZE(1..maxnoofUEInfo)) OF Associated-UE-Info-Item,
 ...
 }
 Associated-UE-Info-Item ::= SEQUENCE {
@@ -359,7 +360,7 @@ eventTrigger-Format5 NULL,
 ...
 }
 E2SM-RC-EventTrigger-Format1 ::= SEQUENCE {
-message-List SEQUENCE (SIZE(1..maxnoofMessages)) OF E2SM-RCEventTrigger-Format1-Item,
+message-List SEQUENCE (SIZE(1..maxnoofMessages)) OF E2SM-RC-EventTrigger-Format1-Item,
 globalAssociatedUEInfo EventTrigger-UE-Info OPTIONAL,
 ...
 }
@@ -395,7 +396,7 @@ associatedUEInfo EventTrigger-UE-Info OPTIONAL,
 ...
 }
 E2SM-RC-EventTrigger-Format3 ::= SEQUENCE {
-e2NodeInfoChange-List SEQUENCE (SIZE(1..maxnoofE2InfoChanges)) OF E2SM-RCEventTrigger-Format3-Item,
+e2NodeInfoChange-List SEQUENCE (SIZE(1..maxnoofE2InfoChanges)) OF E2SM-RC-EventTrigger-Format3-Item,
 ...
 }
 E2SM-RC-EventTrigger-Format3-Item ::= SEQUENCE {
@@ -406,7 +407,7 @@ logicalOR LogicalOR OPTIONAL,
 ...
 }
 E2SM-RC-EventTrigger-Format4 ::= SEQUENCE {
-uEInfoChange-List SEQUENCE (SIZE(1..maxnoofUEInfoChanges)) OF E2SM-RCEventTrigger-Format4-Item,
+uEInfoChange-List SEQUENCE (SIZE(1..maxnoofUEInfoChanges)) OF E2SM-RC-EventTrigger-Format4-Item,
 ...
 }
 E2SM-RC-EventTrigger-Format4-Item ::= SEQUENCE {
@@ -425,7 +426,7 @@ triggerType-Choice-UEcontext TriggerType-Choice-UEcontext,
 triggerType-Choice-L2MACschChg TriggerType-Choice-L2MACschChg
 }
 TriggerType-Choice-RRCstate ::= SEQUENCE {
-rrcState-List SEQUENCE (SIZE(1..maxnoofRRCstate)) OF TriggerTypeChoice-RRCstate-Item,
+rrcState-List SEQUENCE (SIZE(1..maxnoofRRCstate)) OF TriggerType-Choice-RRCstate-Item,
 ...
 }
 TriggerType-Choice-RRCstate-Item ::= SEQUENCE {
@@ -442,6 +443,7 @@ associatedL2variables RANParameter-Testing,
 ...
 }
 TriggerType-Choice-UEcontext ::= SEQUENCE {
+associatedUECtxtVariables RANParameter-Testing,
 ...
 }
 TriggerType-Choice-L2MACschChg ::= SEQUENCE {
@@ -471,7 +473,7 @@ actionDefinition-Format4 E2SM-RC-ActionDefinition-Format4
 ...
 }
 E2SM-RC-ActionDefinition-Format1 ::= SEQUENCE {
-ranP-ToBeReported-List SEQUENCE (SIZE(1..maxnoofParametersToReport)) OF E2SMRC-ActionDefinition-Format1-Item,
+ranP-ToBeReported-List SEQUENCE (SIZE(1..maxnoofParametersToReport)) OF E2SM-RC-ActionDefinition-Format1-Item,
 ...
 }
 E2SM-RC-ActionDefinition-Format1-Item ::= SEQUENCE {
@@ -480,7 +482,7 @@ ranParameter-ID RANParameter-ID,
 ranParameter-Definition RANParameter-Definition OPTIONAL
 }
 E2SM-RC-ActionDefinition-Format2 ::= SEQUENCE {
-ric-PolicyConditions-List SEQUENCE (SIZE(1..maxnoofPolicyConditions)) OF E2SM-RCActionDefinition-Format2-Item,
+ric-PolicyConditions-List SEQUENCE (SIZE(1..maxnoofPolicyConditions)) OF E2SM-RC-ActionDefinition-Format2-Item,
 ...
 }
 E2SM-RC-ActionDefinition-Format2-Item ::= SEQUENCE {
@@ -499,9 +501,10 @@ ueID UEID OPTIONAL,
 E2SM-RC-ActionDefinition-Format3-Item ::= SEQUENCE {
 ranParameter-ID RANParameter-ID,
 ...,
+ranParameter-Definition RANParameter-Definition OPTIONAL
 }
 E2SM-RC-ActionDefinition-Format4 ::= SEQUENCE {
-ric-InsertStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RCActionDefinition-Format4-Style-Item,
+ric-InsertStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RC-ActionDefinition-Format4-Style-Item,
 ueID UEID OPTIONAL,
 ...
 }
@@ -560,11 +563,12 @@ indicationMessage-Format3 E2SM-RC-IndicationMessage-Format3,
 indicationMessage-Format4 NULL,
 indicationMessage-Format5 E2SM-RC-IndicationMessage-Format5,
 ...,
+indicationMessage-Format6 E2SM-RC-IndicationMessage-Format6
 },
 ...
 }
 E2SM-RC-IndicationMessage-Format1 ::= SEQUENCE {
-ranP-Reported-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF E2SMRC-IndicationMessage-Format1-Item,
+ranP-Reported-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF E2SM-RC-IndicationMessage-Format1-Item,
 ...
 }
 E2SM-RC-IndicationMessage-Format1-Item ::= SEQUENCE {
@@ -573,12 +577,12 @@ ranParameter-valueType RANParameter-ValueType,
 ...
 }
 E2SM-RC-IndicationMessage-Format2 ::= SEQUENCE {
-ueParameter-List SEQUENCE (SIZE(1..maxnoofUEID)) OF E2SM-RCIndicationMessage-Format2-Item,
+ueParameter-List SEQUENCE (SIZE(1..maxnoofUEID)) OF E2SM-RC-IndicationMessage-Format2-Item,
 ...
 }
 E2SM-RC-IndicationMessage-Format2-Item ::= SEQUENCE {
 ueID UEID,
-ranP-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF E2SMRC-IndicationMessage-Format2-RANParameter-Item,
+ranP-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF E2SM-RC-IndicationMessage-Format2-RANParameter-Item,
 ...
 }
 E2SM-RC-IndicationMessage-Format2-RANParameter-Item ::= SEQUENCE {
@@ -587,7 +591,7 @@ ranParameter-valueType RANParameter-ValueType,
 ...
 }
 E2SM-RC-IndicationMessage-Format3 ::= SEQUENCE {
-cellInfo-List SEQUENCE (SIZE(1..maxnoofCellID)) OF E2SM-RCIndicationMessage-Format3-Item,
+cellInfo-List SEQUENCE (SIZE(1..maxnoofCellID)) OF E2SM-RC-IndicationMessage-Format3-Item,
 ...
 }
 E2SM-RC-IndicationMessage-Format3-Item ::= SEQUENCE {
@@ -607,7 +611,7 @@ v1700, kHz960-v1700, ...},
 ...
 }
 E2SM-RC-IndicationMessage-Format5 ::= SEQUENCE{
-ranP-Requested-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SMRC-IndicationMessage-Format5-Item,
+ranP-Requested-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-IndicationMessage-Format5-Item,
 ...
 }
 E2SM-RC-IndicationMessage-Format5-Item ::= SEQUENCE {
@@ -616,7 +620,7 @@ ranParameter-valueType RANParameter-ValueType,
 ...
 }
 E2SM-RC-IndicationMessage-Format6 ::= SEQUENCE {
-ric-InsertStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RCIndicationMessage-Format6-Style-Item,
+ric-InsertStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RC-IndicationMessage-Format6-Style-Item,
 ...
 }
 E2SM-RC-IndicationMessage-Format6-Style-Item ::= SEQUENCE {
@@ -704,7 +708,7 @@ controlMessage-Format5 E2SM-RC-ControlMessage-Format5
 ...
 }
 E2SM-RC-ControlMessage-Format1 ::= SEQUENCE {
-ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SMRC-ControlMessage-Format1-Item,
+ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-ControlMessage-Format1-Item,
 ...
 }
 E2SM-RC-ControlMessage-Format1-Item ::= SEQUENCE {
@@ -713,12 +717,12 @@ ranParameter-valueType RANParameter-ValueType,
 ...
 }
 E2SM-RC-ControlMessage-Format2 ::= SEQUENCE {
-ric-ControlStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RCControlMessage-Format2-Style-Item,
+ric-ControlStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RC-ControlMessage-Format2-Style-Item,
 ...
 }
 E2SM-RC-ControlMessage-Format2-Style-Item ::= SEQUENCE {
 indicated-Control-Style-Type RIC-Style-Type,
-ric-ControlAction-List SEQUENCE (SIZE(1..maxnoofMulCtrlActions)) OF E2SM-RCControlMessage-Format2-ControlAction-Item,
+ric-ControlAction-List SEQUENCE (SIZE(1..maxnoofMulCtrlActions)) OF E2SM-RC-ControlMessage-Format2-ControlAction-Item,
 ...
 }
 E2SM-RC-ControlMessage-Format2-ControlAction-Item ::= SEQUENCE {
@@ -751,7 +755,7 @@ ranParameter-valueType RANParameter-ValueType,
 ...
 }
 E2SM-RC-ControlMessage-Format4 ::= SEQUENCE {
-ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SMRC-ControlMessage-Format4-Item,
+ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-ControlMessage-Format4-Item,
 ...
 }
 E2SM-RC-ControlMessage-Format4-Item ::= SEQUENCE {
@@ -772,7 +776,7 @@ controlOutcome-Format3 E2SM-RC-ControlOutcome-Format3 },
 ...
 }
 E2SM-RC-ControlOutcome-Format1 ::= SEQUENCE {
-ranP-List SEQUENCE (SIZE(0..maxnoofRANOutcomeParameters)) OF E2SM-RCControlOutcome-Format1-Item,
+ranP-List SEQUENCE (SIZE(0..maxnoofRANOutcomeParameters)) OF E2SM-RC-ControlOutcome-Format1-Item,
 ...
 }
 E2SM-RC-ControlOutcome-Format1-Item ::= SEQUENCE {
@@ -781,12 +785,12 @@ ranParameter-value RANParameter-Value,
 ...
 }
 E2SM-RC-ControlOutcome-Format2 ::= SEQUENCE {
-ric-ControlStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RCControlOutcome-Format2-Style-Item,
+ric-ControlStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RC-ControlOutcome-Format2-Style-Item,
 ...
 }
 E2SM-RC-ControlOutcome-Format2-Style-Item ::= SEQUENCE {
 indicated-Control-Style-Type RIC-Style-Type,
-ric-ControlOutcome-List SEQUENCE (SIZE(1..maxnoofMulCtrlActions)) OF E2SM-RCControlOutcome-Format2-ControlOutcome-Item,
+ric-ControlOutcome-List SEQUENCE (SIZE(1..maxnoofMulCtrlActions)) OF E2SM-RC-ControlOutcome-Format2-ControlOutcome-Item,
 ...
 }
 E2SM-RC-ControlOutcome-Format2-ControlOutcome-Item ::= SEQUENCE {
@@ -801,7 +805,7 @@ ranParameter-value RANParameter-Value,
 ...
 }
 E2SM-RC-ControlOutcome-Format3 ::= SEQUENCE {
-ranP-List SEQUENCE (SIZE(0..maxnoofRANOutcomeParameters)) OF E2SMRC-ControlOutcome-Format3-Item,
+ranP-List SEQUENCE (SIZE(0..maxnoofRANOutcomeParameters)) OF E2SM-RC-ControlOutcome-Format3-Item,
 ...
 }
 E2SM-RC-ControlOutcome-Format3-Item ::= SEQUENCE {
@@ -836,7 +840,7 @@ queryRequest-Format1 E2SM-RC-QueryDefinition-Format1,
 ...
 }
 E2SM-RC-QueryDefinition-Format1 ::= SEQUENCE {
-ranP-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF E2SMRC-QueryDefinition-Format1-Item,
+ranP-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF E2SM-RC-QueryDefinition-Format1-Item,
 ...
 }
 E2SM-RC-QueryDefinition-Format1-Item ::= SEQUENCE {
@@ -856,12 +860,12 @@ queryOutcome-Format2 E2SM-RC-QueryOutcome-Format2,
 ...
 }
 E2SM-RC-QueryOutcome-Format1 ::= SEQUENCE {
-cellInfo-List SEQUENCE (SIZE(1..maxnoofCellID)) OF E2SM-RCQueryOutcome-Format1-ItemCell,
+cellInfo-List SEQUENCE (SIZE(1..maxnoofCellID)) OF E2SM-RC-QueryOutcome-Format1-ItemCell,
 ...
 }
 E2SM-RC-QueryOutcome-Format1-ItemCell ::= SEQUENCE {
 cellGlobal-ID CGI,
-ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SMRC-QueryOutcome-Format1-ItemParameters,
+ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-QueryOutcome-Format1-ItemParameters,
 neighbourRelation-Table NeighbourRelation-Info OPTIONAL,
 ...,
 servingCellConfigCommon ServingCellConfigCommon OPTIONAL
@@ -872,12 +876,12 @@ ranParameter-valueType RANParameter-ValueType OPTIONAL,
 ...
 }
 E2SM-RC-QueryOutcome-Format2 ::= SEQUENCE {
-ueInfo-List SEQUENCE (SIZE(0..maxnoofUEID)) OF E2SM-RC-QueryOutcomeFormat2-ItemUE,
+ueInfo-List SEQUENCE (SIZE(0..maxnoofUEID)) OF E2SM-RC-QueryOutcome-Format2-ItemUE,
 ...
 }
 E2SM-RC-QueryOutcome-Format2-ItemUE::= SEQUENCE {
 ueID UEID,
-ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SMRC-QueryOutcome-Format2-ItemParameters,
+ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-QueryOutcome-Format2-ItemParameters,
 ueFilterID UE-Filter-ID OPTIONAL, ...
 }
 E2SM-RC-QueryOutcome-Format2-ItemParameters ::= SEQUENCE {
@@ -1171,5 +1175,5 @@ abstract-syntax-error-falsely-constructed-message,
 unspecified,
 ...
 }
-
-
+END
+-- ASN1STOP
