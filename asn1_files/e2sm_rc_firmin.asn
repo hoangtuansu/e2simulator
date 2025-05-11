@@ -1021,7 +1021,9 @@ ric-CallProcessIDFormat-Type RIC-Format-Type OPTIONAL,
 ric-ControlOutcomeFormat-Type RIC-Format-Type,
 ran-ControlOutcomeParameters-List SEQUENCE (SIZE(1..maxnoofRANOutcomeParameters)) OF ControlOutcome-RANParameter-Item OPTIONAL,
 ...,
-listOfAdditionalSupportedFormats ListOfAdditionalSupportedFormats OPTIONAL}
+listOfAdditionalSupportedFormats ListOfAdditionalSupportedFormats OPTIONAL
+}
+
 ControlOutcome-RANParameter-Item ::= SEQUENCE {
 ranParameter-ID RANParameter-ID,
 ranParameter-name RANParameter-Name,
