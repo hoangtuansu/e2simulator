@@ -1112,7 +1112,7 @@ ricService CauseRICservice,
 protocol CauseProtocol,
 ...
 }
-CauseRICservice ::= ENUMERATED{
+CauseRICservice ::= ENUMERATED {
 RIC-Event-Trigger-Style-Type-not-supported,
 RIC-Event-Trigger-Format-Type-not-supported,
 RAN-Parameter-ID-not-supported,
