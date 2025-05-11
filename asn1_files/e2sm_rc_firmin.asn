@@ -609,7 +609,7 @@ ssbPeriodicity ENUMERATED {ms5, ms10, ms20, ms40, ms80, ms160, ...},
 ssbSubcarrierSpacing ENUMERATED {kHz15, kHz30, kHz60, kHz120, kHz240, kHz480-v1700, kHz960-v1700, ...},
 ...
 }
-E2SM-RC-IndicationMessage-Format5 ::= SEQUENCE{
+E2SM-RC-IndicationMessage-Format5 ::= SEQUENCE {
 ranP-Requested-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-IndicationMessage-Format5-Item,
 ...
 }
@@ -887,7 +887,7 @@ ranParameter-valueType RANParameter-ValueType OPTIONAL,
 -- **************************************************************
 -- RAN Function Definition IEs
 -- **************************************************************
-E2SM-RC-RANFunctionDefinition ::= SEQUENCE{
+E2SM-RC-RANFunctionDefinition ::= SEQUENCE {
 ranFunction-Name RANfunction-Name,
 ranFunctionDefinition-EventTrigger RANFunctionDefinition-EventTrigger OPTIONAL,
 ranFunctionDefinition-Report RANFunctionDefinition-Report OPTIONAL,
@@ -1112,6 +1112,7 @@ ricService CauseRICservice,
 protocol CauseProtocol,
 ...
 }
+
 CauseRICservice ::= ENUMERATED {
 RIC-Event-Trigger-Style-Type-not-supported,
 RIC-Event-Trigger-Format-Type-not-supported,
