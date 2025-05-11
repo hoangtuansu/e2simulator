@@ -10,107 +10,120 @@ BEGIN
 -- IEs
 -- **************************************************************
 IMPORTS
-CGI,
-FiveQI,
-PLMNIdentity,
-QCI,
-QosFlowIdentifier,
-RANfunction-Name,
-RIC-Format-Type,
-RIC-Style-Name,
-RIC-Style-Type,
-S-NSSAI,
-UEID,
-Beam-ID
+    CGI,
+    FiveQI,
+    PLMNIdentity,
+    QCI,
+    QosFlowIdentifier,
+    RANfunction-Name,
+    RIC-Format-Type,
+    RIC-Style-Name,
+    RIC-Style-Type,
+    S-NSSAI,
+    UEID,
+    Beam-ID
 FROM E2SM-COMMON-IEs;
+
 TimeStamp ::= OCTET STRING (SIZE(8))
+
 BinIndex ::= INTEGER (1.. 65535, ...)
+
 BinRangeValue ::= CHOICE {
-valueInt INTEGER,
-valueReal REAL,
-...
+    valueInt INTEGER,
+    valueReal REAL,
+    ...
 }
+
 JobID ::= INTEGER (1.. 65535)
+
 GranularityPeriod ::= INTEGER (1.. 4294967295)
+
 LogicalOR ::= ENUMERATED {true, ...}
+
 MeasurementType ::= CHOICE {
-measName MeasurementTypeName,
-measID MeasurementTypeID,
-...
+    measName MeasurementTypeName,
+    measID MeasurementTypeID,
+    ...
 }
+
 MeasurementTypeName ::= PrintableString(SIZE(1.. 150, ...))
+
 MeasurementTypeID ::= INTEGER (1.. 65536, ...)
+
 MeasurementLabel ::= SEQUENCE {
-noLabel ENUMERATED {true, ...} OPTIONAL,
-plmnID PLMNIdentity OPTIONAL,
-sliceID S-NSSAI OPTIONAL,
-fiveQI FiveQI OPTIONAL,
-qFI QosFlowIdentifier OPTIONAL,
-qCI QCI OPTIONAL,
-qCImax QCI OPTIONAL,
-qCImin QCI OPTIONAL,
-aRPmax INTEGER (1.. 15, ...) OPTIONAL,
-aRPmin INTEGER (1.. 15, ...) OPTIONAL,
-bitrateRange INTEGER (1.. 65535, ...) OPTIONAL,
-layerMU-MIMO INTEGER (1.. 65535, ...) OPTIONAL,
-sUM ENUMERATED {true, ...} OPTIONAL,
-distBinX INTEGER (1.. 65535, ...) OPTIONAL,
-distBinY INTEGER (1.. 65535, ...) OPTIONAL,
-distBinZ INTEGER (1.. 65535, ...) OPTIONAL,
-preLabelOverride ENUMERATED {true, ...} OPTIONAL,
-startEndInd ENUMERATED {start, end, ...} OPTIONAL,
-min ENUMERATED {true, ...} OPTIONAL,
-max ENUMERATED {true, ...} OPTIONAL,
-avg ENUMERATED {true, ...} OPTIONAL,
-...,
-ssbIndex INTEGER (1.. 65535, ...) OPTIONAL,
-nonGoB-BFmode-Index INTEGER (1.. 65535, ...) OPTIONAL,
-mIMO-mode-Index INTEGER (1.. 2, ...) OPTIONAL,
-cellGlobalID CGI OPTIONAL,
-beamID Beam-ID OPTIONAL
+    noLabel ENUMERATED {true, ...} OPTIONAL,
+    plmnID PLMNIdentity OPTIONAL,
+    sliceID S-NSSAI OPTIONAL,
+    fiveQI FiveQI OPTIONAL,
+    qFI QosFlowIdentifier OPTIONAL,
+    qCI QCI OPTIONAL,
+    qCImax QCI OPTIONAL,
+    qCImin QCI OPTIONAL,
+    aRPmax INTEGER (1.. 15, ...) OPTIONAL,
+    aRPmin INTEGER (1.. 15, ...) OPTIONAL,
+    bitrateRange INTEGER (1.. 65535, ...) OPTIONAL,
+    layerMU-MIMO INTEGER (1.. 65535, ...) OPTIONAL,
+    sUM ENUMERATED {true, ...} OPTIONAL,
+    distBinX INTEGER (1.. 65535, ...) OPTIONAL,
+    distBinY INTEGER (1.. 65535, ...) OPTIONAL,
+    distBinZ INTEGER (1.. 65535, ...) OPTIONAL,
+    preLabelOverride ENUMERATED {true, ...} OPTIONAL,
+    startEndInd ENUMERATED {start, end, ...} OPTIONAL,
+    min ENUMERATED {true, ...} OPTIONAL,
+    max ENUMERATED {true, ...} OPTIONAL,
+    avg ENUMERATED {true, ...} OPTIONAL,
+    ...,
+    ssbIndex INTEGER (1.. 65535, ...) OPTIONAL,
+    nonGoB-BFmode-Index INTEGER (1.. 65535, ...) OPTIONAL,
+    mIMO-mode-Index INTEGER (1.. 2, ...) OPTIONAL,
+    cellGlobalID CGI OPTIONAL,
+    beamID Beam-ID OPTIONAL
 }
-TestCondInfo ::= SEQUENCE{
-testType TestCond-Type,
-testExpr TestCond-Expression OPTIONAL,
-testValue TestCond-Value OPTIONAL,
-...
+
+TestCondInfo ::= SEQUENCE {
+    testType TestCond-Type,
+    testExpr TestCond-Expression OPTIONAL,
+    testValue TestCond-Value OPTIONAL,
+    ...
 }
-TestCond-Type ::= CHOICE{
-gBR ENUMERATED {true, ...},
-aMBR ENUMERATED {true, ...},
-isStat ENUMERATED {true, ...},
-isCatM ENUMERATED {true, ...},
-rSRP ENUMERATED {true, ...},
-rSRQ ENUMERATED {true, ...},
-...,
-ul-rSRP ENUMERATED {true, ...},
-cQI ENUMERATED {true, ...},
-fiveQI ENUMERATED {true, ...},
-qCI ENUMERATED {true, ...},
-sNSSAI ENUMERATED {true, ...}
+
+TestCond-Type ::= CHOICE {
+    gBR ENUMERATED {true, ...},
+    aMBR ENUMERATED {true, ...},
+    isStat ENUMERATED {true, ...},
+    isCatM ENUMERATED {true, ...},
+    rSRP ENUMERATED {true, ...},
+    rSRQ ENUMERATED {true, ...},
+    ...,
+    ul-rSRP ENUMERATED {true, ...},
+    cQI ENUMERATED {true, ...},
+    fiveQI ENUMERATED {true, ...},
+    qCI ENUMERATED {true, ...},
+    sNSSAI ENUMERATED {true, ...}
 }
+
 TestCond-Expression ::= ENUMERATED {
-equal,
-greaterthan,
-lessthan,
-contains,
-present,
-...
+    equal,
+    greaterthan,
+    lessthan,
+    contains,
+    present,
+    ...
 }
-TestCond-Value ::= CHOICE{
-valueInt INTEGER,
-valueEnum INTEGER,
-valueBool BOOLEAN,
-valueBitS BIT STRING,
-valueOctS OCTET STRING,
-valuePrtS PrintableString,
-...,
-valueReal REAL
+TestCond-Value ::= CHOICE {
+    valueInt INTEGER,
+    valueEnum INTEGER,
+    valueBool BOOLEAN,
+    valueBitS BIT STRING,
+    valueOctS OCTET STRING,
+    valuePrtS PrintableString,
+    ...,
+    valueReal REAL
 }
 MultiReportApproach ::= ENUMERATED {
-single,
-multiple,
-...
+    single,
+    multiple,
+    ...
 }
 -- **************************************************************
 -- Lists
@@ -220,19 +233,19 @@ matchingCondChoice MatchingCondItem-Choice,
 logicalOR LogicalOR OPTIONAL,
 ...
 }
-MatchingCondItem-Choice ::= CHOICE{
+MatchingCondItem-Choice ::= CHOICE {
 measLabel MeasurementLabel,
 testCondInfo TestCondInfo,
 ...
 }
 MatchingUEidList ::= SEQUENCE (SIZE(1..maxnoofUEID)) OF MatchingUEidItem
-MatchingUEidItem ::= SEQUENCE{
+MatchingUEidItem ::= SEQUENCE {
 ueID UEID,
 ...
 }
 MatchingUEidPerGP ::= SEQUENCE (SIZE(1..maxnoofMeasurementRecord)) OF MatchingUEidPerGP-Item
-MatchingUEidPerGP-Item ::= SEQUENCE{
-matchedPerGP CHOICE{
+MatchingUEidPerGP-Item ::= SEQUENCE {
+matchedPerGP CHOICE {
 noUEmatched ENUMERATED {true, ...},
 oneOrMoreUEmatched MatchingUEidList-PerGP,
 ...
@@ -240,18 +253,18 @@ oneOrMoreUEmatched MatchingUEidList-PerGP,
 ...
 }
 MatchingUEidList-PerGP ::= SEQUENCE (SIZE(1..maxnoofUEID)) OF MatchingUEidItem-PerGP
-MatchingUEidItem-PerGP ::= SEQUENCE{
+MatchingUEidItem-PerGP ::= SEQUENCE {
 ueID UEID,
 ...
 }
 MatchingUeCondPerSubList ::= SEQUENCE (SIZE(1..maxnoofConditionInfoPerSub)) OF MatchingUeCondPerSubItem
-MatchingUeCondPerSubItem ::= SEQUENCE{
+MatchingUeCondPerSubItem ::= SEQUENCE {
 testCondInfo TestCondInfo,
 ...,
 logicalOR LogicalOR OPTIONAL
 }
 MatchingUEidPerSubList ::= SEQUENCE (SIZE(2..maxnoofUEIDPerSub)) OF MatchingUEidPerSubItem
-MatchingUEidPerSubItem ::= SEQUENCE{
+MatchingUEidPerSubItem ::= SEQUENCE {
 ueID UEID,
 ...
 }
@@ -271,7 +284,7 @@ indicationMessage E2SM-KPM-IndicationMessage,
 ...
 }
 UEMeasurementReportList ::= SEQUENCE (SIZE(1..maxnoofUEMeasReport)) OF UEMeasurementReportItem
-UEMeasurementReportItem ::= SEQUENCE{
+UEMeasurementReportItem ::= SEQUENCE {
 ueID UEID,
 measReport E2SM-KPM-IndicationMessage-Format1,
 ...
@@ -282,23 +295,23 @@ measReport E2SM-KPM-IndicationMessage-Format1,
 -- **************************************************************
 -- Event Trigger Definition OCTET STRING contents
 -- **************************************************************
-E2SM-KPM-EventTriggerDefinition ::= SEQUENCE{
-eventDefinition-formats CHOICE{
+E2SM-KPM-EventTriggerDefinition ::= SEQUENCE {
+eventDefinition-formats CHOICE {
 eventDefinition-Format1 E2SM-KPM-EventTriggerDefinition-Format1,
 ...
 },
 ...
 }
-E2SM-KPM-EventTriggerDefinition-Format1 ::= SEQUENCE{
+E2SM-KPM-EventTriggerDefinition-Format1 ::= SEQUENCE {
 reportingPeriod INTEGER (1.. 4294967295),
 ...
 }
 -- **************************************************************
 -- Action Definition OCTET STRING contents
 -- **************************************************************
-E2SM-KPM-ActionDefinition ::= SEQUENCE{
+E2SM-KPM-ActionDefinition ::= SEQUENCE {
 ric-Style-Type RIC-Style-Type,
-actionDefinition-formats CHOICE{
+actionDefinition-formats CHOICE {
 actionDefinition-Format1 E2SM-KPM-ActionDefinition-Format1,
 actionDefinition-Format2 E2SM-KPM-ActionDefinition-Format2,
 actionDefinition-Format3 E2SM-KPM-ActionDefinition-Format3,
@@ -346,14 +359,14 @@ commonActionDefinition E2SM-KPM-ActionDefinition OPTIONAL,
 -- **************************************************************
 -- Indication Header OCTET STRING contents
 -- **************************************************************
-E2SM-KPM-IndicationHeader ::= SEQUENCE{
-indicationHeader-formats CHOICE{
+E2SM-KPM-IndicationHeader ::= SEQUENCE {
+indicationHeader-formats CHOICE {
 indicationHeader-Format1 E2SM-KPM-IndicationHeader-Format1,
 ...
 },
 ...
 }
-E2SM-KPM-IndicationHeader-Format1 ::= SEQUENCE{
+E2SM-KPM-IndicationHeader-Format1 ::= SEQUENCE {
 colletStartTime TimeStamp,
 fileFormatversion PrintableString (SIZE (0..15), ...) OPTIONAL,
 senderName PrintableString (SIZE (0..400), ...) OPTIONAL,
@@ -364,8 +377,8 @@ vendorName PrintableString (SIZE (0..32), ...) OPTIONAL,
 -- **************************************************************
 -- Indication Message OCTET STRING contents
 -- **************************************************************
-E2SM-KPM-IndicationMessage ::= SEQUENCE{
-indicationMessage-formats CHOICE{
+E2SM-KPM-IndicationMessage ::= SEQUENCE {
+indicationMessage-formats CHOICE {
 indicationMessage-Format1 E2SM-KPM-IndicationMessage-Format1,
 indicationMessage-Format2 E2SM-KPM-IndicationMessage-Format2,
 ...,
@@ -398,20 +411,20 @@ multiReportIndicationMessageList MultiReportIndicationMessageList,
 -- ***************************************************************
 -- RAN Function Definition OCTET STRING contents
 -- ***************************************************************
-E2SM-KPM-RANfunction-Description ::= SEQUENCE{
+E2SM-KPM-RANfunction-Description ::= SEQUENCE {
 ranFunction-Name RANfunction-Name,
 ric-EventTriggerStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RIC-EventTriggerStyle-Item OPTIONAL,
 ric-ReportStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RIC-ReportStyle-Item OPTIONAL,
 ...,
 ric-IntegratedReportStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RIC-IntegratedReportStyle-Item OPTIONAL
 }
-RIC-EventTriggerStyle-Item ::= SEQUENCE{
+RIC-EventTriggerStyle-Item ::= SEQUENCE {
 ric-EventTriggerStyle-Type RIC-Style-Type,
 ric-EventTriggerStyle-Name RIC-Style-Name,
 ric-EventTriggerFormat-Type RIC-Format-Type,
 ...
 }
-RIC-ReportStyle-Item ::= SEQUENCE{
+RIC-ReportStyle-Item ::= SEQUENCE {
 ric-ReportStyle-Type RIC-Style-Type,
 ric-ReportStyle-Name RIC-Style-Name,
 ric-ActionFormat-Type RIC-Format-Type,
@@ -420,7 +433,7 @@ ric-IndicationHeaderFormat-Type RIC-Format-Type,
 ric-IndicationMessageFormat-Type RIC-Format-Type,
 ...
 }
-RIC-IntegratedReportStyle-Item ::= SEQUENCE{
+RIC-IntegratedReportStyle-Item ::= SEQUENCE {
 ric-ReportStyle-Type RIC-Style-Type,
 ric-ReportStyle-Name RIC-Style-Name,
 ric-ActionFormat-Type RIC-Format-Type,
@@ -432,7 +445,7 @@ ric-MultipleReportingApproachSupport ENUMERATED{true,...} OPTIONAL,
 ric-CommonActionDefinitionSupport ENUMERATED{true,...} OPTIONAL,
 ...
 }
-RIC-FundamentalLevelReportStyle-Item ::= SEQUENCE{
+RIC-FundamentalLevelReportStyle-Item ::= SEQUENCE {
 ric-ReportStyle-Type RIC-Style-Type,
 jobSpecificActionDefinitionSupport ENUMERATED{true,...} OPTIONAL,
 jobSpecificCellGlobalIDSupport ENUMERATED{true,...} OPTIONAL,
