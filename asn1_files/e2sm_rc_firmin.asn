@@ -1114,6 +1114,10 @@ protocol CauseProtocol,
 ...
 }
 
+CauseRICrequest ::= CHOICE {
+Unknown(0)
+}
+
 CauseRICservice ::= ENUMERATED {
     ric-Event-Trigger-Style-Type-not-supported(0),
     ric-Event-Trigger-Format-Type-not-supported(1),
