@@ -955,8 +955,7 @@ ranParameter-Definition RANParameter-Definition OPTIONAL
 -- Report
 -------------------------------
 RANFunctionDefinition-Report ::= SEQUENCE {
-ric-ReportStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF
-RANFunctionDefinition-Report-Item,
+ric-ReportStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RANFunctionDefinition-Report-Item,
 ...
 }
 RANFunctionDefinition-Report-Item ::= SEQUENCE {
