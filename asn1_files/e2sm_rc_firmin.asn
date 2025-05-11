@@ -875,7 +875,7 @@ E2SM-RC-QueryOutcome-Format2 ::= SEQUENCE {
 ueInfo-List SEQUENCE (SIZE(0..maxnoofUEID)) OF E2SM-RC-QueryOutcome-Format2-ItemUE,
 ...
 }
-E2SM-RC-QueryOutcome-Format2-ItemUE::= SEQUENCE {
+E2SM-RC-QueryOutcome-Format2-ItemUE ::= SEQUENCE {
 ueID UEID,
 ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-QueryOutcome-Format2-ItemParameters, ueFilterID UE-Filter-ID OPTIONAL, ...
 }
@@ -1107,7 +1107,7 @@ ranParameter-name RANParameter-Name,
 ranParameter-Definition RANParameter-Definition OPTIONAL,
 ...
 }
-E2SM-RC-ServiceLayerCause::= CHOICE {
+E2SM-RC-ServiceLayerCause ::= CHOICE {
 ricRequest CauseRICrequest,
 ricService CauseRICservice,
 protocol CauseProtocol,
