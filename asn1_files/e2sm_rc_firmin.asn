@@ -606,8 +606,7 @@ servingCellConfigCommon ServingCellConfigCommon OPTIONAL
 ServingCellConfigCommon ::= SEQUENCE {
 ssbPositionsInBurst OCTET STRING,
 ssbPeriodicity ENUMERATED {ms5, ms10, ms20, ms40, ms80, ms160, ...},
-ssbSubcarrierSpacing ENUMERATED {kHz15, kHz30, kHz60, kHz120, kHz240, kHz480-
-v1700, kHz960-v1700, ...},
+ssbSubcarrierSpacing ENUMERATED {kHz15, kHz30, kHz60, kHz120, kHz240, kHz480-v1700, kHz960-v1700, ...},
 ...
 }
 E2SM-RC-IndicationMessage-Format5 ::= SEQUENCE{
@@ -625,14 +624,12 @@ ric-InsertStyle-List SEQUENCE (SIZE(1.. maxnoofRICStyles)) OF E2SM-RC-Indication
 }
 E2SM-RC-IndicationMessage-Format6-Style-Item ::= SEQUENCE {
 indicated-Insert-Style-Type RIC-Style-Type,
-ric-InsertIndication-List SEQUENCE (SIZE(1..maxnoofInsertIndicationActions)) OF
-E2SM-RC-IndicationMessage-Format6-Indication-Item,
+ric-InsertIndication-List SEQUENCE (SIZE(1..maxnoofInsertIndicationActions)) OF E2SM-RC-IndicationMessage-Format6-Indication-Item,
 ...
 }
 E2SM-RC-IndicationMessage-Format6-Indication-Item ::= SEQUENCE {
 ric-InsertIndication-ID RIC-InsertIndication-ID,
-ranP-InsertIndication-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF
-E2SM-RC-IndicationMessage-Format6-RANP-Item ,
+ranP-InsertIndication-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-IndicationMessage-Format6-RANP-Item ,
 ...
 }
 E2SM-RC-IndicationMessage-Format6-RANP-Item ::= SEQUENCE {
@@ -865,8 +862,7 @@ cellInfo-List SEQUENCE (SIZE(1..maxnoofCellID)) OF E2SM-RC-QueryOutcome-Format1-
 }
 E2SM-RC-QueryOutcome-Format1-ItemCell ::= SEQUENCE {
 cellGlobal-ID CGI,
-ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-QueryOutcome-Format1-ItemParameters,
-neighbourRelation-Table NeighbourRelation-Info OPTIONAL,
+ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-QueryOutcome-Format1-ItemParameters, neighbourRelation-Table NeighbourRelation-Info OPTIONAL,
 ...,
 servingCellConfigCommon ServingCellConfigCommon OPTIONAL
 }
@@ -881,8 +877,7 @@ ueInfo-List SEQUENCE (SIZE(0..maxnoofUEID)) OF E2SM-RC-QueryOutcome-Format2-Item
 }
 E2SM-RC-QueryOutcome-Format2-ItemUE::= SEQUENCE {
 ueID UEID,
-ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-QueryOutcome-Format2-ItemParameters,
-ueFilterID UE-Filter-ID OPTIONAL, ...
+ranP-List SEQUENCE (SIZE(0..maxnoofAssociatedRANParameters)) OF E2SM-RC-QueryOutcome-Format2-ItemParameters, ueFilterID UE-Filter-ID OPTIONAL, ...
 }
 E2SM-RC-QueryOutcome-Format2-ItemParameters ::= SEQUENCE {
 ranParameter-ID RANParameter-ID,
@@ -906,16 +901,11 @@ ranFunctionDefinition-Query RANFunctionDefinition-Query OPTIONAL
 -- Event Trigger
 -------------------------------
 RANFunctionDefinition-EventTrigger ::= SEQUENCE {
-ric-EventTriggerStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF
-RANFunctionDefinition-EventTrigger-Style-Item,
-ran-L2Parameters-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF
-L2Parameters-RANParameter-Item OPTIONAL,
-ran-CallProcessTypes-List SEQUENCE (SIZE(1..maxnoofCallProcessTypes)) OF
-RANFunctionDefinition-EventTrigger-CallProcess-Item OPTIONAL,
-ran-UEIdentificationParameters-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF
-UEIdentification-RANParameter-Item OPTIONAL,
-ran-CellIdentificationParameters-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF
-CellIdentification-RANParameter-Item OPTIONAL,
+ric-EventTriggerStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RANFunctionDefinition-EventTrigger-Style-Item,
+ran-L2Parameters-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF L2Parameters-RANParameter-Item OPTIONAL,
+ran-CallProcessTypes-List SEQUENCE (SIZE(1..maxnoofCallProcessTypes)) OF RANFunctionDefinition-EventTrigger-CallProcess-Item OPTIONAL,
+ran-UEIdentificationParameters-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF UEIdentification-RANParameter-Item OPTIONAL,
+ran-CellIdentificationParameters-List SEQUENCE (SIZE(1..maxnoofAssociatedRANParameters)) OF CellIdentification-RANParameter-Item OPTIONAL,
 ...
 }
 RANFunctionDefinition-EventTrigger-Style-Item ::= SEQUENCE {
@@ -945,8 +935,7 @@ ranParameter-Definition RANParameter-Definition OPTIONAL
 RANFunctionDefinition-EventTrigger-CallProcess-Item ::= SEQUENCE {
 callProcessType-ID RIC-CallProcessType-ID,
 callProcessType-Name RIC-CallProcessType-Name,
-callProcessBreakpoints-List SEQUENCE (SIZE (1..maxnoofCallProcessBreakpoints)) OF
-RANFunctionDefinition-EventTrigger-Breakpoint-Item,
+callProcessBreakpoints-List SEQUENCE (SIZE (1..maxnoofCallProcessBreakpoints)) OF RANFunctionDefinition-EventTrigger-Breakpoint-Item,
 ...
 }
 RANFunctionDefinition-EventTrigger-Breakpoint-Item ::= SEQUENCE {
@@ -977,8 +966,7 @@ ric-SupportedEventTriggerStyle-Type RIC-Style-Type,
 ric-ReportActionFormat-Type RIC-Format-Type,
 ric-IndicationHeaderFormat-Type RIC-Format-Type,
 ric-IndicationMessageFormat-Type RIC-Format-Type,
-ran-ReportParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF
-Report-RANParameter-Item OPTIONAL,
+ran-ReportParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF Report-RANParameter-Item OPTIONAL,
 ...
 }
 Report-RANParameter-Item ::= SEQUENCE {
@@ -991,8 +979,7 @@ ranParameter-Definition RANParameter-Definition OPTIONAL
 -- Insert
 -------------------------------
 RANFunctionDefinition-Insert ::= SEQUENCE {
-ric-InsertStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF
-RANFunctionDefinition-Insert-Item,
+ric-InsertStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RANFunctionDefinition-Insert-Item,
 ...
 }
 RANFunctionDefinition-Insert-Item ::= SEQUENCE {
@@ -1000,8 +987,7 @@ ric-InsertStyle-Type RIC-Style-Type,
 ric-InsertStyle-Name RIC-Style-Name,
 ric-SupportedEventTriggerStyle-Type RIC-Style-Type,
 ric-ActionDefinitionFormat-Type RIC-Format-Type,
-ric-InsertIndication-List SEQUENCE (SIZE(1..maxnoofInsertIndication)) OF
-RANFunctionDefinition-Insert-Indication-Item OPTIONAL,
+ric-InsertIndication-List SEQUENCE (SIZE(1..maxnoofInsertIndication)) OF RANFunctionDefinition-Insert-Indication-Item OPTIONAL,
 ric-IndicationHeaderFormat-Type RIC-Format-Type,
 ric-IndicationMessageFormat-Type RIC-Format-Type,
 ric-CallProcessIDFormat-Type RIC-Format-Type,
@@ -1010,8 +996,7 @@ ric-CallProcessIDFormat-Type RIC-Format-Type,
 RANFunctionDefinition-Insert-Indication-Item ::= SEQUENCE {
 ric-InsertIndication-ID RIC-InsertIndication-ID,
 ric-InsertIndication-Name RIC-InsertIndication-Name,
-ran-InsertIndicationParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF
-InsertIndication-RANParameter-Item OPTIONAL,
+ran-InsertIndicationParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF InsertIndication-RANParameter-Item OPTIONAL,
 ...
 }
 InsertIndication-RANParameter-Item ::= SEQUENCE {
@@ -1024,21 +1009,18 @@ ranParameter-Definition RANParameter-Definition OPTIONAL
 -- Control
 -------------------------------
 RANFunctionDefinition-Control ::= SEQUENCE {
-ric-ControlStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF
-RANFunctionDefinition-Control-Item,
+ric-ControlStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RANFunctionDefinition-Control-Item,
 ...
 }
 RANFunctionDefinition-Control-Item ::= SEQUENCE {
 ric-ControlStyle-Type RIC-Style-Type,
 ric-ControlStyle-Name RIC-Style-Name,
-ric-ControlAction-List SEQUENCE (SIZE(1..maxnoofControlAction)) OF
-RANFunctionDefinition-Control-Action-Item OPTIONAL,
+ric-ControlAction-List SEQUENCE (SIZE(1..maxnoofControlAction)) OF RANFunctionDefinition-Control-Action-Item OPTIONAL,
 ric-ControlHeaderFormat-Type RIC-Format-Type,
 ric-ControlMessageFormat-Type RIC-Format-Type,
 ric-CallProcessIDFormat-Type RIC-Format-Type OPTIONAL,
 ric-ControlOutcomeFormat-Type RIC-Format-Type,
-ran-ControlOutcomeParameters-List SEQUENCE (SIZE(1..maxnoofRANOutcomeParameters)) OF
-ControlOutcome-RANParameter-Item OPTIONAL,
+ran-ControlOutcomeParameters-List SEQUENCE (SIZE(1..maxnoofRANOutcomeParameters)) OF ControlOutcome-RANParameter-Item OPTIONAL,
 ...,
 listOfAdditionalSupportedFormats ListOfAdditionalSupportedFormats OPTIONAL}
 ControlOutcome-RANParameter-Item ::= SEQUENCE {
@@ -1050,8 +1032,7 @@ ranParameter-Definition RANParameter-Definition OPTIONAL
 RANFunctionDefinition-Control-Action-Item ::= SEQUENCE {
 ric-ControlAction-ID RIC-ControlAction-ID,
 ric-ControlAction-Name RIC-ControlAction-Name,
-ran-ControlActionParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF
-ControlAction-RANParameter-Item OPTIONAL,
+ran-ControlActionParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF ControlAction-RANParameter-Item OPTIONAL,
 ...,
 ueGroup-ControlAction-Supported ENUMERATED {true, false, ...} OPTIONAL
 }
@@ -1061,8 +1042,7 @@ ranParameter-name RANParameter-Name,
 ...,
 ranParameter-Definition RANParameter-Definition OPTIONAL
 }
-ListOfAdditionalSupportedFormats ::= SEQUENCE (SIZE(0..maxnoofFormatTypes)) OF
-AdditionalSupportedFormat
+ListOfAdditionalSupportedFormats ::= SEQUENCE (SIZE(0..maxnoofFormatTypes)) OF AdditionalSupportedFormat
 AdditionalSupportedFormat ::= SEQUENCE {
 ric-ControlHeaderFormat-Type RIC-Format-Type,
 ric-ControlMessageFormat-Type RIC-Format-Type,
@@ -1074,26 +1054,22 @@ ric-ControlAction-ID RIC-ControlAction-ID OPTIONAL
 -- Policy
 -------------------------------
 RANFunctionDefinition-Policy ::= SEQUENCE {
-ric-PolicyStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF
-RANFunctionDefinition-Policy-Item,
+ric-PolicyStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RANFunctionDefinition-Policy-Item,
 ...
 }
 RANFunctionDefinition-Policy-Item ::= SEQUENCE {
 ric-PolicyStyle-Type RIC-Style-Type,
 ric-PolicyStyle-Name RIC-Style-Name,
 ric-SupportedEventTriggerStyle-Type RIC-Style-Type,
-ric-PolicyAction-List SEQUENCE (SIZE(1..maxnoofPolicyAction)) OF
-RANFunctionDefinition-Policy-Action-Item OPTIONAL,
+ric-PolicyAction-List SEQUENCE (SIZE(1..maxnoofPolicyAction)) OF RANFunctionDefinition-Policy-Action-Item OPTIONAL,
 ...
 }
 RANFunctionDefinition-Policy-Action-Item ::= SEQUENCE {
 ric-PolicyAction-ID RIC-ControlAction-ID,
 ric-PolicyAction-Name RIC-ControlAction-Name,
 ric-ActionDefinitionFormat-Type RIC-Format-Type,
-ran-PolicyActionParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF
-PolicyAction-RANParameter-Item OPTIONAL,
-ran-PolicyConditionParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF
-PolicyCondition-RANParameter-Item OPTIONAL,
+ran-PolicyActionParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF PolicyAction-RANParameter-Item OPTIONAL,
+ran-PolicyConditionParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF PolicyCondition-RANParameter-Item OPTIONAL,
 ...
 }
 PolicyAction-RANParameter-Item ::= SEQUENCE {
@@ -1112,8 +1088,7 @@ ranParameter-Definition RANParameter-Definition OPTIONAL
 -- Query
 -------------------------------
 RANFunctionDefinition-Query ::= SEQUENCE {
-ric-QueryStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF
-RANFunctionDefinition-Query-Item,
+ric-QueryStyle-List SEQUENCE (SIZE(1..maxnoofRICStyles)) OF RANFunctionDefinition-Query-Item,
 ...
 }
 RANFunctionDefinition-Query-Item ::= SEQUENCE {
@@ -1122,8 +1097,7 @@ ric-QueryStyle-Name RIC-Style-Name,
 ric-QueryHeaderFormat-Type RIC-Format-Type,
 ric-QueryDefinitionFormat-Type RIC-Format-Type,
 ric-QueryOutcomeFormat-Type RIC-Format-Type,
-ran-QueryParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF
-Query-RANParameter-Item OPTIONAL,
+ran-QueryParameters-List SEQUENCE (SIZE (1..maxnoofAssociatedRANParameters)) OF Query-RANParameter-Item OPTIONAL,
 ...
 }
 Query-RANParameter-Item ::= SEQUENCE {
