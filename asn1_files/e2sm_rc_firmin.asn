@@ -1114,7 +1114,7 @@ protocol CauseProtocol,
 ...
 }
 
-CauseRICrequest ::= CHOICE {
+CauseRICrequest ::= ENUMERATED {
 Unknown(0)
 }
 
