@@ -1,0 +1,13 @@
+include:
+  - project: 'oran-ric/infra/cicd'
+    file: '/.ci-common.yml'
+
+stages:
+  - build
+
+
+build_job:
+  extends: .build_template
+  only:
+    - tags
+    - /^oran-student-.*/
