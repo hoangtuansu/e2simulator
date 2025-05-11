@@ -1115,7 +1115,8 @@ protocol CauseProtocol,
 }
 
 CauseRICrequest ::= ENUMERATED {
-Unknown(0)
+    ric-Request-Unknown(0),
+    ...
 }
 
 CauseRICservice ::= ENUMERATED {
