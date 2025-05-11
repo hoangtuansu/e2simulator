@@ -62,15 +62,19 @@ startEndInd ENUMERATED {start, end, ...} OPTIONAL,
 min ENUMERATED {true, ...} OPTIONAL,
 max ENUMERATED {true, ...} OPTIONAL,
 avg ENUMERATED {true, ...} OPTIONAL,
+...,
 ssbIndex INTEGER (1.. 65535, ...) OPTIONAL,
 nonGoB-BFmode-Index INTEGER (1.. 65535, ...) OPTIONAL,
 mIMO-mode-Index INTEGER (1.. 2, ...) OPTIONAL,
 cellGlobalID CGI OPTIONAL,
-beamID Beam-ID OPTIONAL,
+beamID Beam-ID OPTIONAL
+}
 TestCondInfo ::= SEQUENCE{
 testType TestCond-Type,
 testExpr TestCond-Expression OPTIONAL,
 testValue TestCond-Value OPTIONAL,
+...
+}
 TestCond-Type ::= CHOICE{
 gBR ENUMERATED {true, ...},
 aMBR ENUMERATED {true, ...},
@@ -78,12 +82,12 @@ isStat ENUMERATED {true, ...},
 isCatM ENUMERATED {true, ...},
 rSRP ENUMERATED {true, ...},
 rSRQ ENUMERATED {true, ...},
+...,
 ul-rSRP ENUMERATED {true, ...},
 cQI ENUMERATED {true, ...},
 fiveQI ENUMERATED {true, ...},
 qCI ENUMERATED {true, ...},
-sNSSAI ENUMERATED {true, ...},
-...,
+sNSSAI ENUMERATED {true, ...}
 }
 TestCond-Expression ::= ENUMERATED {
 equal,
@@ -100,8 +104,8 @@ valueBool BOOLEAN,
 valueBitS BIT STRING,
 valueOctS OCTET STRING,
 valuePrtS PrintableString,
-valueReal REAL,
 ...,
+valueReal REAL
 }
 MultiReportApproach ::= ENUMERATED {
 single,
@@ -147,8 +151,8 @@ MeasurementInfoList ::= SEQUENCE (SIZE(1..maxnoofMeasurementInfo)) OF Measuremen
 MeasurementInfoItem ::= SEQUENCE {
 measType MeasurementType,
 labelInfoList LabelInfoList,
-matchCondReportList MatchCondReportList OPTIONAL,
 ...,
+matchCondReportList MatchCondReportList OPTIONAL
 }
 LabelInfoList ::= SEQUENCE (SIZE(1..maxnoofLabelInfo)) OF LabelInfoItem
 LabelInfoItem ::= SEQUENCE {
@@ -185,30 +189,30 @@ MeasurementRecordItem ::= CHOICE {
 integer INTEGER (0.. 4294967295),
 real REAL,
 noValue NULL,
-notSatisfied NULL
 ...,
+notSatisfied NULL
 }
 MeasurementInfo-Action-List ::= SEQUENCE (SIZE(1..maxnoofMeasurementInfo)) OF MeasurementInfo-Action-Item
 MeasurementInfo-Action-Item ::= SEQUENCE {
 measName MeasurementTypeName,
 measID MeasurementTypeID OPTIONAL,
-binRangeDef BinRangeDefinition OPTIONAL,
 ...,
+binRangeDef BinRangeDefinition OPTIONAL
 }
 MeasurementCondList ::= SEQUENCE (SIZE(1..maxnoofMeasurementInfo)) OF MeasurementCondItem
 MeasurementCondItem ::= SEQUENCE {
 measType MeasurementType,
 matchingCond MatchingCondList,
-binRangeDef BinRangeDefinition OPTIONAL,
 ...,
+binRangeDef BinRangeDefinition OPTIONAL
 }
 MeasurementCondUEidList ::= SEQUENCE (SIZE(1..maxnoofMeasurementInfo)) OF MeasurementCondUEidItem
 MeasurementCondUEidItem ::= SEQUENCE {
 measType MeasurementType,
 matchingCond MatchingCondList,
 matchingUEidList MatchingUEidList OPTIONAL,
-matchingUEidPerGP MatchingUEidPerGP OPTIONAL,
 ...,
+matchingUEidPerGP MatchingUEidPerGP OPTIONAL
 }
 MatchingCondList ::= SEQUENCE (SIZE(1..maxnoofConditionInfo)) OF MatchingCondItem
 MatchingCondItem ::= SEQUENCE {
@@ -231,8 +235,8 @@ MatchingUEidPerGP-Item ::= SEQUENCE{
 matchedPerGP CHOICE{
 noUEmatched ENUMERATED {true, ...},
 oneOrMoreUEmatched MatchingUEidList-PerGP,
-...,
-}
+...
+},
 ...
 }
 MatchingUEidList-PerGP ::= SEQUENCE (SIZE(1..maxnoofUEID)) OF MatchingUEidItem-PerGP
@@ -243,8 +247,8 @@ ueID UEID,
 MatchingUeCondPerSubList ::= SEQUENCE (SIZE(1..maxnoofConditionInfoPerSub)) OF MatchingUeCondPerSubItem
 MatchingUeCondPerSubItem ::= SEQUENCE{
 testCondInfo TestCondInfo,
-logicalOR LogicalOR OPTIONAL,
 ...,
+logicalOR LogicalOR OPTIONAL
 }
 MatchingUEidPerSubList ::= SEQUENCE (SIZE(2..maxnoofUEIDPerSub)) OF MatchingUEidPerSubItem
 MatchingUEidPerSubItem ::= SEQUENCE{
@@ -301,17 +305,16 @@ actionDefinition-Format3 E2SM-KPM-ActionDefinition-Format3,
 ...,
 actionDefinition-Format4 E2SM-KPM-ActionDefinition-Format4,
 actionDefinition-Format5 E2SM-KPM-ActionDefinition-Format5,
-actionDefinition-Format255 E2SM-KPM-ActionDefinition-Format255,
-...
-}
+actionDefinition-Format255 E2SM-KPM-ActionDefinition-Format255
+},
 ...
 }
 E2SM-KPM-ActionDefinition-Format1 ::= SEQUENCE {
 measInfoList MeasurementInfoList,
 granulPeriod GranularityPeriod,
 cellGlobalID CGI OPTIONAL,
-distMeasBinRangeInfo DistMeasurementBinRangeList OPTIONAL,
 ...,
+distMeasBinRangeInfo DistMeasurementBinRangeList OPTIONAL
 }
 E2SM-KPM-ActionDefinition-Format2 ::= SEQUENCE {
 ueID UEID,
@@ -333,8 +336,8 @@ E2SM-KPM-ActionDefinition-Format5 ::= SEQUENCE {
 matchingUEidList MatchingUEidPerSubList,
 subscriptionInfo E2SM-KPM-ActionDefinition-Format1,
 ...
-} 
-E2SM-KPM-ActionDefinition_Format255 ::= SEQUENCE {
+}
+E2SM-KPM-ActionDefinition-Format255 ::= SEQUENCE {
 multiReportActionDefinitionList MultiReportActionDefinitionList,
 multiReportApproach MultiReportApproach,
 commonActionDefinition E2SM-KPM-ActionDefinition OPTIONAL,
@@ -367,7 +370,7 @@ indicationMessage-Format1 E2SM-KPM-IndicationMessage-Format1,
 indicationMessage-Format2 E2SM-KPM-IndicationMessage-Format2,
 ...,
 indicationMessage-Format3 E2SM-KPM-IndicationMessage-Format3,
-indicationMessage-Format255 E2SM-KPM-IndicationMessage-Format255,
+indicationMessage-Format255 E2SM-KPM-IndicationMessage-Format255
 },
 ...,
 jobID JobID OPTIONAL
@@ -388,7 +391,7 @@ E2SM-KPM-IndicationMessage-Format3 ::= SEQUENCE {
 ueMeasReportList UEMeasurementReportList,
 ...
 }
-E2SM-KPM-IndicationMessage_Format255 ::= SEQUENCE {
+E2SM-KPM-IndicationMessage-Format255 ::= SEQUENCE {
 multiReportIndicationMessageList MultiReportIndicationMessageList,
 ...
 }
@@ -416,7 +419,7 @@ measInfo-Action-List MeasurementInfo-Action-List,
 ric-IndicationHeaderFormat-Type RIC-Format-Type,
 ric-IndicationMessageFormat-Type RIC-Format-Type,
 ...
-},
+}
 RIC-IntegratedReportStyle-Item ::= SEQUENCE{
 ric-ReportStyle-Type RIC-Style-Type,
 ric-ReportStyle-Name RIC-Style-Name,
