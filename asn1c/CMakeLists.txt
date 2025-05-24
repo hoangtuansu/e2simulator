@@ -20,6 +20,14 @@
 
 # For clarity: this generates object, not a lib as the CM command implies.
 #
+
+project (e2sim)
+cmake_minimum_required ( VERSION 3.5 )
+
+set ( major_version "1" )
+set ( minor_version "0" )
+set ( patch_level "0" )
+
 file(GLOB SOURCES "*.c")
 file(GLOB HEADERS "*.h")
 
