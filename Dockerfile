@@ -1,4 +1,4 @@
-FROM oran/asn1c:latest 
+FROM oran1.ens.ad.etsmtl.ca:5000/oran/asn1c:latest 
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
