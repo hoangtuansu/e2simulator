@@ -4,7 +4,7 @@ COPY asn1c/CMakeLists.txt /asn1/asn1_generated/
 
 WORKDIR /asn1/asn1_generated
 
-RUN cmake . && cmake --build .
+RUN cmake . -DDEV_PKG=1 && cmake --build .
 
 FROM debian:trixie-slim as run
 

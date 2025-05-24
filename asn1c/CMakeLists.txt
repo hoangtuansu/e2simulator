@@ -30,6 +30,7 @@ set ( patch_level "0" )
 
 file(GLOB SOURCES "*.c")
 file(GLOB HEADERS "*.h")
+set( install_inc "include/e2sim" )
 
 include_directories(.)
 add_library( asn1_objects OBJECT ${SOURCES})
