@@ -1,33 +1,41 @@
-
-# Étape 1 : Image de base
 FROM debian:trixie-slim
+	
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	autoconf \
+	automake \
+	bison \
+	build-essential \
+	cmake \
+	flex \
+	git \
+	libboost-all-dev \
+	libsctp-dev \
+	libtool \
+	lksctp-tools \
+	net-tools \
+	&& rm -rf /var/lib/apt/lists/*
 
-# Étape 2 : Installer les outils nécessaires
-RUN apt update && \
-    apt install -y build-essential git cmake autoconf wget bison flex libtool
+RUN mkdir -p /opt/e2sim/asn1c \
+	/opt/e2sim/src \
+	/usr/local/include/nlohmann \
+	/opt/e2sim/build
 
-# Étape 3 : Cloner et installer asn1c
-RUN git clone https://github.com/mouse07410/asn1c.git /opt/asn1c
-WORKDIR /opt/asn1c
-RUN autoreconf -iv && ./configure && make -j$(nproc) && make install
+COPY src/nlohmann_json.hpp /usr/local/include/nlohmann/json.hpp
+COPY CMakeLists.txt /opt/e2sim/
+COPY asn1c/ /opt/e2sim/asn1c
+COPY src/ /opt/e2sim/src
 
-# Étape 4 : Revenir dans le répertoire de travail
-WORKDIR /e2sim
+WORKDIR /opt/e2sim/build
+RUN cmake .. && make package \
+&& cmake .. -DDEV_PKG=1 && make package \
+&& dpkg -i e2sim_1.0.0_amd64.deb e2sim-dev_1.0.0_amd64.deb \
+&& rm -f *.deb
+	
+RUN mkdir -p /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/kpm_e2sm/.build
 
-# Étape 5 : Copier les fichiers ASN.1
-COPY asn1_files/ ./asn1_files/
+COPY ./kpm_e2sm/ /opt/e2sim/kpm_e2sm/
+COPY ./kpm_e2sm/src/kpm/config.json /opt/e2sim/kpm_e2sm/
 
-# Étape 6 : Copier le main.c de test
-COPY main.c .
-
-# Étape 7 : Créer le dossier pour les fichiers générés
-RUN mkdir -p asn1_generated
-
-# Étape 8 : Générer le code source ASN.1
-RUN asn1c -fcompound-names -pdu=all -D asn1_generated asn1_files/*.asn
-
-# Étape 9 : Compiler le main de test
-RUN gcc -o /usr/local/bin/kpm_sim main.c $(find asn1_generated -name '*.c' ! -name 'converter-example.c') -Iasn1_generated -lm
-
-# Étape 10 : Exécuter le programme automatiquement
-CMD ["/usr/local/bin/kpm_sim", "10.180.113.156", "32222"]
+WORKDIR /opt/e2sim/kpm_e2sm/.build
+RUN cmake .. && make install

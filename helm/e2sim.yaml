@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e2sim
+  namespace: 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: e2sim
+  template:
+    metadata:
+      labels:
+        app: e2sim
+    spec:
+      containers:
+        - name: e2sim-container
+          image: au24800/e2sim:0.8
+          command:
+            - sh
+            - '-c'
+            - kpm_sim service-ricplt-e2term-sctp-headless.ricplt.svc 36422
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+
