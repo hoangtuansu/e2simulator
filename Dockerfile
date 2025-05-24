@@ -1,4 +1,12 @@
-FROM oran1.ens.ad.etsmtl.ca:5000/oran/asn1c:latest 
+FROM oran1.ens.ad.etsmtl.ca:5000/oran/asn1c:latest AS builder
+
+COPY asn1c/CMakeLists.txt /asn1/asn1_generated/
+
+WORKDIR /asn1/asn1_generated
+
+RUN cmake . -DDEV_PKG=1 && cmake --build .
+
+FROM debian:trixie-slim as run
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -23,7 +31,7 @@ RUN mkdir -p /opt/e2sim/asn1c \
 
 COPY src/nlohmann_json.hpp /usr/local/include/nlohmann/json.hpp
 COPY CMakeLists.txt /opt/e2sim/
-COPY asn1c/ /opt/e2sim/asn1c
+COPY --from=builder /asn1/asn1_generated /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
 
 WORKDIR /opt/e2sim/build
