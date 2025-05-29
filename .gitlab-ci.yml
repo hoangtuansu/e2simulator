@@ -11,3 +11,4 @@ build_job:
   only:
     - tags
     - /^oran-student-.*/
+    - main
