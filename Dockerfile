@@ -17,17 +17,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	net-tools \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /opt/e2sim/asn1c \
-	/opt/e2sim/src \
-	/usr/local/include/nlohmann \
+RUN mkdir -p /usr/local/include/nlohmann \
+	/usr/local/include/strasser \
 	/opt/e2sim/build
 
-COPY src/nlohmann_json.hpp /usr/local/include/nlohmann/json.hpp
-COPY CMakeLists.txt /opt/e2sim/
-COPY --from=builder /asn1/asn1_generated /opt/e2sim/asn1c
-COPY src/ /opt/e2sim/src
+
+COPY . /opt/e2sim/
+
+RUN cp /opt/e2sim/src/nlohmann_json.hpp /usr/local/include/nlohmann/json.hpp && \
+	cp /opt/e2sim/src/csv.h /usr/local/include/strasser/csv.h 
+
+COPY --from=builder /asn1/asn1_generated/* /opt/e2sim/asn1c/
 
 WORKDIR /opt/e2sim/build
+
 RUN cmake .. && make package \
 && cmake .. -DDEV_PKG=1 && make package \
 && dpkg -i e2sim_1.0.0_amd64.deb e2sim-dev_1.0.0_amd64.deb \
