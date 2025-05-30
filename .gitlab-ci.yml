@@ -1,26 +1,14 @@
+include:
+  - project: 'oran-ric/infra/cicd'
+    file: '/.ci-common.yml'
+
 stages:
   - build
   - deploy
 
-variables:
-  IMAGE_NAME: $REGISTRY_URL/$CI_COMMIT_BRANCH/$CI_PROJECT_NAME # Replace with your desired image name
 
 build_job:
-  image: quay.io/podman/stable
-  stage: build
-  tags:
-    - oran-runner # Use your specific tag
-  before_script:
-    - podman info
-    - id
-  script:
-    - sleep 5
-    - mkdir -p /etc/containers/certs.d/$REGISTRY_URL
-    - echo "$REGISTRY_CERTIFICATE" > /etc/containers/certs.d/$REGISTRY_URL/ca.crt
-    - update-ca-trust
-    - podman build . -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest
-    - podman push $IMAGE_NAME:$CI_COMMIT_SHA
-    - podman push $IMAGE_NAME:latest
+  extends: .build_template
   only:
     - tags
     - /^oran-student-.*/
