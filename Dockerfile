@@ -1,4 +1,4 @@
-FROM oran1.ens.ad.etsmtl.ca:5000/oran/asn1c:latest AS builder
+FROM oran1.ens.ad.etsmtl.ca:5000/oran/asn1c:84e2740e AS builder
 FROM debian:trixie-slim as run
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -42,4 +42,4 @@ COPY ./kpm_e2sm/ /opt/e2sim/kpm_e2sm/
 COPY ./kpm_e2sm/src/kpm/config.json /opt/e2sim/kpm_e2sm/
 
 WORKDIR /opt/e2sim/kpm_e2sm/.build
-RUN cmake .. && make install
+#RUN cmake .. && make install
