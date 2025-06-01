@@ -63,6 +63,8 @@ int gFuncId;
 
 E2Sim e2sim;
 
+#define NUMBER_OF_METRICS 8
+
 int main(int argc, char* argv[]) {
   LOG_I("Starting KPM simulator");
 
@@ -162,6 +164,61 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
     LOG_E("Can't open cellmeasreport.json, exiting ...");
     exit(1);
   }
+
+  std::string data_filename = "data.csv";
+  std::ifstream datafile(data_filename);
+
+  if (!datafile.is_open()) {
+      std::cerr << "Error: Could not open the file " << data_filename << std::endl;
+      return 1;
+  }
+
+  std::string line;
+  int line_num = 0;
+
+  while (std::getline(file, line)) {
+      line_num++;
+
+      if (line.empty()) {
+          continue;
+      }
+
+      std::vector<std::string> metrics = split(line, ',');
+
+      if (line_num == 1) {
+          // Header row
+          std::cout << "Header: ";
+          for (const std::string& col : metrics) {
+              std::cout << "[" << col << "] ";
+          }
+          std::cout << "\n\n";
+          continue;
+      }
+
+      // Data row processing
+      if (metrics.size() == NUMBER_OF_METRICS) { // Expecting 5 columns
+          std::string productID = metrics[0];
+          std::string name = metrics[1];
+          double price = std::stod(metrics[2]);      // Convert string to double
+          float weight_kg = std::stof(metrics[3]);    // Convert string to float
+          bool inStock = stringToBool(metrics[4]);    // Convert string to boolean
+
+          std::cout << "  Product ID: " << productID
+                    << ", Name: " << name
+                    << ", Price: " << price
+                    << ", Weight (kg): " << weight_kg
+                    << ", In Stock: " << (inStock ? "Yes" : "No")
+                    << std::endl;
+      } else {
+          std::cerr << "Warning: Skipping row " << line_num << " due to unexpected column count (" << metrics.size() << ").\n";
+      }
+  }
+
+  file.close();
+  std::cout << "\nSuccessfully read " << line_num << " lines from " << filename << std::endl;
+
+  
+
 
   std::istream input {input_filebuf};
   long seqNum = 1;
