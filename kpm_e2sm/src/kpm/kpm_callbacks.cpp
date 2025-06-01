@@ -43,6 +43,7 @@ extern "C" {
 #include "encode_e2apv1.hpp"
 
 #include <nlohmann/json.hpp>
+#include <strasser/csv.h>
 #include <thread>
 #include <chrono>
 #include <time.h>
