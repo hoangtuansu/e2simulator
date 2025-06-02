@@ -19,6 +19,7 @@
 #                                                                            *
 ******************************************************************************/
 #include "e2ap_message_handler.hpp"
+#include "rc_subscription_handler.h"
 
 //#include <iostream>
 //#include <vector>
@@ -37,6 +38,74 @@ void e2ap_handle_sctp_data(int& socket_fd, sctp_buffer_t& data, bool xmlenc, E2S
   auto rval = asn_decode(nullptr, syntax, &asn_DEF_E2AP_PDU, (void**)&pdu, data.buffer, data.len);
 
   switch (rval.code) {
+if (pdu->present == E2AP_PDU_PR_initiatingMessage &&
+    pdu->choice.initiatingMessage->procedureCode == ProcedureCode_id_RICsubscription) {
+
+    LOG_I("📥 RIC Subscription Request reçue");
+
+    auto &subscription = pdu->choice.initiatingMessage->value.choice.RICsubscriptionRequest;
+
+    for (int i = 0; i < subscription.protocolIEs.list.count; i++) {
+        RICsubscriptionRequest_IEs_t *ie = subscription.protocolIEs.list.array[i];
+
+        if (ie->id == ProtocolIE_ID_id_RICeventTriggerDefinition) {
+            OCTET_STRING_t event_trigger = ie->value.choice.RICeventTriggerDefinition;
+
+            uint8_t* event_trigger_buf = event_trigger.buf;
+            size_t event_trigger_len = event_trigger.size;
+
+            LOG_I("📨 Appel du handler RC");
+            handle_subscription_rc(event_trigger_buf, event_trigger_len);
+        }
+    }
+}
+// Cherche l'IE contenant la liste des actions
+for (int i = 0; i < subscription.protocolIEs.list.count; i++) {
+    RICsubscriptionRequest_IEs_t *ie = subscription.protocolIEs.list.array[i];
+
+    if (ie->id == ProtocolIE_ID_id_RICactions_ToBeSetup_List) {
+        RICaction_ToBeSetup_List_t *action_list = &ie->value.choice.RICactions_ToBeSetup_List;
+
+        for (int j = 0; j < action_list->list.count; j++) {
+            RICaction_ToBeSetup_ItemIEs_t *action_item_ie = action_list->list.array[j];
+            RICaction_ToBeSetup_Item_t *action_item = &action_item_ie->value.choice.RICaction_ToBeSetup_Item;
+
+            // Vérifie si ActionDefinition est présent
+            if (action_item->ricActionDefinition) {
+                uint8_t *action_buf = action_item->ricActionDefinition->buf;
+                size_t action_len = action_item->ricActionDefinition->size;
+
+                LOG_I("📨 Décodage de l'ActionDefinition RC");
+
+                // Décode en utilisant ASN.1
+                E2SM_RC_ActionDefinition_t *action_def = nullptr;
+
+                asn_dec_rval_t rval = asn_decode(
+                    NULL,
+                    ATS_ALIGNED_BASIC_PER,
+                    &asn_DEF_E2SM_RC_ActionDefinition,
+                    (void **)&action_def,
+                    action_buf,
+                    action_len
+                );
+
+                if (rval.code != RC_OK) {
+                    LOG_E("❌ Échec du décodage de E2SM_RC_ActionDefinition");
+                } else {
+                    LOG_I("✔️ Décodage E2SM_RC_ActionDefinition réussi");
+
+                    // Exemple : afficher le style type s’il existe
+                    if (action_def->ric_Style_Type) {
+                        printf("🆔 RIC Style Type (Action): %ld\n", action_def->ric_Style_Type->value);
+                    }
+                }
+
+                ASN_STRUCT_FREE(asn_DEF_E2SM_RC_ActionDefinition, action_def);
+            }
+        }
+    }
+}
+
     case RC_WMORE:
     case RC_FAIL:
       LOG_E("Failed to decode E2AP data from SCTP connection");

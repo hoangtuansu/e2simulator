@@ -94,6 +94,7 @@ add_subdirectory(src/SCTP)
 add_subdirectory(src/messagerouting)
 add_subdirectory(src/base)
 add_subdirectory(src/encoding)
+add_subdirectory(kpm_e2sm/src/kpm)
 
 
 add_library( e2sim_shared SHARED
@@ -101,7 +102,23 @@ add_library( e2sim_shared SHARED
 "$<TARGET_OBJECTS:asn1_objects>;$<TARGET_OBJECTS:def_objects>;$<TARGET_OBJECTS:sctp_objects>;$<TARGET_OBJECTS:messagerouting_objects>;$<TARGET_OBJECTS:encoding_objects>;$<TARGET_OBJECTS:base_objects>"
 
 )
+# Ajout de l'exécutable principal e2sim
+add_executable(e2sim src/base/e2sim.cpp)
 
+target_include_directories(e2sim PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/asn1c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/base
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/DEF
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/SCTP
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/messagerouting
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/encoding
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/rc_e2sm
+)
+
+target_link_libraries(e2sim
+  e2sim_shared
+  pthread
+)
 
 # we only build/export the static archive (.a) if generating a dev package
 if( DEV_PKG )
