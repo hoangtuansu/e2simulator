@@ -15,18 +15,24 @@
 #==================================================================================
 #
 
-add_executable( kpm_sim kpm_callbacks.cpp encode_kpm.cpp )
+add_executable(kpm_sim
+  kpm_callbacks.cpp
+  encode_kpm.cpp
+)
 
-include_directories(.)
-include_directories(/opt/e2sim/build/asn1c)
-include_directories(/usr/local/include/e2sim)
-include_directories(/usr/local/include)
+# Inclure les headers du projet
+target_include_directories(kpm_sim PUBLIC
+  ${CMAKE_SOURCE_DIR}/asn1c
+  ${CMAKE_SOURCE_DIR}/src/DEF
+  ${CMAKE_SOURCE_DIR}/src/SCTP
+  ${CMAKE_SOURCE_DIR}/src/messagerouting
+  ${CMAKE_SOURCE_DIR}/src/base
+  ${CMAKE_SOURCE_DIR}/src/encoding
+)
 
-target_link_libraries( kpm_sim e2sim )
-target_link_libraries( kpm_sim pthread)
-
-install( 
-    TARGETS kpm_sim
-    DESTINATION ${install_bin}
+# Lien avec la bibliothèque principale
+target_link_libraries(kpm_sim
+  e2sim_shared
+  pthread
 )
 

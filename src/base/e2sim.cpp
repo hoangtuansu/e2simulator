@@ -16,7 +16,7 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-
+#include "rc_subscription_handler.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
