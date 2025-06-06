@@ -1,0 +1,11 @@
+CellConfiguration DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+CellConfiguration ::= SEQUENCE {
+    cellId     INTEGER,
+    frequency  INTEGER,
+    txPower    INTEGER,
+    band       INTEGER
+}
+
+END
+
