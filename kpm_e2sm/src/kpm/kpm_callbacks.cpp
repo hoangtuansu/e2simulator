@@ -158,16 +158,7 @@ void get_cell_id(uint8_t *nrcellid_buf, char *cid_return_buf) {
 }
 
 void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long actionId) {
-  std::filebuf reports_json;
-  std::streambuf *input_filebuf = &reports_json;
-  int e2node_id = std::stoi(std::getenv("E2NODE_ID"));
-
-  if (!reports_json.open("/opt/e2sim/kpm_e2sm/cellmeasreport.json", std::ios::in)) {
-    LOG_E("Can't open cellmeasreport.json, exiting ...");
-    exit(1);
-  }
-
-  std::string filename = "data.csv";
+  std::string filename = "/opt/e2sim/kpm_e2sm/data.csv";
 
   try {
       // io::CSVReader because we expect 5 columns
@@ -195,6 +186,7 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
       double rsrp;
       double rsrq;
       double rssinr;
+      long seqNum = 1;
 
       std::cout << "Reading products.csv (ben-strasser/fast-cpp-csv-parser):\n";
 
@@ -211,14 +203,15 @@ void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long
                     << rssinr
                     << std::endl;
 
-          LOG_I("Start sending E2Node measurement reports with DU id %d", duid);
+          LOG_I("Start sending E2Node measurement reports");
 
           asn_codec_ctx_t *opt_cod2;
 
           E2SM_KPM_IndicationMessage_t *ind_message_style1 = (E2SM_KPM_IndicationMessage_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_t));
           E2AP_PDU *pdu_style1 = (E2AP_PDU*)calloc(1, sizeof(E2AP_PDU));
-          const char* cell_pms_labels[NUMBER_OF_METRICS] = {"throughput", "pdcpBytesDl", "pdcpBytesUl", "availPrbDl", "availPrbUl"};
-          double cell_pms_values[NUMBER_OF_METRICS] = {throughput, pdcpBytesDl, pdcpBytesUl, availPrbDl, availPrbUl};
+          
+          const char* cell_pms_labels[NUMBER_OF_METRICS] = {"throughput", "pdcpBytesDl", "pdcpBytesUl", "availPrbDl", "availPrbUl", "rsrp", "rsrq", "rssinr"};
+          double cell_pms_values[NUMBER_OF_METRICS] = {throughput, pdcpBytesDl, pdcpBytesUl, availPrbDl, availPrbUl, rsrp, rsrq, rssinr};
 
           kpm_report_indication_message_initialized(ind_message_style1, cell_pms_labels, cell_pms_values, NUMBER_OF_METRICS);
 

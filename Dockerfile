@@ -42,7 +42,8 @@ RUN cmake .. && make package \
 RUN mkdir -p /opt/e2sim/kpm_e2sm/.build
 
 COPY ./kpm_e2sm/ /opt/e2sim/kpm_e2sm/
-COPY ./kpm_e2sm/src/kpm/config.json /opt/e2sim/kpm_e2sm/
+RUN cp /opt/e2sim/kpm_e2sm/src/kpm/config.json /opt/e2sim/kpm_e2sm/src/kpm/data.csv /opt/e2sim/kpm_e2sm/
+
 
 WORKDIR /opt/e2sim/kpm_e2sm/.build
 RUN cmake .. && make install
