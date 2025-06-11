@@ -54,9 +54,9 @@ Once the deploy job succeeds in Gitlab, you open Lens and you should see the fol
 ![alt text](docs/images/pod_details.png)
 
 
-## How to find ID corresponding to the E2 node simulated by E2sim
+## E2 node ID
 
-Click on the pod e2sim, and select to view its log.
+In this section, you will figure out the ID registered by E2sim with near-RT RIC platform. First, click on the pod e2sim, and select to view its log.
 
 ![alt text](docs/images/view_log_e2sim.png)
 
