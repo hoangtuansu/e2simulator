@@ -1,3 +1,5 @@
+In this document, you will learn how to deploy E2 simulator on lab K8s cluster with your own change.
+
 ## Prepare in Gitlab
 
 Create a branch for yourself by clicking on `plus` button as following:
