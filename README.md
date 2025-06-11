@@ -52,3 +52,18 @@ Once the deploy job succeeds in Gitlab, you open Lens and you should see the fol
 - Pod details
 
 ![alt text](docs/images/pod_details.png)
+
+
+## How to find ID corresponding to the E2 node simulated by E2sim
+
+Click on the pod e2sim, and select to view its log.
+
+![alt text](docs/images/view_log_e2sim.png)
+
+You will see the RAN function ID registered by the E2sim:
+
+![alt text](docs/images/ran_func_id_from_log.png)
+
+Run the command `curl --location 'http://10.180.113.156:32137/v1/e2t/list'` in devvm terminal, you will get the list of connected E2 nodes.
+
+![alt text](docs/images/connected_e2_nodes.png)
