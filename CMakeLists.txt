@@ -95,6 +95,7 @@ add_subdirectory(src/messagerouting)
 add_subdirectory(src/base)
 add_subdirectory(src/encoding)
 add_subdirectory(kpm_e2sm/src/kpm)
+add_subdirectory(src/rc_e2sm)
 
 
 add_library( e2sim_shared SHARED
