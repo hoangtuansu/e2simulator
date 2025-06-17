@@ -114,6 +114,7 @@ target_include_directories(e2sim PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/messagerouting
   ${CMAKE_CURRENT_SOURCE_DIR}/src/encoding
   ${CMAKE_CURRENT_SOURCE_DIR}/src/rc_e2sm
+  ${CMAKE_CURRENT_SOURCE_DIR}/kpm_e2sm/src/kpm
 )
 
 target_link_libraries(e2sim
