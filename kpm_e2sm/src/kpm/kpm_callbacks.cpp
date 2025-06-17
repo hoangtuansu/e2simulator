@@ -43,7 +43,6 @@ extern "C" {
 #include "encode_e2apv1.hpp"
 
 #include <nlohmann/json.hpp>
-#include <strasser/csv.h>
 #include <thread>
 #include <chrono>
 #include <time.h>
@@ -53,15 +52,20 @@ extern "C" {
 #include "errno.h"
 #include "e2sim_defs.h"
 #include <cstdlib>
+#include <strasser/csv.h>
+
 
 using json = nlohmann::json;
 using namespace std;
+using namespace io;
 using namespace std::chrono;
 
 class E2Sim;
 int gFuncId;
 
 E2Sim e2sim;
+
+#define NUMBER_OF_METRICS 8
 
 int main(int argc, char* argv[]) {
   LOG_I("Starting KPM simulator");
@@ -154,192 +158,143 @@ void get_cell_id(uint8_t *nrcellid_buf, char *cid_return_buf) {
 }
 
 void run_report_loop(long requestorId, long instanceId, long ranFunctionId, long actionId) {
-  std::filebuf reports_json;
-  std::streambuf *input_filebuf = &reports_json;
-  int e2node_id = std::stoi(std::getenv("E2NODE_ID"));
+  std::string filename = "/opt/e2sim/kpm_e2sm/data.csv";
 
-  if (!reports_json.open("/opt/e2sim/kpm_e2sm/cellmeasreport.json", std::ios::in)) {
-    LOG_E("Can't open cellmeasreport.json, exiting ...");
-    exit(1);
+  try {
+      // io::CSVReader because we expect 5 columns
+      io::CSVReader<NUMBER_OF_METRICS> in(filename);
+
+      
+
+      // Read the header line, mapping to variables.
+      // The library automatically handles type conversion based on the variable types you provide.
+      in.read_header(io::ignore_extra_column,
+                      "throughput",
+                      "pdcpBytesDl",
+                      "pdcpBytesUl",
+                      "availPrbDl",
+                      "availPrbUl",
+                      "rsrp",
+                      "rsrq",
+                      "rssinr");
+
+      double throughput;
+      double pdcpBytesDl;
+      double pdcpBytesUl;
+      double availPrbDl;
+      double availPrbUl;
+      double rsrp;
+      double rsrq;
+      double rssinr;
+      long seqNum = 1;
+
+      std::cout << "Reading products.csv (ben-strasser/fast-cpp-csv-parser):\n";
+
+
+      while (in.read_row(throughput, pdcpBytesDl, pdcpBytesUl, availPrbDl, 
+                        availPrbUl, rsrp, rsrq, rssinr)) {
+          std::cout << throughput << ", " 
+                    << pdcpBytesDl << ", " 
+                    << pdcpBytesUl << ", " 
+                    << availPrbDl << ", " 
+                    << availPrbUl << ", " 
+                    << rsrp << ", " 
+                    << rsrq << ", " 
+                    << rssinr
+                    << std::endl;
+
+          LOG_I("Start sending E2Node measurement reports");
+
+          asn_codec_ctx_t *opt_cod2;
+
+          E2SM_KPM_IndicationMessage_t *ind_message_style1 = (E2SM_KPM_IndicationMessage_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_t));
+          E2AP_PDU *pdu_style1 = (E2AP_PDU*)calloc(1, sizeof(E2AP_PDU));
+          
+          const char* cell_pms_labels[NUMBER_OF_METRICS] = {"throughput", "pdcpBytesDl", "pdcpBytesUl", "availPrbDl", "availPrbUl", "rsrp", "rsrq", "rssinr"};
+          double cell_pms_values[NUMBER_OF_METRICS] = {throughput, pdcpBytesDl, pdcpBytesUl, availPrbDl, availPrbUl, rsrp, rsrq, rssinr};
+
+          kpm_report_indication_message_initialized(ind_message_style1, cell_pms_labels, cell_pms_values, NUMBER_OF_METRICS);
+
+          LOG_I("E2SM KPM Indication message:");
+          xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, ind_message_style1);
+
+          uint8_t e2sm_message_buf_style1[8192] = {0, };
+          size_t e2sm_message_buf_size_style1 = 8192;
+
+          asn_enc_rval_t er_message_style1 = asn_encode_to_buffer(opt_cod2,
+                                                                  ATS_ALIGNED_BASIC_PER,
+                                                                  &asn_DEF_E2SM_KPM_IndicationMessage,
+                                                                  ind_message_style1,
+                                                                  e2sm_message_buf_style1, e2sm_message_buf_size_style1);
+
+          if (er_message_style1.encoded == -1) {
+            LOG_I("Failed to serialize data. Detail: %s.", asn_DEF_E2SM_KPM_IndicationMessage.name);
+            exit(1);
+          } else if (er_message_style1.encoded > e2sm_message_buf_size_style1) {
+            LOG_I("Buffer of size %zu is too small for %s, need %zu\n", e2sm_message_buf_size_style1, asn_DEF_E2SM_KPM_IndicationMessage.name, er_message_style1.encoded);
+            exit(1);
+          } else {
+            LOG_I("Encoded Cell indication message succesfully, size in bytes: %ld", er_message_style1.encoded);
+          }
+
+          E2SM_KPM_IndicationHeader_t* ind_header_style1 = (E2SM_KPM_IndicationHeader_t*)calloc(1, sizeof(E2SM_KPM_IndicationHeader_t));
+
+          kpm_report_indication_header_initialized(ind_header_style1);
+          LOG_I("E2SM KPM Indication header:");
+          xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationHeader, ind_header_style1);
+
+          uint8_t e2sm_header_buf_style1[8192] = {0, };
+          size_t e2sm_header_buf_size_style1 = 8192;
+
+          asn_enc_rval_t er_header_style1 = asn_encode_to_buffer(opt_cod2,
+                                                                ATS_ALIGNED_BASIC_PER,
+                                                                &asn_DEF_E2SM_KPM_IndicationHeader,
+                                                                ind_header_style1,
+                                                                e2sm_header_buf_style1, e2sm_header_buf_size_style1);
+
+          if (er_header_style1.encoded == -1) {
+            LOG_I("Failed to serialize data. Detail: %s.\n", asn_DEF_E2SM_KPM_IndicationHeader.name);
+            exit(1);
+          } else if (er_header_style1.encoded > e2sm_header_buf_size_style1) {
+            LOG_I("Buffer of size %zu is too small for %s, need %zu", e2sm_header_buf_size_style1, asn_DEF_E2SM_KPM_IndicationHeader.name, er_header_style1.encoded);
+            exit(1);
+          } else {
+            LOG_I("Encoded Cell indication header succesfully, size in bytes: %ld", er_header_style1.encoded);
+          }
+
+          ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationHeader, ind_header_style1);
+
+          encoding::generate_e2apv1_indication_request_parameterized(pdu_style1, requestorId,
+                                                                    instanceId, ranFunctionId,
+                                                                    actionId, seqNum, e2sm_header_buf_style1,
+                                                                    er_header_style1.encoded,
+                                                                    e2sm_message_buf_style1, er_message_style1.encoded);
+
+          e2sim.encode_and_send_sctp_data(pdu_style1);
+          seqNum++;
+          LOG_I("Succesfully sent subscribed PM values. Sleep 3s before sending again new values.");
+          std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+      }
+
+      std::cout << "Successfully read data from " << filename << std::endl;
+
+  } catch (const io::error::can_not_open_file& e) {
+      std::cerr << "Error: Could not open the file " << filename << ": " << e.what() << std::endl;
+      return;
+  } catch (const io::error::missing_column_in_header& e) {
+      std::cerr << "Error: Missing column in CSV: " << e.what() << std::endl;
+      return;
+  } catch (const io::error::too_few_columns& e) {
+      std::cerr << "Error: Too few columns in a row: " << e.what() << std::endl;
+      return;
+  } catch (const io::error::too_many_columns& e) {
+      std::cerr << "Error: Too many columns in a row: " << e.what() << std::endl;
+      return;
+  } catch (const std::exception& e) {
+      std::cerr << "An unexpected error occurred: " << e.what() << std::endl;
+      return;
   }
-
-  std::istream input {input_filebuf};
-  long seqNum = 1;
-  std::string str;
-
-  while (getline(input, str)) {
-    json all_ues_json;
-
-    try {
-      all_ues_json = json::parse(str);
-    } catch (...) {
-      LOG_I("Exception on reading json from string: %s", str.c_str());
-      exit(1);
-    }
-
-    if (0) {
-      E2SM_KPM_IndicationMessage_t *ind_msg_cucp_ue = (E2SM_KPM_IndicationMessage_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_t));
-      // kpm_report_indication_message_initialized(ind_msg_cucp_ue);
-
-      uint8_t e2sm_message_buf_cucp_ue[8192] = {0, };
-      size_t e2sm_message_buf_size_cucp_ue = 8192;
-
-      asn_codec_ctx_t *opt_cod;
-
-      asn_enc_rval_t er_message_cucp_ue = asn_encode_to_buffer(opt_cod,
-                                                               ATS_ALIGNED_BASIC_PER,
-                                                               &asn_DEF_E2SM_KPM_IndicationMessage,
-                                                               ind_msg_cucp_ue, e2sm_message_buf_cucp_ue, e2sm_message_buf_size_cucp_ue);
-
-      if (er_message_cucp_ue.encoded == -1) {
-        LOG_I("Failed to serialize message data. Detail: %s.\n", asn_DEF_E2SM_KPM_IndicationMessage.name);
-        exit(1);
-      } else if (er_message_cucp_ue.encoded > e2sm_message_buf_size_cucp_ue) {
-        LOG_I("Buffer of size %zu is too small for %s, need %zu\n", e2sm_message_buf_size_cucp_ue, asn_DEF_E2SM_KPM_IndicationMessage.name, er_message_cucp_ue.encoded);
-        exit(1);
-      } else {
-        LOG_I("Encoded UE indication message succesfully, size in bytes: %zu", er_message_cucp_ue.encoded);
-      }
-
-      E2SM_KPM_IndicationHeader_t* ind_header_cucp_ue = (E2SM_KPM_IndicationHeader_t*)calloc(1, sizeof(E2SM_KPM_IndicationHeader_t));
-      kpm_report_indication_header_initialized(ind_header_cucp_ue);
-
-      asn_codec_ctx_t *opt_cod1;
-      uint8_t e2sm_header_buf_cucp_ue[8192] = {0, };
-      size_t e2sm_header_buf_size_cucp_ue = 8192;
-
-      asn_enc_rval_t er_header_cucp_ue = asn_encode_to_buffer(opt_cod1,
-                                                              ATS_ALIGNED_BASIC_PER,
-                                                              &asn_DEF_E2SM_KPM_IndicationHeader,
-                                                              ind_header_cucp_ue, e2sm_header_buf_cucp_ue, e2sm_header_buf_size_cucp_ue);
-
-      if (er_header_cucp_ue.encoded == -1) {
-        LOG_I("Failed to serialize data. Detail: %s.\n", asn_DEF_E2SM_KPM_IndicationHeader.name);
-        exit(1);
-      } else if (er_header_cucp_ue.encoded > e2sm_header_buf_size_cucp_ue) {
-        LOG_I("Buffer of size %zu is too small for %s, need %zu\n", e2sm_header_buf_size_cucp_ue, asn_DEF_E2SM_KPM_IndicationHeader.name, er_header_cucp_ue.encoded);
-        exit(1);
-      } else {
-        LOG_I("Encoded UE indication header succesfully, size in bytes: %zu", er_header_cucp_ue.encoded);
-        for (int i = 0; i < er_header_cucp_ue.encoded; i++) {
-          printf("%x ", e2sm_header_buf_cucp_ue[i]);
-        }
-      }
-
-      ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationHeader, ind_header_cucp_ue);
-
-      E2AP_PDU *pdu_cucp_ue = (E2AP_PDU*)calloc(1, sizeof(E2AP_PDU));
-
-      encoding::generate_e2apv1_indication_request_parameterized(pdu_cucp_ue, requestorId,
-                                                                 instanceId, ranFunctionId,
-                                                                 actionId, seqNum, e2sm_header_buf_cucp_ue,
-                                                                 er_header_cucp_ue.encoded, e2sm_message_buf_cucp_ue,
-                                                                 er_message_cucp_ue.encoded);
-
-      e2sim.encode_and_send_sctp_data(pdu_cucp_ue);
-      LOG_I("Measurement report for UE has been sent");
-      seqNum++;
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
-    } else if (1) {
-      json::json_pointer du_id(std::string("/du-id"));
-      int duid = all_ues_json[du_id].get<int>();
-
-      if (duid != e2node_id) {
-        continue;
-      }
-
-      LOG_D("Current line: %s", str.c_str());
-
-      json::json_pointer p0(std::string("/cellMeasReportList/0/throughput"));
-      double throughput = all_ues_json[p0].get<double>();
-
-      json::json_pointer p1(std::string("/cellMeasReportList/0/pdcpByteMeasReport/pdcpBytesDl"));
-      double pdcpBytesDl = all_ues_json[p1].get<double>();
-
-      json::json_pointer p2(std::string("/cellMeasReportList/0/pdcpByteMeasReport/pdcpBytesUl"));
-      double pdcpBytesUl = all_ues_json[p2].get<double>();
-
-      json::json_pointer p3(std::string("/cellMeasReportList/0/prbMeasReport/availPrbDl"));
-      double availPrbDl = all_ues_json[p3].get<double>();
-
-      json::json_pointer p4(std::string("/cellMeasReportList/0/prbMeasReport/availPrbUl"));
-      double availPrbUl = all_ues_json[p4].get<double>();
-
-      LOG_I("Start sending E2Node measurement reports with DU id %d", duid);
-
-      asn_codec_ctx_t *opt_cod2;
-
-      E2SM_KPM_IndicationMessage_t *ind_message_style1 = (E2SM_KPM_IndicationMessage_t*)calloc(1, sizeof(E2SM_KPM_IndicationMessage_t));
-      E2AP_PDU *pdu_style1 = (E2AP_PDU*)calloc(1, sizeof(E2AP_PDU));
-      const char* cell_pms_labels[5] = {"throughput", "pdcpBytesDl", "pdcpBytesUl", "availPrbDl", "availPrbUl"};
-      double cell_pms_values[5] = {throughput, pdcpBytesDl, pdcpBytesUl, availPrbDl, availPrbUl};
-
-      kpm_report_indication_message_initialized(ind_message_style1, cell_pms_labels, cell_pms_values, 5);
-
-      LOG_I("E2SM KPM Indication message:");
-      xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, ind_message_style1);
-
-      uint8_t e2sm_message_buf_style1[8192] = {0, };
-      size_t e2sm_message_buf_size_style1 = 8192;
-
-      asn_enc_rval_t er_message_style1 = asn_encode_to_buffer(opt_cod2,
-                                                              ATS_ALIGNED_BASIC_PER,
-                                                              &asn_DEF_E2SM_KPM_IndicationMessage,
-                                                              ind_message_style1,
-                                                              e2sm_message_buf_style1, e2sm_message_buf_size_style1);
-
-      if (er_message_style1.encoded == -1) {
-        LOG_I("Failed to serialize data. Detail: %s.", asn_DEF_E2SM_KPM_IndicationMessage.name);
-        exit(1);
-      } else if (er_message_style1.encoded > e2sm_message_buf_size_style1) {
-        LOG_I("Buffer of size %zu is too small for %s, need %zu\n", e2sm_message_buf_size_style1, asn_DEF_E2SM_KPM_IndicationMessage.name, er_message_style1.encoded);
-        exit(1);
-      } else {
-        LOG_I("Encoded Cell indication message succesfully, size in bytes: %ld", er_message_style1.encoded);
-      }
-
-      E2SM_KPM_IndicationHeader_t* ind_header_style1 = (E2SM_KPM_IndicationHeader_t*)calloc(1, sizeof(E2SM_KPM_IndicationHeader_t));
-
-      kpm_report_indication_header_initialized(ind_header_style1);
-      LOG_I("E2SM KPM Indication header:");
-      xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationHeader, ind_header_style1);
-
-      uint8_t e2sm_header_buf_style1[8192] = {0, };
-      size_t e2sm_header_buf_size_style1 = 8192;
-
-      asn_enc_rval_t er_header_style1 = asn_encode_to_buffer(opt_cod2,
-                                                             ATS_ALIGNED_BASIC_PER,
-                                                             &asn_DEF_E2SM_KPM_IndicationHeader,
-                                                             ind_header_style1,
-                                                             e2sm_header_buf_style1, e2sm_header_buf_size_style1);
-
-      if (er_header_style1.encoded == -1) {
-        LOG_I("Failed to serialize data. Detail: %s.\n", asn_DEF_E2SM_KPM_IndicationHeader.name);
-        exit(1);
-      } else if (er_header_style1.encoded > e2sm_header_buf_size_style1) {
-        LOG_I("Buffer of size %zu is too small for %s, need %zu", e2sm_header_buf_size_style1, asn_DEF_E2SM_KPM_IndicationHeader.name, er_header_style1.encoded);
-        exit(1);
-      } else {
-        LOG_I("Encoded Cell indication header succesfully, size in bytes: %ld", er_header_style1.encoded);
-      }
-
-      ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationHeader, ind_header_style1);
-
-      encoding::generate_e2apv1_indication_request_parameterized(pdu_style1, requestorId,
-                                                                 instanceId, ranFunctionId,
-                                                                 actionId, seqNum, e2sm_header_buf_style1,
-                                                                 er_header_style1.encoded,
-                                                                 e2sm_message_buf_style1, er_message_style1.encoded);
-
-      e2sim.encode_and_send_sctp_data(pdu_style1);
-      seqNum++;
-      LOG_I("Succesfully sent subscribed PM values. Sleep 3s before sending again new values.");
-      std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-    }
-  }
-
-  reports_json.close();
+  
 }
 
 void callback_kpm_subscription_request(E2AP_PDU_t *sub_req_pdu) {

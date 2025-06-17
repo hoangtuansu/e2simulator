@@ -42,7 +42,6 @@ const char* performance_measurements[] = {
   "L1M.UL-SRS-RSRP"
   };
 
-int NUMBER_MEASUREMENTS = 9;
 
 void encode_kpm_function_description(E2SM_KPM_RANfunction_Description_t* ranfunc_desc) {
   uint8_t* short_name = (uint8_t*)"ORAN-E2SM-KPM";
@@ -108,7 +107,7 @@ void encode_kpm_function_description(E2SM_KPM_RANfunction_Description_t* ranfunc
   MeasurementInfo_Action_List_t* measInfo_Action_List =
       (MeasurementInfo_Action_List_t*)calloc(1, sizeof(MeasurementInfo_Action_List_t));
 
-  for (int i = 0; i < NUMBER_MEASUREMENTS; i++) {
+  for (int i = 0; i < NUMBER_OF_METRICS; i++) {
     uint8_t* metrics = (uint8_t *)performance_measurements[i];
     MeasurementInfo_Action_Item_t* measItem =
         (MeasurementInfo_Action_Item_t*)calloc(1, sizeof(MeasurementInfo_Action_Item_t));
