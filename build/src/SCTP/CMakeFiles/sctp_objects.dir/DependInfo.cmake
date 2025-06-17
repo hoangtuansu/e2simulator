@@ -8,8 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/system/workspace/e2sim/e2sim/src/SCTP/e2sim_sctp.c" "src/SCTP/CMakeFiles/sctp_objects.dir/e2sim_sctp.c.o" "gcc" "src/SCTP/CMakeFiles/sctp_objects.dir/e2sim_sctp.c.o.d"
-  "/home/system/workspace/e2sim/e2sim/src/SCTP/e2sim_sctp.cpp" "src/SCTP/CMakeFiles/sctp_objects.dir/e2sim_sctp.cpp.o" "gcc" "src/SCTP/CMakeFiles/sctp_objects.dir/e2sim_sctp.cpp.o.d"
+  "/home/firmin/e2sim/src/SCTP/e2sim_sctp.cpp" "src/SCTP/CMakeFiles/sctp_objects.dir/e2sim_sctp.cpp.o" "gcc" "src/SCTP/CMakeFiles/sctp_objects.dir/e2sim_sctp.cpp.o.d"
   )
 
 # Targets to which this target links.

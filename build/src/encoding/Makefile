@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/system/workspace/e2sim/e2sim
+CMAKE_SOURCE_DIR = /home/firmin/e2sim
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/system/workspace/e2sim/build
+CMAKE_BINARY_DIR = /home/firmin/e2sim/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -68,7 +68,7 @@ CMAKE_BINARY_DIR = /home/system/workspace/e2sim/build
 # Special rule for the target package
 package: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	cd /home/system/workspace/e2sim/build && /usr/bin/cpack --config ./CPackConfig.cmake
+	cd /home/firmin/e2sim/build && /usr/bin/cpack --config ./CPackConfig.cmake
 .PHONY : package
 
 # Special rule for the target package
@@ -78,7 +78,7 @@ package/fast: package
 # Special rule for the target package_source
 package_source:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	cd /home/system/workspace/e2sim/build && /usr/bin/cpack --config ./CPackSourceConfig.cmake /home/system/workspace/e2sim/build/CPackSourceConfig.cmake
+	cd /home/firmin/e2sim/build && /usr/bin/cpack --config ./CPackSourceConfig.cmake /home/firmin/e2sim/build/CPackSourceConfig.cmake
 .PHONY : package_source
 
 # Special rule for the target package_source
@@ -152,14 +152,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/system/workspace/e2sim/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/system/workspace/e2sim/build/CMakeFiles /home/system/workspace/e2sim/build/src/encoding//CMakeFiles/progress.marks
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/system/workspace/e2sim/build/CMakeFiles 0
+	cd /home/firmin/e2sim/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/firmin/e2sim/build/CMakeFiles /home/firmin/e2sim/build/src/encoding//CMakeFiles/progress.marks
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/firmin/e2sim/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/clean
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/clean
 .PHONY : clean
 
 # The main clean target
@@ -168,22 +168,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/preinstall
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/preinstall
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/system/workspace/e2sim/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/firmin/e2sim/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/encoding/CMakeFiles/encoding_objects.dir/rule:
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/CMakeFiles/encoding_objects.dir/rule
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/encoding/CMakeFiles/encoding_objects.dir/rule
 .PHONY : src/encoding/CMakeFiles/encoding_objects.dir/rule
 
 # Convenience name for target.
@@ -192,7 +192,7 @@ encoding_objects: src/encoding/CMakeFiles/encoding_objects.dir/rule
 
 # fast build rule for target.
 encoding_objects/fast:
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f src/encoding/CMakeFiles/encoding_objects.dir/build.make src/encoding/CMakeFiles/encoding_objects.dir/build
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f src/encoding/CMakeFiles/encoding_objects.dir/build.make src/encoding/CMakeFiles/encoding_objects.dir/build
 .PHONY : encoding_objects/fast
 
 encode_e2apv1.o: encode_e2apv1.cpp.o
@@ -200,7 +200,7 @@ encode_e2apv1.o: encode_e2apv1.cpp.o
 
 # target to build an object file
 encode_e2apv1.cpp.o:
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f src/encoding/CMakeFiles/encoding_objects.dir/build.make src/encoding/CMakeFiles/encoding_objects.dir/encode_e2apv1.cpp.o
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f src/encoding/CMakeFiles/encoding_objects.dir/build.make src/encoding/CMakeFiles/encoding_objects.dir/encode_e2apv1.cpp.o
 .PHONY : encode_e2apv1.cpp.o
 
 encode_e2apv1.i: encode_e2apv1.cpp.i
@@ -208,7 +208,7 @@ encode_e2apv1.i: encode_e2apv1.cpp.i
 
 # target to preprocess a source file
 encode_e2apv1.cpp.i:
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f src/encoding/CMakeFiles/encoding_objects.dir/build.make src/encoding/CMakeFiles/encoding_objects.dir/encode_e2apv1.cpp.i
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f src/encoding/CMakeFiles/encoding_objects.dir/build.make src/encoding/CMakeFiles/encoding_objects.dir/encode_e2apv1.cpp.i
 .PHONY : encode_e2apv1.cpp.i
 
 encode_e2apv1.s: encode_e2apv1.cpp.s
@@ -216,7 +216,7 @@ encode_e2apv1.s: encode_e2apv1.cpp.s
 
 # target to generate assembly for a file
 encode_e2apv1.cpp.s:
-	cd /home/system/workspace/e2sim/build && $(MAKE) $(MAKESILENT) -f src/encoding/CMakeFiles/encoding_objects.dir/build.make src/encoding/CMakeFiles/encoding_objects.dir/encode_e2apv1.cpp.s
+	cd /home/firmin/e2sim/build && $(MAKE) $(MAKESILENT) -f src/encoding/CMakeFiles/encoding_objects.dir/build.make src/encoding/CMakeFiles/encoding_objects.dir/encode_e2apv1.cpp.s
 .PHONY : encode_e2apv1.cpp.s
 
 # Help Target
@@ -248,6 +248,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/system/workspace/e2sim/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/firmin/e2sim/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

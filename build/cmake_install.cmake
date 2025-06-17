@@ -1,4 +1,4 @@
-# Install script for directory: /home/system/workspace/e2sim/e2sim
+# Install script for directory: /home/firmin/e2sim
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "Debug")
+    set(CMAKE_INSTALL_CONFIG_NAME "")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -49,7 +49,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libe2sim_shared.so"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/system/workspace/e2sim/build/libe2sim_shared.so")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/firmin/e2sim/build/libe2sim_shared.so")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libe2sim_shared.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libe2sim_shared.so")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -63,12 +63,14 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/system/workspace/e2sim/build/asn1c/cmake_install.cmake")
-  include("/home/system/workspace/e2sim/build/src/DEF/cmake_install.cmake")
-  include("/home/system/workspace/e2sim/build/src/SCTP/cmake_install.cmake")
-  include("/home/system/workspace/e2sim/build/src/messagerouting/cmake_install.cmake")
-  include("/home/system/workspace/e2sim/build/src/base/cmake_install.cmake")
-  include("/home/system/workspace/e2sim/build/src/encoding/cmake_install.cmake")
+  include("/home/firmin/e2sim/build/asn1c/cmake_install.cmake")
+  include("/home/firmin/e2sim/build/src/DEF/cmake_install.cmake")
+  include("/home/firmin/e2sim/build/src/SCTP/cmake_install.cmake")
+  include("/home/firmin/e2sim/build/src/messagerouting/cmake_install.cmake")
+  include("/home/firmin/e2sim/build/src/base/cmake_install.cmake")
+  include("/home/firmin/e2sim/build/src/encoding/cmake_install.cmake")
+  include("/home/firmin/e2sim/build/kpm_e2sm/src/kpm/cmake_install.cmake")
+  include("/home/firmin/e2sim/build/src/rc_e2sm/cmake_install.cmake")
 
 endif()
 
@@ -80,5 +82,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/system/workspace/e2sim/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/firmin/e2sim/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

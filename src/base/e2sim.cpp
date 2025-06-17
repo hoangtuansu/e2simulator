@@ -16,14 +16,14 @@
 # limitations under the License.                                             *
 #                                                                            *
 ******************************************************************************/
-#include "rc_subscription_handler.h"
+#include "rc_handler.hpp"
+#include "rc_callbacks.hpp"
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <vector>
-
 #include "e2sim.hpp"
 #include "e2sim_defs.h"
 #include "e2sim_sctp.hpp"

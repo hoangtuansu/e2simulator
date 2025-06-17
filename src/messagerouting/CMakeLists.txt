@@ -29,7 +29,8 @@ include_directories(../encoding)
 
 target_include_directories (messagerouting_objects PUBLIC                    
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../asn1c>  
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../asn1c>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/rc_e2sm>  
   $<INSTALL_INTERFACE:include>
   PRIVATE src)
 

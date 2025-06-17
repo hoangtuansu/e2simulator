@@ -27,6 +27,11 @@ target_include_directories (base_objects PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   PRIVATE src)
+target_include_directories(base_objects PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../asn1c
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/src/rc_e2sm
+)
 
 # header files should go into .../include/xfcpp/
 if( DEV_PKG )                                   

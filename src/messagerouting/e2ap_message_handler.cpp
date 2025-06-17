@@ -19,7 +19,7 @@
 #                                                                            *
 ******************************************************************************/
 #include "e2ap_message_handler.hpp"
-#include "rc_subscription_handler.h"
+#include "rc_handler.hpp"
 
 //#include <iostream>
 //#include <vector>
