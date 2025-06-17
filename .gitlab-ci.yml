@@ -12,7 +12,6 @@ build_job:
   only:
     - tags
     - /^oran-student-.*/
-    - tuan
 
 
 deploy_job:
