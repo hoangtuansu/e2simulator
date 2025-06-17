@@ -94,7 +94,7 @@ add_subdirectory(src/SCTP)
 add_subdirectory(src/messagerouting)
 add_subdirectory(src/base)
 add_subdirectory(src/encoding)
-add_subdirectory(kpm_e2sm/)
+add_subdirectory(kpm_e2sm)
 add_subdirectory(src/rc_e2sm)
 
 
