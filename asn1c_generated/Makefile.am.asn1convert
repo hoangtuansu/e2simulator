@@ -1,0 +1,14 @@
+include /app/asn1c_generated/Makefile.am.libasncodec
+
+bin_PROGRAMS += asn1convert
+asn1convert_CFLAGS = $(ASN_MODULE_CFLAGS) 
+asn1convert_CPPFLAGS = -I$(top_srcdir)/-DASN_PDU_COLLECTION 
+asn1convert_LDADD = libasncodec.la
+asn1convert_SOURCES = \
+	/app/asn1c_generated/converter-example.c\
+	/app/asn1c_generated/pdu_collection.c
+regen: regenerate-from-asn1-source
+
+regenerate-from-asn1-source:
+	asn1c -fcompound-names -pdu=all -D /app/asn1c_generated CellConfiguration.asn
+
