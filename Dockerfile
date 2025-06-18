@@ -1,4 +1,4 @@
-FROM oran1.ens.ad.etsmtl.ca:5000/oran/asn1c:50744e6d AS builder
+FROM oran1.ens.ad.etsmtl.ca:5000/oran/asn1c:84e2740e AS builder
 FROM debian:trixie-slim as run
 
 ENV DEBIAN_FRONTEND=noninteractive
