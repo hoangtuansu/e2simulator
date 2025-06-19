@@ -1,10 +1,2020 @@
 CellConfiguration DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-CellConfiguration ::= SEQUENCE {
-    cellId     INTEGER,
-    frequency  INTEGER,
-    txPower    INTEGER,
-    band       INTEGER
+GeneratedSchema ::= SEQUENCE {
+    openapi UTF8String,
+    info SEQUENCE {
+        title UTF8String,
+        version UTF8String,
+        description UTF8String
+    },
+    paths SEQUENCE {
+    },
+    components SEQUENCE {
+        schemas SEQUENCE {
+            gnbId SEQUENCE {
+                type UTF8String,
+                minimum INTEGER,
+                maximum INTEGER
+            },
+            gnbIdLength SEQUENCE {
+                type UTF8String,
+                minimum INTEGER,
+                maximum INTEGER
+            },
+            gnbName SEQUENCE {
+                type UTF8String,
+                maxLength INTEGER
+            },
+            gnbDuId SEQUENCE {
+                type UTF8String,
+                minimum INTEGER,
+                maximum INTEGER
+            },
+            gnbCuUpId SEQUENCE {
+                type UTF8String,
+                minimum INTEGER,
+                maximum INTEGER
+            },
+            sst SEQUENCE {
+                type UTF8String,
+                maximum INTEGER
+            },
+            snssai SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    sst SEQUENCE {
+                        ref UTF8String
+                    },
+                    sd SEQUENCE {
+                        type UTF8String
+                    }
+                }
+            },
+            snssaiList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            mcc SEQUENCE {
+                type UTF8String,
+                pattern UTF8String
+            },
+            mnc SEQUENCE {
+                type UTF8String,
+                pattern UTF8String
+            },
+            plmnId SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    mcc SEQUENCE {
+                        ref UTF8String
+                    },
+                    mnc SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            plmnIdList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            plmnInfo SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    plmnId SEQUENCE {
+                        ref UTF8String
+                    },
+                    snssai SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            plmnInfoList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            gGnbId SEQUENCE {
+                type UTF8String,
+                pattern UTF8String
+            },
+            gEnbId SEQUENCE {
+                type UTF8String,
+                pattern UTF8String
+            },
+            gGnbIdList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            gEnbIdList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            nrPci SEQUENCE {
+                type UTF8String,
+                minimum INTEGER,
+                maximum INTEGER
+            },
+            nrTac SEQUENCE {
+                type UTF8String,
+                minimum INTEGER,
+                maximum INTEGER
+            },
+            operationalState SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF UTF8String
+            },
+            administrativeState SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF UTF8String
+            },
+            cellState SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF UTF8String
+            },
+            cyclicPrefix SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF UTF8String
+            },
+            bwpContext SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF UTF8String
+            },
+            isInitialBwp SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF UTF8String
+            },
+            subCarrierSpacing SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF INTEGER
+            },
+            ssbPeriodicity SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF INTEGER
+            },
+            ssbDuration SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF INTEGER
+            },
+            ssbSubCarrierSpacing SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF INTEGER
+            },
+            resourceType SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF UTF8String
+            },
+            rrmPolicyMember SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    plmnId SEQUENCE {
+                        ref UTF8String
+                    },
+                    snssai SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            rrmPolicyMemberList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            n5QiList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    type UTF8String
+                }
+            },
+            partitionFlowList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    type UTF8String,
+                    properties SEQUENCE {
+                        snssai SEQUENCE {
+                            ref UTF8String
+                        },
+                        plmnId SEQUENCE {
+                            ref UTF8String
+                        },
+                        n5qiList SEQUENCE {
+                            ref UTF8String
+                        }
+                    }
+                }
+            },
+            partitionList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    type UTF8String,
+                    properties SEQUENCE {
+                        pOffsetToPointA SEQUENCE {
+                            type UTF8String
+                        },
+                        pNumberOfRBs SEQUENCE {
+                            type UTF8String
+                        },
+                        partitionFlowList SEQUENCE {
+                            ref UTF8String
+                        }
+                    }
+                }
+            },
+            esObjective SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    type UTF8String,
+                    properties SEQUENCE {
+                        targetEc SEQUENCE {
+                            type UTF8String
+                        } OPTIONAL,
+                        esPercentage SEQUENCE {
+                            type UTF8String,
+                            minimum INTEGER,
+                            maximum INTEGER
+                        } OPTIONAL
+                    }
+                }
+            },
+            perfObjective SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    plmnInfoList SEQUENCE {
+                        ref UTF8String
+                    },
+                    fiveQIValue SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    maxNgbrFlowBr SEQUENCE {
+                        type UTF8String
+                    },
+                    flowBrAvgWindow SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    maxPd SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    targetPd SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            perfObjectiveList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            sleepMode SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    sleepModeType SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    },
+                    wakeupDuration SEQUENCE {
+                        type UTF8String
+                    },
+                    wakeupDurationGuaranteed SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            sleepModes SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            supportedTrxControlMask SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    maskName SEQUENCE {
+                        type UTF8String
+                    },
+                    antennaMask SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            supportedTrxControlMasks SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            energySavingCapabilityCommonInfo SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    sT8-ready-message-supported SEQUENCE {
+                        type UTF8String
+                    },
+                    sleep-duration-extension-supported SEQUENCE {
+                        type UTF8String
+                    },
+                    emergency-wake-up-command-supported SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            asmCapabilityInfo SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    sleepModes SEQUENCE {
+                        ref UTF8String
+                    },
+                    definedDurationSleepSupported SEQUENCE {
+                        type UTF8String
+                    },
+                    undefinedDurationSleepSupported SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            trxControlCapabilityInfo SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    supportedTrxControlMasks SEQUENCE {
+                        ref UTF8String
+                    },
+                    sleepModes SEQUENCE {
+                        ref UTF8String
+                    },
+                    definedDurationSleepSupported SEQUENCE {
+                        type UTF8String
+                    },
+                    undefinedDurationSleepSupported SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            oruCapabilities SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    energySavingCapabilityCommonInfo SEQUENCE {
+                        ref UTF8String
+                    },
+                    asmCapabilityInfo SEQUENCE {
+                        ref UTF8String
+                    },
+                    trxControlCapabilityInfo SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            onDurationTimer SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    type UTF8String,
+                    enum SEQUENCE OF UTF8String OPTIONAL,
+                    minimum INTEGER OPTIONAL,
+                    maximum INTEGER OPTIONAL
+                }
+            },
+            cycleStartOffset SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    periodicity SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    },
+                    offset SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    }
+                }
+            },
+            tPolarizationItem SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    tPolarizationIndex SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    tPolarizationType SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rPolarizationItem SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    rPolarizationIndex SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    rPolarizationType SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            txArrayItem SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    tName SEQUENCE {
+                        type UTF8String
+                    },
+                    tNumberOfRows SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    tNumberOfColumns SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    tNumberOfArrayLayers SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    tHorizontalSpacing SEQUENCE {
+                        type UTF8String
+                    },
+                    tVerticalSpacing SEQUENCE {
+                        type UTF8String
+                    },
+                    tNormalVectorDirection SEQUENCE {
+                        type UTF8String,
+                        properties SEQUENCE {
+                            tAzimuthAngle SEQUENCE {
+                                type UTF8String
+                            },
+                            tZenithAngle SEQUENCE {
+                                type UTF8String
+                            }
+                        }
+                    },
+                    tLeftmostBottomArrayElementPosition SEQUENCE {
+                        type UTF8String,
+                        properties SEQUENCE {
+                            tXAxis SEQUENCE {
+                                type UTF8String
+                            },
+                            tYAxis SEQUENCE {
+                                type UTF8String
+                            },
+                            tZAxis SEQUENCE {
+                                type UTF8String
+                            }
+                        }
+                    },
+                    tPolarizationList SEQUENCE {
+                        type UTF8String,
+                        items SEQUENCE {
+                            ref UTF8String
+                        }
+                    },
+                    tBandNumber SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    tMaxGain SEQUENCE {
+                        type UTF8String
+                    },
+                    tMinGain SEQUENCE {
+                        type UTF8String
+                    },
+                    tIndependentPowerBudget SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rxArrayItem SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    rName SEQUENCE {
+                        type UTF8String
+                    },
+                    rNumberOfRows SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    rNumberOfColumns SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    rNumberOfArrayLayers SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    rHorizontalSpacing SEQUENCE {
+                        type UTF8String
+                    },
+                    rVerticalSpacing SEQUENCE {
+                        type UTF8String
+                    },
+                    rNormalVectorDirection SEQUENCE {
+                        type UTF8String,
+                        properties SEQUENCE {
+                            rAzimuthAngle SEQUENCE {
+                                type UTF8String
+                            },
+                            rZenithAngle SEQUENCE {
+                                type UTF8String
+                            }
+                        }
+                    },
+                    rLeftmostBottomArrayElementPosition SEQUENCE {
+                        type UTF8String,
+                        properties SEQUENCE {
+                            rXAxis SEQUENCE {
+                                type UTF8String
+                            },
+                            rYAxis SEQUENCE {
+                                type UTF8String
+                            },
+                            rZAxis SEQUENCE {
+                                type UTF8String
+                            }
+                        }
+                    },
+                    rPolarizationList SEQUENCE {
+                        type UTF8String,
+                        items SEQUENCE {
+                            ref UTF8String
+                        }
+                    },
+                    rBandNumber SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    rGainCorrectionRange SEQUENCE {
+                        type UTF8String,
+                        properties SEQUENCE {
+                            rMax SEQUENCE {
+                                type UTF8String
+                            },
+                            rMin SEQUENCE {
+                                type UTF8String
+                            }
+                        }
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            txArrayList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            rxArrayList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            oruUserPlaneConfiguration SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    txArrayList SEQUENCE {
+                        ref UTF8String
+                    },
+                    rxArrayList SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            o-GnbCuCpFunction SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    gnbId SEQUENCE {
+                        ref UTF8String
+                    },
+                    gnbIdLength SEQUENCE {
+                        ref UTF8String
+                    },
+                    gnbCuName SEQUENCE {
+                        ref UTF8String
+                    },
+                    plmnId SEQUENCE {
+                        ref UTF8String
+                    },
+                    x2BlockList SEQUENCE {
+                        ref UTF8String
+                    },
+                    xnBlockList SEQUENCE {
+                        ref UTF8String
+                    },
+                    x2AllowList SEQUENCE {
+                        ref UTF8String
+                    },
+                    xnAllowList SEQUENCE {
+                        ref UTF8String
+                    },
+                    x2HOBlockList SEQUENCE {
+                        ref UTF8String
+                    },
+                    xnHOBlockList SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            o-GnbCuUpFunction SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    gnbId SEQUENCE {
+                        ref UTF8String
+                    },
+                    gnbIdLength SEQUENCE {
+                        ref UTF8String
+                    },
+                    gnbCuUpId SEQUENCE {
+                        ref UTF8String
+                    },
+                    plmnInfoList SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            o-GnbDuFunction SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    gnbDuId SEQUENCE {
+                        ref UTF8String
+                    },
+                    gnbDuName SEQUENCE {
+                        ref UTF8String
+                    },
+                    gnbId SEQUENCE {
+                        ref UTF8String
+                    },
+                    gnbIdLength SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            o-NrCellCu SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellLocalId SEQUENCE {
+                        type UTF8String
+                    },
+                    plmnInfoList SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            o-NrCellDu SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellLocalId SEQUENCE {
+                        type UTF8String
+                    },
+                    operationalState SEQUENCE {
+                        ref UTF8String
+                    },
+                    administrativeState SEQUENCE {
+                        ref UTF8String
+                    },
+                    cellState SEQUENCE {
+                        ref UTF8String
+                    },
+                    plmnInfoList SEQUENCE {
+                        ref UTF8String
+                    },
+                    nrPci SEQUENCE {
+                        ref UTF8String
+                    },
+                    nrTac SEQUENCE {
+                        ref UTF8String
+                    },
+                    arfcnDL SEQUENCE {
+                        type UTF8String
+                    },
+                    arfcnUL SEQUENCE {
+                        type UTF8String
+                    },
+                    arfcnSUL SEQUENCE {
+                        type UTF8String
+                    },
+                    bSChannelBwDL SEQUENCE {
+                        type UTF8String
+                    },
+                    ssbFrequency SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    ssbPeriodicity SEQUENCE {
+                        ref UTF8String
+                    },
+                    ssbSubCarrierSpacing SEQUENCE {
+                        ref UTF8String
+                    },
+                    ssbOffset SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    ssbDuration SEQUENCE {
+                        ref UTF8String
+                    },
+                    bSChannelBwUL SEQUENCE {
+                        type UTF8String
+                    },
+                    bSChannelBwSUL SEQUENCE {
+                        type UTF8String
+                    },
+                    bwpList SEQUENCE {
+                        type UTF8String,
+                        items SEQUENCE {
+                            ref UTF8String
+                        }
+                    },
+                    partitionList SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            o-RRMPolicyRatio SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    resourceType SEQUENCE {
+                        ref UTF8String
+                    },
+                    rRMPolicyMemberList SEQUENCE {
+                        ref UTF8String
+                    },
+                    rRMPolicyMaxRatio SEQUENCE {
+                        type UTF8String
+                    },
+                    rRMPolicyMinRatio SEQUENCE {
+                        type UTF8String
+                    },
+                    rRMPolicyDedicatedRatio SEQUENCE {
+                        type UTF8String
+                    }
+                }
+            },
+            o-Bwp SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    bwpContext SEQUENCE {
+                        ref UTF8String
+                    },
+                    isInitialBwp SEQUENCE {
+                        ref UTF8String
+                    },
+                    subCarrierSpacing SEQUENCE {
+                        ref UTF8String
+                    },
+                    cyclicPrefix SEQUENCE {
+                        ref UTF8String
+                    },
+                    startRB SEQUENCE {
+                        type UTF8String
+                    },
+                    numberOfRBs SEQUENCE {
+                        type UTF8String
+                    }
+                }
+            },
+            o-CESManagementFunction SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cesSwitch SEQUENCE {
+                        type UTF8String
+                    },
+                    energySavingState SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    },
+                    energySavingControl SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    }
+                }
+            },
+            o-NESPolicy SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    policyType SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    },
+                    antennaMaskName SEQUENCE {
+                        type UTF8String
+                    },
+                    antennaMask SEQUENCE {
+                        type UTF8String
+                    },
+                    sleepMode SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    },
+                    dataDir SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    },
+                    symbolMask SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    slotMask SEQUENCE {
+                        type UTF8String
+                    },
+                    validDuration SEQUENCE {
+                        type UTF8String
+                    },
+                    esObjective SEQUENCE {
+                        ref UTF8String
+                    },
+                    perfObjectiveList SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            o-CellDTXDRXConfig SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    onDurationTimer SEQUENCE {
+                        ref UTF8String
+                    },
+                    cycleStartOffset SEQUENCE {
+                        ref UTF8String
+                    },
+                    slotOffset SEQUENCE {
+                        type UTF8String,
+                        minimum INTEGER,
+                        maximum INTEGER
+                    },
+                    configType SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    },
+                    activationStatus SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    },
+                    l1Activation SEQUENCE {
+                        type UTF8String,
+                        enum SEQUENCE OF UTF8String
+                    }
+                }
+            },
+            o-RUInfo SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    oruUserPlaneConfiguration SEQUENCE {
+                        ref UTF8String
+                    },
+                    oruCapabilities SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            e2SM-CCC-RAN-Configuration-Structure SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            rIC-Indication-Header SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    indicationHeaderFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            indicationHeaderFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-IndicationHeaderFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    indicationReason SEQUENCE {
+                        enum SEQUENCE OF UTF8String
+                    },
+                    eventTime SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rIC-Indication-Message SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    indicationMessageFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            indicationMessageFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-IndicationMessageFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfConfigurationStructuresReported SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfConfigurationsReported SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            configurationStructure SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    changeType SEQUENCE {
+                        enum SEQUENCE OF UTF8String
+                    },
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    valuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    },
+                    oldValuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            valuesOfAttributes SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructure SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            e2SM-CCC-IndicationMessageFormat2 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfCellsReported SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCellsReported SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            cellReported SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellGlobalId SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfConfigurationStructuresReported SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            cellGlobalId SEQUENCE {
+                type UTF8String,
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            nR-CGI SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    plmnIdentity SEQUENCE {
+                        ref UTF8String
+                    },
+                    nRCellIdentity SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            nRCellIdentity SEQUENCE {
+                type UTF8String,
+                pattern UTF8String
+            },
+            eUTRA-CGI SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    plmnIdentity SEQUENCE {
+                        ref UTF8String
+                    },
+                    eUTRACellIdentity SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            eUTRACellIdentity SEQUENCE {
+                type UTF8String
+            },
+            rIC-Control-Header SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    controlHeaderFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            controlHeaderFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-ControlHeaderFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ricStyleType SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rIC-Control-Message SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    controlMessageFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            controlMessageFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-ControlMessageFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfConfigurationStructures SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfConfigurationStructures SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            configurationStructureWrite SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    oldValuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    },
+                    newValuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            e2SM-CCC-ControlMessageFormat2 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfCellsControlled SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCellsControlled SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            cellControlled SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellGlobalId SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfConfigurationStructures SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rANFunctionDefinition SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranFunctionName SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfSupportedNodeLevelConfigurationStructures SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfCellsForRANFunctionDefinition SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rANFunctionName SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranFunctionShortName SEQUENCE {
+                        type UTF8String
+                    },
+                    ranFunctionServiceModelOID SEQUENCE {
+                        type UTF8String
+                    },
+                    ranFunctionDescription SEQUENCE {
+                        type UTF8String
+                    },
+                    ranFunctionInstance SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfSupportedRANConfigurationStructures SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            rANConfigurationStructure SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    listOfSupportedAttributes SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfSupportedAttributes SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            attribute SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    attributeName SEQUENCE {
+                        type UTF8String
+                    },
+                    supportedServices SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rICServices SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    eventTrigger SEQUENCE {
+                        ref UTF8String
+                    },
+                    reportService SEQUENCE {
+                        ref UTF8String
+                    },
+                    insertService SEQUENCE {
+                        ref UTF8String
+                    },
+                    controlService SEQUENCE {
+                        ref UTF8String
+                    },
+                    policyService SEQUENCE {
+                        ref UTF8String
+                    },
+                    queryService SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            eventTrigger SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfSupportedEventTriggerStyles SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfSupportedEventTriggerStyles SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            eventTriggerStyle SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    eventTriggerStyleType SEQUENCE {
+                        type UTF8String
+                    },
+                    eventTriggerStyleName SEQUENCE {
+                        type UTF8String
+                    },
+                    eventTriggerFormatType SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            reportService SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfSupportedReportStyles SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfSupportedReportStyles SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            reportStyle SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    reportServiceStyleType SEQUENCE {
+                        type UTF8String
+                    },
+                    reportServiceStyleName SEQUENCE {
+                        type UTF8String
+                    },
+                    listOfSupportedEventTriggerStylesForReportStyle SEQUENCE {
+                        type UTF8String,
+                        items SEQUENCE {
+                            ref UTF8String
+                        }
+                    },
+                    reportServiceActionDefinitionFormatType SEQUENCE {
+                        type UTF8String
+                    },
+                    reportServiceIndicationHeaderFormatType SEQUENCE {
+                        type UTF8String
+                    },
+                    reportServiceIndicationMessageFormatType SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            eventTriggerStyleType SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    eventTriggerStyleType SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            insertService SEQUENCE {
+                type UTF8String
+            },
+            controlService SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfSupportedControlStyles SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfSupportedControlStyles SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            controlStyle SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    controlServiceStyleType SEQUENCE {
+                        type UTF8String
+                    },
+                    controlServiceStyleName SEQUENCE {
+                        type UTF8String
+                    },
+                    controlServiceHeaderFormatType SEQUENCE {
+                        type UTF8String
+                    },
+                    controlServiceMessageFormatType SEQUENCE {
+                        type UTF8String
+                    },
+                    ricCallProcessIDFormatType SEQUENCE {
+                        type UTF8String
+                    },
+                    controlServiceControlOutcomeFormatType SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            policyService SEQUENCE {
+                type UTF8String
+            },
+            queryService SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfSupportedQueryStyles SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfSupportedQueryStyles SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            queryStyle SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    queryServiceStyleType SEQUENCE {
+                        type UTF8String
+                    },
+                    queryServiceStyleName SEQUENCE {
+                        type UTF8String
+                    },
+                    queryServiceHeaderFormatType SEQUENCE {
+                        type UTF8String
+                    },
+                    queryServiceDefinitionFormatType SEQUENCE {
+                        type UTF8String
+                    },
+                    queryServiceOutcomeFormatType SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCellsForRANFunctionDefinition SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            cellForRANFunctionDefinition SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellGlobalID SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfSupportedCellLevelRANConfigurationStructures SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rICEventTriggerDefinition SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    eventTriggerDefinitionFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            eventTriggerDefinitionFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-EventTriggerDefinition-Format1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfNodeLevelConfigurationStructuresForEventTrigger SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfRANConfigurationStructuresForEventTrigger SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            rANConfigurationStructureForEventTrigger SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    listOfAttributes SEQUENCE {
+                        type UTF8String,
+                        items SEQUENCE {
+                            type UTF8String
+                        }
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            e2SM-CCC-EventTriggerDefinition-Format2 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfCellLevelConfigurationStructuresForEventTrigger SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCellLevelConfigurationStructuresForEventTrigger SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            cellLevelConfigurationStructureForEventTrigger SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellGlobalId SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfRANConfigurationStructuresForEventTrigger SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            e2SM-CCC-EventTriggerDefinition-Format3 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    period SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rICActionDefinition SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ricStyleType SEQUENCE {
+                        type UTF8String
+                    },
+                    actionDefinitionFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            actionDefinitionFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-ActionDefinitionFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfNodeLevelRANConfigurationStructuresForADF SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfRANConfigurationStructuresForADF SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            rANConfigurationStructureForADF SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    reportType SEQUENCE {
+                        enum SEQUENCE OF UTF8String
+                    },
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    listOfAttributes SEQUENCE {
+                        type UTF8String,
+                        items SEQUENCE {
+                            ref UTF8String
+                        }
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            attributeName SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    attributeName SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            e2SM-CCC-ActionDefinitionFormat2 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfCellConfigurationsToBeReportedForADF SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCellConfigurationsToBeReportedForADF SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            cellConfigurationToBeReportedForADF SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellGlobalId SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfCellLevelRANConfigurationStructuresForADF SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            rIC-Control-Outcome SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    controlOutcomeFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            controlOutcomeFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-ControlOutcomeFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    receivedTimestamp SEQUENCE {
+                        type UTF8String
+                    },
+                    ranConfigurationStructuresAcceptedList SEQUENCE {
+                        ref UTF8String
+                    },
+                    ranConfigurationStructuresFailedList SEQUENCE {
+                        ref UTF8String
+                    }
+                }
+            },
+            ranConfigurationStructuresAcceptedList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            configurationStructureAccepted SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    oldValuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    },
+                    currentValuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    },
+                    appliedTimestamp SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            ranConfigurationStructuresFailedList SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            configurationStructureFailed SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    oldValuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    },
+                    requestedValuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    },
+                    cause SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            cause SEQUENCE {
+                type UTF8String,
+                enum SEQUENCE OF UTF8String
+            },
+            e2SM-CCC-ControlOutcomeFormat2 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    receivedTimestamp SEQUENCE {
+                        type UTF8String
+                    },
+                    listOfCellsForControlOutcome SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCellsForControlOutcome SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            cellControlOutcome SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellGlobalId SEQUENCE {
+                        ref UTF8String
+                    },
+                    ranConfigurationStructuresAcceptedList SEQUENCE {
+                        ref UTF8String
+                    },
+                    ranConfigurationStructuresFailedList SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rIC-Query-Header SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    queryHeaderFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            queryHeaderFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-QueryHeaderFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ricStyleType SEQUENCE {
+                        type UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rIC-Query-Definition SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    queryDefinitionFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            queryDefinitionFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-QueryDefinitionFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfNodelevelRanConfigurationStructuresForQuery SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfNodelevelRanConfigurationStructuresForQuery SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            nodelevelRanConfigurationStructuresForQuery SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    listOfAttributes SEQUENCE {
+                        type UTF8String,
+                        items SEQUENCE {
+                            ref UTF8String
+                        }
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            e2SM-CCC-QueryDefinitionFormat2 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfCellsToBeQueriedForQuery SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCellsToBeQueriedForQuery SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            cellsToBeQueried SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellGlobalId SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfCelllevelConfigurationStructuresForQuery SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCelllevelConfigurationStructuresForQuery SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            celllevelConfigurationStructuresForQuery SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    listOfAttributes SEQUENCE {
+                        type UTF8String,
+                        items SEQUENCE {
+                            ref UTF8String
+                        }
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            rIC-Query-Outcome SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    queryDefinitionFormat SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            queryOutcomeFormat SEQUENCE {
+                oneOf SEQUENCE OF SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            e2SM-CCC-QueryOutcomeFormat1 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfConfigurationStructuresToBeReportedForQuery SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfConfigurationStructuresToBeReportedForQuery SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            configurationStructuresToBeReportedForQuery SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    ranConfigurationStructureName SEQUENCE {
+                        type UTF8String
+                    },
+                    valuesOfAttributes SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            e2SM-CCC-QueryOutcomeFormat2 SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    listOfCellsToBeReportedForQuery SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            },
+            listOfCellsToBeReportedForQuery SEQUENCE {
+                type UTF8String,
+                items SEQUENCE {
+                    ref UTF8String
+                }
+            },
+            cellsToBeReportedForQuery SEQUENCE {
+                type UTF8String,
+                properties SEQUENCE {
+                    cellGlobalId SEQUENCE {
+                        ref UTF8String
+                    },
+                    listOfConfigurationStructuresToBeReportedForQuery SEQUENCE {
+                        ref UTF8String
+                    }
+                },
+                required SEQUENCE OF UTF8String
+            }
+        }
+    }
+}
+
+-- Valeur d'instance générée avec les valeurs par défaut
+generatedValue GeneratedSchema ::= {
+    openapi "3.0.1", 
+    info {
+        title "E2SM-CCC", 
+        version "5.0.0", 
+        description "OAS 3.0.1 specification compatible schema for O-RAN WG3 E2SM-CCC"
+    }, 
+    paths {
+    }, 
+    components {
+        schemas {
+            gnbId {
+                type "integer", 
+                minimum 0, 
+                maximum 4294967295
+            },
+            gnbIdLength {
+                type "integer", 
+                minimum 22, 
+                maximum 32
+            }, 
+            gnbName {
+                type "string", 
+                maxLength 150
+            }, 
+            gnbDuId {
+                type "number", 
+                minimum 0, 
+                maximum 68719476735
+            }, 
+            gnbCuUpId {
+                type "number", 
+                minimum 0, 
+                maximum 68719476735
+            }, 
+            sst {
+                type "integer", 
+                maximum 255
+            }, 
+            snssai {
+                type "object", 
+                properties {
+                    sst {
+                        ref "#/components/schemas/Sst"
+                    }, 
+                    sd {
+                        type "string"
+                    }
+                }
+            }, 
+            snssaiList {
+                type "array", 
+                items {
+                    ref "#/components/schemas/Snssai"
+                }
+            }, 
+            mcc {
+                type "string", 
+                pattern "[0-9]{3}"
+            }, 
+            mnc {
+                type "string", 
+                pattern "[0-9]{3}|[0-9]{2}"
+            }, 
+            plmnId {
+                type "object", 
+                properties {
+                    mcc {
+                        ref "#/components/schemas/Mcc"
+                    }, 
+                    mnc {
+                        ref "#/components/schemas/Mnc"
+                    }
+                }
+            }, 
+            plmnIdList {
+                type "array", 
+                items {
+                    ref "#/components/schemas/PlmnId"
+                }
+            }, 
+            plmnInfo {
+                type "object", 
+                properties {
+                    plmnId {
+                        ref "#/components/schemas/PlmnId"
+                    }, 
+                    snssai {
+                        ref "#/components/schemas/Snssai"
+                    }
+                }
+            }, 
+            plmnInfoList {
+                type "array", 
+                items {
+                    ref "#/components/schemas/PlmnInfo"
+                }
+            }, 
+            gGnbId {
+                type "string", 
+                pattern "^[0-9]{3}[0-9]{2,3}-(22|23|24|25|26|27|28|29|30|31|32)-[0-9]{1,10}"
+            }, 
+            gEnbId {
+                type "string", 
+                pattern "^[0-9]{3}[0-9]{2,3}-(18|20|21|22)-[0-9]{1,7}"
+            }, 
+            gGnbIdList {
+                type "array", 
+                items {
+                    ref "#/components/schemas/GGnbId"
+                }
+            }, 
+            gEnbIdList {
+                type "array", 
+                items {
+                    ref "#/components/schemas/GEnbId"
+                }
+            }, 
+            nrPci {
+                type "integer", 
+                minimum 0, 
+                maximum 503
+            }, 
+            nrTac {
+                type "integer", 
+                minimum 0, 
+                maximum 16777215
+            }
+            -- Définitions complètes disponibles dans la structure
+        }
+    }
 }
 
 END
