@@ -94,8 +94,7 @@ add_subdirectory(src/SCTP)
 add_subdirectory(src/messagerouting)
 add_subdirectory(src/base)
 add_subdirectory(src/encoding)
-add_subdirectory(kpm_e2sm/src/kpm)
-add_subdirectory(src/rc_e2sm)
+add_subdirectory(rc_e2sm/src/rc)
 
 add_library( e2sim_shared SHARED
 
@@ -112,7 +111,7 @@ target_include_directories(e2sim PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/SCTP
   ${CMAKE_CURRENT_SOURCE_DIR}/src/messagerouting
   ${CMAKE_CURRENT_SOURCE_DIR}/src/encoding
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/rc_e2sm
+  ${CMAKE_CURRENT_SOURCE_DIR}/rc_e2sm/src/rc
   ${CMAKE_CURRENT_SOURCE_DIR}/kpm_e2sm/src/kpm
 )
 
