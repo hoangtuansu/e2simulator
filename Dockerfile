@@ -40,17 +40,24 @@ COPY CMakeLists.txt /opt/e2sim/
 COPY asn1c/ /opt/e2sim/asn1c
 COPY src/ /opt/e2sim/src
 COPY asn1_files/ /opt/e2sim/asn1_files
+COPY rc_e2sm/ /opt/e2sim/rc_e2sm/
 
 # Étape 6 : Générer le code ASN.1 automatiquement
 RUN mkdir -p /opt/e2sim/asn1_generated && \
     asn1c -fcompound-names -pdu=all -D /opt/e2sim/asn1_generated /opt/e2sim/asn1_files/*.asn
 
-# Étape 7 : Construire e2sim
+# # Étape 7 : Construire e2sim
+RUN rm -rf /opt/e2sim/build && mkdir -p /opt/e2sim/build
 WORKDIR /opt/e2sim/build
-RUN cmake .. && make package \
- && cmake .. -DDEV_PKG=1 && make package \
- && dpkg -i e2sim_1.0.0_amd64.deb e2sim-dev_1.0.0_amd64.deb \
- && rm -f *.deb
+
+# Première compilation (release)
+RUN cmake .. && make package
+
+# Nettoyage entre les deux builds pour éviter les conflits
+RUN rm -rf * && cmake .. -DDEV_PKG=1 && make package
+
+# Installation des paquets générés
+RUN dpkg -i e2sim_1.0.0_amd64.deb e2sim-dev_1.0.0_amd64.deb && rm -f *.deb
 
 # Étape 8 : Construction du protocole KPM (si nécessaire)
 RUN mkdir -p /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/kpm_e2sm/.build
