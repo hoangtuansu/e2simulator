@@ -5,7 +5,12 @@ RUN apt-get update \
 	libtool bison flex libboost-all-dev iputils-ping \
 	net-tools nano vim tcpdump net-tools nmap \
   	&& apt-get clean
+asdfASDFASdfAS
 
+asdfg
+asdfASDFASdfASfda
+sfg
+asdfg
 RUN mkdir -p /opt/e2sim/asn1c /opt/e2sim/kpm_e2sm /opt/e2sim/kpm_e2sm/asn1c /opt/e2sim/src /usr/local/include/nlohmann
 
 RUN git clone https://github.com/azadkuh/nlohmann_json_release.git
