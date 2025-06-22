@@ -8,11 +8,7 @@ set ( patch_level "0" )
 
 set( install_root "${CMAKE_INSTALL_PREFIX}" )
 set( install_inc "include/e2sim" )
-klajsfhjglksdl
-asflgkjshdjf;glka
-sfgkajds;fglkjsd;lfgk
 
-asfg;lkhaj;sflgkjasd
 
 if( MAN_PREFIX )
         set( install_man ${MAN_PREFIX} )                        # is there a cmake var for this -- can't find one
