@@ -1,109 +1,110 @@
-projet (e2sim)
+
+project (e2sim)
 cmake_minimum_required ( VERSION 3.5 )
 
-ensemble (version_majeure "1" )
-ensemble (version_mineur "0" )
-définir ( patch_level "0" )
+set ( major_version "1" )
+set ( minor_version "0" )
+set ( patch_level "0" )
 
-définir( racine_d'installation "${CMAKE_INSTALL_PREFIX}" )
-définir( install_inc "include/e2sim" )
+set( install_root "${CMAKE_INSTALL_PREFIX}" )
+set( install_inc "include/e2sim" )
 
-si( MAN_PREFIX )
-        set( install_man ${MAN_PREFIX} ) # existe-t-il une variable cmake pour cela -- je n'en trouve pas
-autre()
-        set( install_man "/usr/share/man" ) # cela doit être corrigé pour que ce ne soit pas codé en dur
-fin si()
+if( MAN_PREFIX )
+        set( install_man ${MAN_PREFIX} )                        # is there a cmake var for this -- can't find one
+else()
+        set( install_man "/usr/share/man" )                     # this needs to be fixed so it's not hard coded
+endif()
 
-inclure ( GNUInstallDirs )
+include ( GNUInstallDirs )
 
 add_definitions("-D ASN_DISABLE_OER_SUPPORT")
 
-si( PAS CMAKE_INSTALL_LIBDIR )
-	définir( CMAKE_INSTALL_LIBDIR "lib" )
-fin si()
+if( NOT CMAKE_INSTALL_LIBDIR )
+	set( CMAKE_INSTALL_LIBDIR "lib" )
+endif()
 
-définir( install_lib "${CMAKE_INSTALL_LIBDIR}" )
+set( install_lib "${CMAKE_INSTALL_LIBDIR}" )
 
-si( ${CMAKE_SYSTEM_PROCESSOR} CORRESPOND À "x86_64" )
-	si( PAS PRESERVE_PTYPE )
-		définir( deb_sys_name "amd64" )
-	autre()
-		définir( nom_système_deb ${CMAKE_SYSTEM_PROCESSOR} )
-	fin si()
-autre()
-	définir( nom_système_deb ${CMAKE_SYSTEM_PROCESSOR} )
-fin si()
-unset( PRESERVE_PTYPE CACHE ) # nous ne voulons pas que cela persiste
+if( ${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64" )
+	if( NOT PRESERVE_PTYPE )
+		set( deb_sys_name "amd64" )
+	else()
+		set( deb_sys_name ${CMAKE_SYSTEM_PROCESSOR} )
+	endif()
+else()
+	set( deb_sys_name ${CMAKE_SYSTEM_PROCESSOR} )
+endif()
+unset( PRESERVE_PTYPE CACHE )					# we don't want this to persist
 
-définir( rpm_sys_name ${CMAKE_SYSTEM_PROCESSOR} )
+set( rpm_sys_name ${CMAKE_SYSTEM_PROCESSOR} )
 
-si( DEV_PKG )
-    définir( deb_pkg_name "e2sim-dev" )
-    définir( rpm_pkg_name "e2sim-devel" )
-autre()
-    définir( deb_pkg_name "e2sim" )
-    définir( rpm_pkg_name "e2sim" )
-fin si()
+if( DEV_PKG )
+    set( deb_pkg_name "e2sim-dev" )
+    set( rpm_pkg_name "e2sim-devel" )
+else()
+    set( deb_pkg_name "e2sim" )
+    set( rpm_pkg_name "e2sim" )
+endif()
 
 set( pkg_label "ricxfcpp${spoiled_str}-${major_version}.${minor_version}.${patch_level}-${sys_name}" )
 set( rpm_pkg_label "${rpm_pkg_name}${spoiled_str}-${major_version}.${minor_version}.${patch_level}-${rpm_sys_name}" )
 set( deb_pkg_label "${deb_pkg_name}${spoiled_str}_${major_version}.${minor_version}.${patch_level}_${deb_sys_name}" )
-message( "+++ nom du paquet : ${deb_pkg_label}.deb" )
+message( "+++ pkg name: ${deb_pkg_label}.deb" )
 
-définir( gen_rpm 0 )
-find_program( rpm NAMES rpmbuild ) # le package rpm gen nécessite que ceci soit installé
-if( "${rpm}" CORRESPOND À "rpm-NOTFOUND" ) # impossible de créer rpm
-	définir( pkg_list "DEB" )
-	message( "### make package générera uniquement le package deb ; impossible de trouver le support pour générer les packages rpm" )
-autre()
-	message( "+++ nom du package : ${rpm_pkg_label}.rpm" ) # débogage si nous pensons que nous pouvons également générer des rpm
-	définir( pkg_list "DEB;RPM" )
-	définir( gen_rpm 1 )
-	message( "+++ make package générera à la fois les packages deb et rpm" )
-fin si()
+set( gen_rpm 0 )
+find_program( rpm NAMES rpmbuild )					# rpm package gen requires this to be installed
+if( "${rpm}" MATCHES "rpm-NOTFOUND" )				# cannot build rpm
+	set( pkg_list "DEB" )
+	message( "### make package will generate only deb package; cannot find support to generate rpm packages" )
+else()
+	message( "+++ pkg name: ${rpm_pkg_label}.rpm" )		# debugging if we think we can gen rpm too
+	set( pkg_list "DEB;RPM" )
+	set( gen_rpm 1 )
+	message( "+++ make package will generate both deb and rpm packages" )
+endif()
 
-# les noms de cmake qui saignent sont des romans courts ; et quand les lignes ne peuvent pas être séparées, elles sont pénibles
-définir ( srcd "${CMAKE_CURRENT_SOURCE_DIR}" )
+# bleeding cmake names are short novels; and when lines cannot be split they're a pain
+set ( srcd "${CMAKE_CURRENT_SOURCE_DIR}" )
 
-# cela nous permet de contourner le problème de la poule et de l'œuf. Les fichiers d'inclusion n'existent pas tant que make n'est pas exécuté
-# mais Cmake insiste pour que ceux-ci existent lorsque nous les ajoutons pour inclure des répertoires à
-# activer le code pour les trouver après les avoir construits.
+# this gets us round a chicken/egg problem. include files don't exist until make is run
+# but Cmake insists on having these exist when we add them to include directories to
+# enable code to find them after we build them.
 #
 include_directories( "asn1c;${srcd}/src/DEF;${srcd}/src/SCTP;${srcd}/src/messagerouting;${srcd}/src/base;${srcd}/src/encoding" )
 
 
-# Drapeaux du compilateur
+# Compiler flags
 #
-définir(CMAKE_POSITION_INDEPENDENT_CODE ON)
-définir( CMAKE_C_FLAGS "-g " )
-définir( CMAKE_CPP_FLAGS "-g " )
-définir( CMAKE_CXX_FLAGS "-g " )
-if( GPROF ) # si défini, nous définirons l'indicateur de profilage lors des compilations
-	message( "+++ le profilage est activé" )
-	définir( CMAKE_C_FLAGS "-pg " )
-	définir( CMAKE_CPP_FLAGS "-pg " )
-autre()
-	message( "+++ le profilage est désactivé" )
-fin si()
-unset( GPROF CACHE ) # nous ne voulons pas que cela persiste
+set( CMAKE_POSITION_INDEPENDENT_CODE ON )
+set( CMAKE_C_FLAGS "-g " )
+set( CMAKE_CPP_FLAGS "-g " )
+set( CMAKE_CXX_FLAGS "-g " )
+if( GPROF )					# if set, we'll set profiling flag on compiles
+	message( "+++ profiling is on" )
+	set( CMAKE_C_FLAGS "-pg " )
+	set( CMAKE_CPP_FLAGS "-pg " )
+else()
+	message( "+++ profiling is off" )
+endif()
+unset( GPROF CACHE )					# we don't want this to persist
 
-ajouter_sous-répertoire(asn1c)
-ajouter_sous-répertoire(src/DEF)
-ajouter_sous-répertoire(src/SCTP)
-ajouter_sous-répertoire(src/messagerouting)
-ajouter_sous-répertoire(src/base)
-ajouter_sous-répertoire(src/encodage)
-ajouter_sous-répertoire(rc_e2sm/src/rc)
+add_subdirectory(asn1c)
+add_subdirectory(src/DEF)
+add_subdirectory(src/SCTP)
+add_subdirectory(src/messagerouting)
+add_subdirectory(src/base)
+add_subdirectory(src/encoding)
+add_subdirectory(rc_e2sm/src/rc)
 
-add_library( e2sim_shared PARTAGÉ
+add_library( e2sim_shared SHARED
 
-"$<OBJETS_CIBLES:objets_asn1>;$<OBJETS_CIBLES:objets_def>;$<OBJETS_CIBLES:objets_sctp>;$<OBJETS_CIBLES:objets_de_routage_de_messages>;$<OBJETS_CIBLES:objets_de_codage>;$<OBJETS_CIBLES:objets_de_base>"
+"$<TARGET_OBJECTS:asn1_objects>;$<TARGET_OBJECTS:def_objects>;$<TARGET_OBJECTS:sctp_objects>;$<TARGET_OBJECTS:messagerouting_objects>;$<TARGET_OBJECTS:encoding_objects>;$<TARGET_OBJECTS:base_objects>"
 
 )
 # Ajout de l'exécutable principal e2sim
 add_executable(e2sim src/base/e2sim.cpp)
 
-target_include_directories(e2sim PRIVÉ
+target_include_directories(e2sim PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/asn1c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/base
   ${CMAKE_CURRENT_SOURCE_DIR}/src/DEF
@@ -114,75 +115,75 @@ target_include_directories(e2sim PRIVÉ
   ${CMAKE_CURRENT_SOURCE_DIR}/kpm_e2sm/src/kpm
 )
 
-bibliothèques_liens_cibles(e2sim
+target_link_libraries(e2sim
   e2sim_shared
   pthread
 )
 
-# nous construisons/exportons uniquement l'archive statique (.a) si nous générons un package de développement
-si( DEV_PKG )
-    	add_library( e2sim_static STATIQUE
-        	     "$<OBJETS_CIBLES:objets_asn1>;$<OBJETS_CIBLES:objets_def>;$<OBJETS_CIBLES:objets_sctp>;$<OBJETS_CIBLES:objets_de_routage_de_messages>;$<OBJETS_CIBLES:objets_de_codage>;$<OBJETS_CIBLES:objets_de_base>"
+# we only build/export the static archive (.a) if generating a dev package
+if( DEV_PKG )
+    	add_library( e2sim_static STATIC
+        	     "$<TARGET_OBJECTS:asn1_objects>;$<TARGET_OBJECTS:def_objects>;$<TARGET_OBJECTS:sctp_objects>;$<TARGET_OBJECTS:messagerouting_objects>;$<TARGET_OBJECTS:encoding_objects>;$<TARGET_OBJECTS:base_objects>"
 	)
 
-	définir_propriétés_cible( e2sim_static
-   			       PROPRIÉTÉS
-   			       NOM_SORTIE "e2sim"
+	set_target_properties( e2sim_static
+   			       PROPERTIES
+   			       OUTPUT_NAME "e2sim"
    			       SOVERSION 1
    			       VERSION ${major_version}.${minor_version}.${patch_level}
 	)
 
-	répertoires_include_cible( e2sim_static PUBLIC "asn1c" "src/DEF" "src/SCTP" "src/messagerouting" "src/base" "src/encoding" )	
-fin si()
+	target_include_directories( e2sim_static PUBLIC "asn1c" "src/DEF" "src/SCTP" "src/messagerouting" "src/base" "src/encoding" )	
+endif()
 
 
-si (DEV_PKG )
-   définir (liste_cibles "e2sim_static" )
-autre()
-   définir (liste_cibles "e2sim_shared" )
-fin si()
+if (DEV_PKG )
+   set (target_list "e2sim_static" )
+else()
+   set (target_list "e2sim_shared" )
+endif()
 
-installer( CIBLES ${target_list} EXPORTER LibraryConfig
-       DESTINATION DE LA BIBLIOTHÈQUE ${install_lib}
-       DESTINATION DES ARCHIVES ${install_lib}
-       DESTINATION DE L'EN-TÊTE_PUBLIQUE ${install_inc}
+install( TARGETS ${target_list} EXPORT LibraryConfig
+       LIBRARY  DESTINATION ${install_lib}
+       ARCHIVE  DESTINATION ${install_lib}
+       PUBLIC_HEADER DESTINATION ${install_inc}
 )
 
 
-unset( DEV_PKG CACHE ) # empêche d'être un paramètre masqué si l'utilisateur refait les choses
+unset( DEV_PKG  CACHE )			# prevent from being a hidden setting if user redoes things
 
-SI( EXISTE "${CMAKE_ROOT}/Modules/CPack.cmake" )
-	inclure(InstallRequiredSystemLibraries)
+IF( EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
+	include( InstallRequiredSystemLibraries )
 
-	définir( CPACK_DEBIAN_PACKAGE_NAME ${deb_pkg_name} )
-	définir( CPACK_RPM_PACKAGE_NAME ${rpm_pkg_name} )
+	set( CPACK_DEBIAN_PACKAGE_NAME ${deb_pkg_name} )
+	set( CPACK_RPM_PACKAGE_NAME ${rpm_pkg_name} )
 
-	définir( CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "/usr/local;/usr/local/bin;/usr/local/include;/usr/local/share;/usr/local/lib" )
+	set( CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "/usr/local;/usr/local/bin;/usr/local/include;/usr/local/share;/usr/local/lib" )
 
-	définir( CPACK_set_DESTDIR "on" )
-	définir( CPACK_PACKAGING_INSTALL_PREFIX "${install_root}" )
-	définir( CPACK_GENERATOR "${pkg_list}" )
+	set( CPACK_set_DESTDIR "on" )
+	set( CPACK_PACKAGING_INSTALL_PREFIX "${install_root}" )
+	set( CPACK_GENERATOR "${pkg_list}" )
 
-	set( CPACK_PACKAGE_DESCRIPTION "Framework C++ pour RIC xAPPs basé sur RMR." )
-	set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "Bibliothèque de framework C++ xAPP RIC" )
-	définir( CPACK_PACKAGE_VENDOR "Aucun" )
-	définir( CPACK_PACKAGE_CONTACT "Aucun" )
-	définir( CPACK_PACKAGE_VERSION_MAJOR "${major_version}" )
-	définir( CPACK_PACKAGE_VERSION_MINOR "${minor_version}" )
-	définir( CPACK_PACKAGE_VERSION_PATCH "${patch_level}" )
-	set( CPACK_PACKAGE "${pkg_label}" ) # nom générique pour les anciennes versions de cpack
-	définir( CPACK_DEBIAN_FILE_NAME "${deb_pkg_label}.deb" )
-	définir( CPACK_RPM_FILE_NAME "${rpm_pkg_label}.rpm" )
+	set( CPACK_PACKAGE_DESCRIPTION "C++ framework for RIC xAPPs based on RMR." )
+	set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "RIC xAPP C++ framework library" )
+	set( CPACK_PACKAGE_VENDOR "None" )
+	set( CPACK_PACKAGE_CONTACT "None" )
+	set( CPACK_PACKAGE_VERSION_MAJOR "${major_version}" )
+	set( CPACK_PACKAGE_VERSION_MINOR "${minor_version}" )
+	set( CPACK_PACKAGE_VERSION_PATCH "${patch_level}" )
+	set( CPACK_PACKAGE "${pkg_label}" )						# generic name for old versions of cpack
+	set( CPACK_DEBIAN_FILE_NAME "${deb_pkg_label}.deb" )
+	set( CPACK_RPM_FILE_NAME "${rpm_pkg_label}.rpm" )
 
-	# Futur : définir les dépendances sur RMR et d'autres bibliothèques
+	# Future: define dependencies on RMR and other libs
 
-	définir( CPACK_DEBIAN_PACKAGE_PRIORITY "facultatif" )
-	définir( CPACK_DEBIAN_PACKAGE_SECTION "ric" )
-	définir( CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR} )
-	définir( CPACK_RPM_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR} )
+	set( CPACK_DEBIAN_PACKAGE_PRIORITY "optional" )
+	set( CPACK_DEBIAN_PACKAGE_SECTION "ric" )
+	set( CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR} )
+	set( CPACK_RPM_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR} )
 
-	# cela semble ignoré s'il est inclus
-	#set( CPACK_COMPONENTS_ALL Bibliothèques ApplicationData )
+	# this seems ingnored if included
+	#set( CPACK_COMPONENTS_ALL Libraries ApplicationData )
 
-	INCLURE( CPack )
+	INCLUDE( CPack )
 ENDIF()
