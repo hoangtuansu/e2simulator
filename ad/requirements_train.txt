@@ -1,0 +1,11 @@
+tensorflow
+pandas
+numpy
+scikit-learn
+mlflow
+minio
+urllib3
+seaborn
+matplotlib
+pandas
+plotly
