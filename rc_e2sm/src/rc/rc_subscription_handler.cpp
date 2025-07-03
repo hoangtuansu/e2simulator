@@ -1,5 +1,5 @@
 #include "rc_subscription_handler.hpp"
-#include "../messagerouting/subscription_callbacks.hpp"
+#include "messagerouting/subscription_callbacks.hpp"
 #include <iostream>
 
 void ran_control_callback(void* data) {

@@ -1,6 +1,7 @@
 #include "rc_handler.hpp"
 #include <stdio.h>
 #include <stdint.h>
+#include "E2Sim.hpp"
 
 extern "C" {
 #include "E2SM-RC-EventTriggerDefinition.h"

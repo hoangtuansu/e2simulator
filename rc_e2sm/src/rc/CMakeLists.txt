@@ -22,10 +22,10 @@ add_executable(rc_sim
 
 target_include_directories(rc_sim PUBLIC
   ${CMAKE_SOURCE_DIR}/asn1c
-  ${CMAKE_SOURCE_DIR}/asn1_generated      # <-- Ajouté pour les fichiers .h générés par asn1c
+  ${CMAKE_SOURCE_DIR}/asn1_generated
   ${CMAKE_SOURCE_DIR}/src/DEF
   ${CMAKE_SOURCE_DIR}/src/SCTP
-  ${CMAKE_SOURCE_DIR}/src/messagerouting  # <-- Pour subscription_callbacks.hpp
+  ${CMAKE_SOURCE_DIR}/src/messagerouting
   ${CMAKE_SOURCE_DIR}/src/base
   ${CMAKE_SOURCE_DIR}/src/encoding
   ${CMAKE_SOURCE_DIR}/rc_e2sm/src/rc
@@ -34,4 +34,9 @@ target_include_directories(rc_sim PUBLIC
 target_link_libraries(rc_sim
   e2sim_shared
   pthread
+)
+
+install(
+    TARGETS rc_sim
+    DESTINATION ${install_bin}
 )
