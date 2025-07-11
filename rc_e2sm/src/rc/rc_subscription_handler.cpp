@@ -1,6 +1,9 @@
 #include "rc_subscription_handler.hpp"
-#include "messagerouting/subscription_callbacks.hpp"
 #include <iostream>
+#include <map>
+
+// Définition de la map globale
+std::map<int, void(*)(void*)> subscription_callbacks;
 
 void ran_control_callback(void* data) {
     std::cout << "🔁 E2SM-RC Callback triggered (ran_control_callback)." << std::endl;

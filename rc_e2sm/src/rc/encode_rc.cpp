@@ -8,7 +8,7 @@
 /* ------------------------------------------------------------------ */
 /* 1) RAN-function description – très light :                         */
 /*    juste de quoi passer la phase d’init (à enrichir plus tard).    */
-void encode_rc_function_description(E2SM_RC_RANfunction_Description_t* ranfunc_desc)
+void encode_rc_FunctionDefinition(E2SM_RC_RANFunctionDefinition_t* ranFunc_def)
 {
   uint8_t* short_name = (uint8_t*)"ORAN-E2SM-RC";
   uint8_t* desc       = (uint8_t*)"RAN Control";

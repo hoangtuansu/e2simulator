@@ -18,6 +18,7 @@ add_executable(rc_sim
   rc_callbacks.cpp
   rc_handler.cpp
   rc_subscription_handler.cpp
+  encode_rc.cpp
 )
 
 target_include_directories(rc_sim PUBLIC
@@ -29,6 +30,7 @@ target_include_directories(rc_sim PUBLIC
   ${CMAKE_SOURCE_DIR}/src/base
   ${CMAKE_SOURCE_DIR}/src/encoding
   ${CMAKE_SOURCE_DIR}/rc_e2sm/src/rc
+  ${CMAKE_SOURCE_DIR}/src
 )
 
 target_link_libraries(rc_sim

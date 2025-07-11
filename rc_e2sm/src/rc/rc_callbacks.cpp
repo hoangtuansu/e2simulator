@@ -26,8 +26,8 @@ extern "C" {
   #include "E2SM-RC-ControlMessage.h"
   #include "E2SM-RC-ControlMessage-Format1.h"
   #include "E2SM-RC-ActionDefinition.h"
-  #include "E2SM-RC-RANfunction-Description.h"
-  #include "E2SM-RC-EventTriggerDefinition.h"
+  #include "E2SM-RC-RANFunctionDefinition.h"
+  #include "RANFunctionDefinition-EventTrigger.h"
 
   /* ===  E2AP  === */
   #include "E2AP-PDU.h"
@@ -37,10 +37,11 @@ extern "C" {
   #include "ProtocolIE-Field.h"
   #include "ProtocolIE-SingleContainer.h"
   #include "InitiatingMessage.h"
+  #include "RICaction-ToBeSetup-Item.h"  // AJOUT - pour résoudre le type incomplet
 }
 
 #include "rc_callbacks.hpp"
-#include "encode_rc.hpp"          // <-- tes helpers d’encodage RC
+#include "encode_rc.hpp"          // <-- tes helpers d'encodage RC
 #include "encode_e2apv1.hpp"
 #include "e2sim_defs.h"
 
@@ -71,29 +72,24 @@ static void build_and_send_rc_control(long reqId,
                                       size_t   controlMessageLen,
                                       long&    seqNum)
 {
-  /* Construit l’Indication / Control E2AP puis envoie via SCTP */
+  /* Construit l'Indication / Control E2AP puis envoie via SCTP */
   E2AP_PDU_t* pdu = (E2AP_PDU_t*)calloc(1, sizeof(E2AP_PDU_t));
+
+  // CORRECTION : Créer le vecteur requis par la fonction
+  std::vector<encoding::ran_func_info> funcInfoVector;
+  // Tu peux ajouter des éléments au vecteur si nécessaire
+  // funcInfoVector.push_back({...});
 
   // TODO : choisis la primitive E2AP adaptée :
   //        ici démonstration avec un ControlRequest
-  encoding::generate_e2apv1_control_request_parameterized(
-        pdu,
-        reqId,
-        reqInstId,
-        ranFuncId,
-        actionId,
-        seqNum,
-        controlHeaderBuf,
-        controlHeaderLen,
-        controlMessageBuf,
-        controlMessageLen);
-
+  encoding::generate_e2apv1_subscription_request(pdu);
+  
   g_e2sim.encode_and_send_sctp_data(pdu);
   seqNum++;
 }
 
 /*****************************************************************
- * Boucle d’envoi périodique des contrôles RC
+ * Boucle d'envoi périodique des contrôles RC
  *****************************************************************/
 void run_rc_report_loop(long requestorId,
                         long instanceId,
@@ -102,7 +98,7 @@ void run_rc_report_loop(long requestorId,
 {
   long seqNum = 1;
 
-  /* Exemple : lecture d’un fichier JSON décrivant les commandes RC
+  /* Exemple : lecture d'un fichier JSON décrivant les commandes RC
    * ----------------------------------------------------------------
    * Format attendu :
    * [
@@ -122,18 +118,28 @@ void run_rc_report_loop(long requestorId,
     /* ---------- 1. Construire le ControlHeader ---------- */
     E2SM_RC_ControlHeader_t* hdr = (E2SM_RC_ControlHeader_t*)calloc(1, sizeof(*hdr));
     // TODO : remplir hdr->choice...
-    encode_rc_control_header_format1(hdr, cmd);
 
     uint8_t hdrBuf[1024] = {0};
-    size_t  hdrLen      = encode_rc_to_buffer(hdr, hdrBuf, sizeof(hdrBuf));
+    // CORRECTION : Utiliser l'encodage ASN.1 standard
+    auto er_hdr = asn_encode_to_buffer(nullptr, ATS_ALIGNED_BASIC_PER,
+                                       &asn_DEF_E2SM_RC_ControlHeader,
+                                       hdr, hdrBuf, sizeof(hdrBuf));
+    size_t hdrLen = er_hdr.encoded;
+
     ASN_STRUCT_FREE(asn_DEF_E2SM_RC_ControlHeader, hdr);
 
     /* ---------- 2. Construire le ControlMessage ---------- */
     E2SM_RC_ControlMessage_t* msg = (E2SM_RC_ControlMessage_t*)calloc(1, sizeof(*msg));
-    encode_rc_control_message_format1(msg, cmd);
+    // CORRECTION : Appeler sans le paramètre cmd
+    //encode_rc_control_message(msg)
+    // TODO : Tu devras modifier cette fonction pour accepter les paramètres du JSON
 
     uint8_t msgBuf[1024] = {0};
-    size_t  msgLen       = encode_rc_to_buffer(msg, msgBuf, sizeof(msgBuf));
+    // CORRECTION : Utiliser l'encodage ASN.1 standard
+    auto er_msg = asn_encode_to_buffer(nullptr, ATS_ALIGNED_BASIC_PER,
+                                       &asn_DEF_E2SM_RC_ControlMessage,
+                                       msg, msgBuf, sizeof(msgBuf));
+    size_t msgLen = er_msg.encoded;
     ASN_STRUCT_FREE(asn_DEF_E2SM_RC_ControlMessage, msg);
 
     /* ---------- 3. Packager et envoyer ---------- */
@@ -181,8 +187,10 @@ void callback_rc_subscription_request(E2AP_PDU_t* subReqPdu)
         bool accepted = false;
 
         for (int j = 0; j < list.list.count; ++j) {
-          auto* itemIE   = list.list.array[j];
-          auto& item     = itemIE->value.choice.RICaction_ToBeSetup_Item;
+          // CORRECTION : Cast explicite pour résoudre le type incomplet
+          RICaction_ToBeSetup_ItemIEs_t* itemIE = 
+              (RICaction_ToBeSetup_ItemIEs_t*)list.list.array[j];
+          auto& item = itemIE->value.choice.RICaction_ToBeSetup_Item;
           long  actionId = item.ricActionID;
 
           if (!accepted && item.ricActionType == RICactionType_report) {
@@ -213,7 +221,7 @@ void callback_rc_subscription_request(E2AP_PDU_t* subReqPdu)
 
   g_e2sim.encode_and_send_sctp_data(respPdu);
 
-  /* ---------- Lancer la boucle d’envoi RC ---------- */
+  /* ---------- Lancer la boucle d'envoi RC ---------- */
   std::thread(run_rc_report_loop,
               reqRequestorId,
               reqInstanceId,
@@ -228,19 +236,21 @@ int main(int argc, char* argv[])
 {
   LOG_I("Starting RC simulator");
 
-  /* -------- 1. Charger la RAN-function-description (E2SM-RC) -------- */
+  /* -------- 1. Charger la E2SM_RC_RANFunctionDefinition_ (E2SM-RC) -------- */
   asn_codec_ctx_t* opt_cod = nullptr;
-  E2SM_RC_RANfunction_Description_t* ranFuncDesc =
-      (E2SM_RC_RANfunction_Description_t*)calloc(1, sizeof(*ranFuncDesc));
-
-  encode_rc_function_description(ranFuncDesc);   // TODO : à implémenter
+  E2SM_RC_RANFunctionDefinition_t* ranFuncDesc =
+      (E2SM_RC_RANFunctionDefinition_t*)calloc(1, sizeof(*ranFuncDesc));
 
   uint8_t buf[8192] = {0};
   size_t  bufSz     = sizeof(buf);
 
+  // CORRECTION : Déclarer les variables avant utilisation
+  uint8_t* buffer = buf;
+  size_t buffer_len = bufSz;
+
   auto er = asn_encode_to_buffer(opt_cod,
                                  ATS_ALIGNED_BASIC_PER,
-                                 &asn_DEF_E2SM_RC_RANfunction_Description,
+                                 &asn_DEF_E2SM_RC_RANFunctionDefinition,
                                  ranFuncDesc,
                                  buf,
                                  bufSz);
@@ -249,7 +259,7 @@ int main(int argc, char* argv[])
     exit(1);
   }
 
-  /* -------- 2. Enregistrer la RAN Function auprès d’E2Sim -------- */
+  /* -------- 2. Enregistrer la RAN Function auprès d'E2Sim -------- */
   std::random_device rd; std::mt19937 gen(rd());
   std::uniform_int_distribution<> d(0,4095);
   gFuncId = d(gen);
