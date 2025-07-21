@@ -1,0 +1,49 @@
+# ==================================================================================
+#  Copyright (c) 2020 HCL Technologies Limited.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+# ==================================================================================
+# Utiliser une image Python propre pour éviter les conflits avec distutils
+FROM python:3.11-slim
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Installer les dépendances système nécessaires
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installer pip à jour
+RUN pip install --upgrade pip setuptools
+
+# Copier et installer les librairies depuis requirements_train.txt
+COPY requirements_train.txt ./
+RUN pip install --upgrade pip
+RUN pip install -r requirements_train.txt
+
+# Installer les bibliothèques Python supplémentaires nécessaires
+RUN pip install --no-cache-dir --upgrade \
+    numpy pandas tensorflow scikit-learn mlflow minio seaborn matplotlib plotly
+
+# Copier votre script Python
+COPY src/train_model.py .
+
+# Variables d'environnement pour TensorFlow et MLflow
+ENV CUDA_VISIBLE_DEVICES=-1
+ENV TF_ENABLE_ONEDNN_OPTS=0
+ENV TF_CPP_MIN_LOG_LEVEL=3
+
+# Exécuter le script (optionnel, si nécessaire à la construction)
+CMD ["python", "train_model.py"]
