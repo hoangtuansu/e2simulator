@@ -1,0 +1,7 @@
+docs
+.vscode
+build
+helm
+.gitlab-ci.yml
+*.md
+.gitignore

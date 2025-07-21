@@ -1,0 +1,34 @@
+include:
+  - project: 'oran-ric/infra/cicd'
+    file: '/.ci-common.yml'
+
+stages:
+  - build
+  - deploy
+
+
+build_job:
+  extends: .build_template
+  only:
+    - tags
+    - /^oran-student-.*/
+
+
+deploy_job:
+  stage: deploy
+  when: manual
+  image: bitnami/kubectl:1.32.2
+  tags:
+    - oran-runner # Use your specific tag
+  script:
+    - export IMAGE_NAME=$IMAGE_NAME
+    - export IMAGE_TAG=$CI_COMMIT_SHA
+    - export NAMESPACE=${CI_COMMIT_BRANCH#oran-student-}
+    - echo $NAMESPACE
+    - envsubst < helm/manifest.template.yaml > helm/manifest.yml
+    - cat helm/manifest.yml
+    - kubectl apply -f helm/manifest.yml -n $NAMESPACE
+  only:
+    - /^oran-student-.*/
+  dependencies:
+    - build_job
