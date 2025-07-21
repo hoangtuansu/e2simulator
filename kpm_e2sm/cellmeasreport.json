@@ -1,0 +1,67 @@
+{
+    "Metrics": [
+        {
+            "Metric Name": "User Outage",
+            "Description": "Pourcentage d'utilisateurs ne recevant pas le débit minimum requis (QoS).",
+            "Example Value / Result": "2.5% à 10% selon la politique d'allocation dans les petites cellules (Fig. 4)"
+        },
+        {
+            "Metric Name": "Throughput",
+            "Description": "Débit descendant (DL) et montant (UL) des utilisateurs.",
+            "Example Value / Result": "Non précisé numériquement, mais suivi en temps réel"
+        },
+        {
+            "Metric Name": "Radio Resource Utilization",
+            "Description": "Utilisation globale des PRBs dans chaque cellule.",
+            "Example Value / Result": "Mesurée via l'interface E2 dans O-RAN"
+        },
+        {
+            "Metric Name": "Available PRBs",
+            "Description": "Nombre total de Physical Resource Blocks disponibles (DL/UL).",
+            "Example Value / Result": "Dépend du scénario; alloué dynamiquement (5 MHz ou 10 MHz par cellule)"
+        },
+        {
+            "Metric Name": "Number of Active UEs",
+            "Description": "Nombre d’utilisateurs actifs connectés à une cellule.",
+            "Example Value / Result": "Exemple : 24 voix + 19 MBB dans une cellule (Fig. 4)"
+        },
+        {
+            "Metric Name": "ML Classification Accuracy",
+            "Description": "Précision du modèle ML pour choisir la bonne politique.",
+            "Example Value / Result": "≥ 85% (Random Forest Classifier)"
+        },
+        {
+            "Metric Name": "ML Training Time",
+            "Description": "Durée d’entraînement du modèle (selon l’algorithme).",
+            "Example Value / Result": "Variable (Fig. 5); Random Forest choisi pour son compromis efficacité/temps"
+        }
+    ],
+    "Allocation Policies": [
+        {
+            "Policy Name": "Equal Allocation Policy",
+            "Description": "Répartition équitable des PRBs entre les utilisateurs voix et MBB, sans tenir compte des exigences QoS."
+        },
+        {
+            "Policy Name": "Voice Priority Allocation Policy",
+            "Description": "Priorité aux utilisateurs voix (M fois plus de PRBs que MBB)."
+        },
+        {
+            "Policy Name": "MBB Priority Allocation Policy",
+            "Description": "Priorité aux utilisateurs MBB (K fois plus de PRBs que voix)."
+        },
+        {
+            "Policy Name": "Dedicated Resources Reservation Policy",
+            "Description": "Réservation explicite d'une portion (α pour voix, β pour MBB) des ressources dans chaque type de cellule."
+        }
+    ],
+    "QoS Requirements": [
+        {
+            "UE Type": "Voice",
+            "Minimum QoS Requirement": "250 Kbps"
+        },
+        {
+            "UE Type": "MBB",
+            "Minimum QoS Requirement": "3 Gbps"
+        }
+    ]
+  }

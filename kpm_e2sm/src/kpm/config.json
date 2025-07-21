@@ -1,0 +1,15 @@
+{
+  "pm": [
+      "dl_throughput_ue_mbps",
+      "ul_throughput_ue_mbps",
+      "dl_prb_available",
+      "ul_prb_available",
+      "radio_resource_utilization_percent",
+      "active_ue_count",
+      "user_outage_percent",
+      "ml_classification_accuracy_percent",
+      "ml_training_time_sec",
+      "traffic_type_voice",
+      "traffic_type_mbb"
+  ]
+}
