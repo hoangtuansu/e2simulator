@@ -6,7 +6,7 @@ import urllib3
 urllib3.disable_warnings()
 
 # Nombre d'échantillons à générer
-num_samples = 17000  # ← modifié ici
+num_samples = 25000  # ← modifié ici
 
 # Types de politique d'allocation (extraits du JSON)
 allocation_policies = [
