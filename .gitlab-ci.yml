@@ -17,11 +17,13 @@ sonarqube-check:
     - echo "Running Sonarqube Analysis "  # Prints a message before analysis starts
     - export SONAR_HOST_URL=http://10.180.113.156:30744
     - export SONAR_TOKEN=squ_da7c06eac0bba17330fb7f3fce8a95397a4fd240
+    - pwd
+    - ls
     - |
       sonar-scanner -Dsonar.host.url=$SONAR_HOST_URL  \
-                    -Dsonar.projectKey=oran-ric_xapps_e2sim_46bf5204-383f-459b-90ee-042be01dec29 \
+                    -Dsonar.projectKey=oran-ric_xapps_e2sim_80c73a76-5763-4467-a17f-10aa60ffdde7 \
                     -Dsonar.token=$SONAR_TOKEN  \
-                    -Dsonar.sources=./src,./kpm_e2sm/src/kpm,./rc_e2sm/src/rc \
+                    -Dsonar.sources=src,kpm_e2sm/src/kpm,rc_e2sm/src/rc \
                     -Dsonar.qualitygate.wait=true  # Ensures pipeline waits for quality gate results
   tags: 
     - oran-runner # Use your specific tag
