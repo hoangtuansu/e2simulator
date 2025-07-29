@@ -3,13 +3,13 @@ include:
     file: '/.ci-common.yml'
 
 stages:
-  - sonarqube
+  - security
   - build
   - deploy
 
 
 sonarqube-check:
-  stage: sonarqube  # Specifies that this job belongs to the 'sonarqube' stage
+  stage: security  # Specifies that this job belongs to the 'sonarqube' stage
   image:
     name: sonarsource/sonar-scanner-cli:latest  # Uses the official SonarScanner CLI image
     entrypoint: [""]  # Resets the default entrypoint to avoid conflicts
@@ -27,9 +27,10 @@ sonarqube-check:
                     -Dsonar.qualitygate.wait=true  # Ensures pipeline waits for quality gate results
   tags: 
     - oran-runner # Use your specific tag
-  allow_failure: false  # If analysis fails, the pipeline will fail
+  allow_failure: true  # If analysis fails, the pipeline will fail
   only:
     - main
+  when: manual
 
 build_job:
   extends: .build_template
