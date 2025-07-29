@@ -28,7 +28,6 @@ sonarqube-check:
   allow_failure: false  # If analysis fails, the pipeline will fail
   only:
     - scan-security-integrate
-  when: manual
 
 build_job:
   extends: .build_template
