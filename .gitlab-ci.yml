@@ -29,7 +29,7 @@ sonarqube-check:
     - oran-runner # Use your specific tag
   allow_failure: false  # If analysis fails, the pipeline will fail
   only:
-    - scan-security-integrate
+    - main
 
 build_job:
   extends: .build_template
