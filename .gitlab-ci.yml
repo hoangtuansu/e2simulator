@@ -19,6 +19,7 @@ sonarqube-check:
     - export SONAR_TOKEN=squ_da7c06eac0bba17330fb7f3fce8a95397a4fd240
     - |
       sonar-scanner -Dsonar.host.url=$SONAR_HOST_URL  \
+                    -Dsonar.projectKey=oran-ric_xapps_e2sim_46bf5204-383f-459b-90ee-042be01dec29 \
                     -Dsonar.token=$SONAR_TOKEN  \
                     -Dsonar.qualitygate.wait=true  # Ensures pipeline waits for quality gate results
   tags: 
