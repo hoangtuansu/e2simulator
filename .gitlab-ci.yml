@@ -21,7 +21,7 @@ sonarqube-check:
       sonar-scanner -Dsonar.host.url=$SONAR_HOST_URL  \
                     -Dsonar.projectKey=oran-ric_xapps_e2sim_46bf5204-383f-459b-90ee-042be01dec29 \
                     -Dsonar.token=$SONAR_TOKEN  \
-                    -Dsonar.sources=src,kpm_e2sm/src/kpm,rc_e2sm/src/rc \
+                    -Dsonar.sources=./src,./kpm_e2sm/src/kpm,./rc_e2sm/src/rc \
                     -Dsonar.qualitygate.wait=true  # Ensures pipeline waits for quality gate results
   tags: 
     - oran-runner # Use your specific tag
